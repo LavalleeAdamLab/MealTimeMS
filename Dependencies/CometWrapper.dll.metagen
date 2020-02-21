@@ -1,0 +1,243 @@
+ImageRuntimeVersion: v4.0.30319
+Assembly CometWrapper, Version=1.0.*, Culture=Invariant Language (Invariant Country): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a: 
+	hash=None, flags=None
+Assembly System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Class CometWrapper.IntRangeWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(Int32, Int32): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(IntRange*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    get_iStart(): PrivateScope, Public, HideBySig
+    set_iStart(Int32): PrivateScope, Public, HideBySig
+    get_iEnd(): PrivateScope, Public, HideBySig
+    set_iEnd(Int32): PrivateScope, Public, HideBySig
+    get_IntRangePtr(): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class CometWrapper.DoubleRangeWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(Double, Double): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(DoubleRange*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    get_dStart(): PrivateScope, Public, HideBySig
+    set_dStart(Double): PrivateScope, Public, HideBySig
+    get_dEnd(): PrivateScope, Public, HideBySig
+    set_dEnd(Double): PrivateScope, Public, HideBySig
+    get_DoubleRangePtr(): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class CometWrapper.VarModsWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(VarMods*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    get_BinaryMod(): PrivateScope, Public, HideBySig
+    set_BinaryMod(Int32): PrivateScope, Public, HideBySig
+    get_RequireThisMod(): PrivateScope, Public, HideBySig
+    set_RequireThisMod(Int32): PrivateScope, Public, HideBySig
+    get_MaxNumVarModAAPerMod(): PrivateScope, Public, HideBySig
+    set_MaxNumVarModAAPerMod(Int32): PrivateScope, Public, HideBySig
+    get_VarModTermDistance(): PrivateScope, Public, HideBySig
+    set_VarModTermDistance(Int32): PrivateScope, Public, HideBySig
+    get_WhichTerm(): PrivateScope, Public, HideBySig
+    set_WhichTerm(Int32): PrivateScope, Public, HideBySig
+    get_VarModMass(): PrivateScope, Public, HideBySig
+    set_VarModMass(Double): PrivateScope, Public, HideBySig
+    get_VarModChar(): PrivateScope, Public, HideBySig
+    set_VarModChar(String): PrivateScope, Public, HideBySig
+    get_VarModsPtr(): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class CometWrapper.EnzymeInfoWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(EnzymeInfo*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    get_EnzymeInfoPtr(): PrivateScope, Public, HideBySig
+    get_AllowedMissedCleavge(): PrivateScope, Public, HideBySig
+    set_AllowedMissedCleavge(Int32): PrivateScope, Public, HideBySig
+    get_SearchEnzymeOffSet(): PrivateScope, Public, HideBySig
+    set_SearchEnzymeOffSet(Int32): PrivateScope, Public, HideBySig
+    get_SampleEnzymeOffSet(): PrivateScope, Public, HideBySig
+    set_SampleEnzymeOffSet(Int32): PrivateScope, Public, HideBySig
+    get_SearchEnzymeName(): PrivateScope, Public, HideBySig
+    set_SearchEnzymeName(String): PrivateScope, Public, HideBySig
+    get_SearchEnzymeBreakAA(): PrivateScope, Public, HideBySig
+    set_SearchEnzymeBreakAA(String): PrivateScope, Public, HideBySig
+    get_SearchEnzymeNoBreakAA(): PrivateScope, Public, HideBySig
+    set_SearchEnzymeNoBreakAA(String): PrivateScope, Public, HideBySig
+    get_SampleEnzymeName(): PrivateScope, Public, HideBySig
+    set_SampleEnzymeName(String): PrivateScope, Public, HideBySig
+    get_SampleEnzymeBreakAA(): PrivateScope, Public, HideBySig
+    set_SampleEnzymeBreakAA(String): PrivateScope, Public, HideBySig
+    get_SampleEnzymeNoBreakAA(): PrivateScope, Public, HideBySig
+    set_SampleEnzymeNoBreakAA(String): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class CometWrapper.InputFileInfoWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(InputFileInfo*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    get_InputFileInfoPtr(): PrivateScope, Public, HideBySig
+    get_InputType(): PrivateScope, Public, HideBySig
+    set_InputType(InputType): PrivateScope, Public, HideBySig
+    get_AnalysisType(): PrivateScope, Public, HideBySig
+    set_AnalysisType(AnalysisType): PrivateScope, Public, HideBySig
+    get_FirstScan(): PrivateScope, Public, HideBySig
+    set_FirstScan(Int32): PrivateScope, Public, HideBySig
+    get_LastScan(): PrivateScope, Public, HideBySig
+    set_LastScan(Int32): PrivateScope, Public, HideBySig
+    get_FileName(): PrivateScope, Public, HideBySig
+    set_FileName(String): PrivateScope, Public, HideBySig
+    get_BaseName(): PrivateScope, Public, HideBySig
+    set_BaseName(String): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class CometWrapper.ScoreWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(Scores*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Properties:
+    Int32 TotalIons 'get ' : 
+    Int32 MatchedIons 'get ' : 
+    Double mass 'get ' : 
+    Double dCn 'get ' : 
+    Double xCorr 'get ' : 
+  Methods:
+    get_xCorr(): PrivateScope, Public, HideBySig, SpecialName
+    get_dCn(): PrivateScope, Public, HideBySig, SpecialName
+    get_mass(): PrivateScope, Public, HideBySig, SpecialName
+    get_MatchedIons(): PrivateScope, Public, HideBySig, SpecialName
+    get_TotalIons(): PrivateScope, Public, HideBySig, SpecialName
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class CometWrapper.FragmentWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(Fragment*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Properties:
+    Int32 Charge 'get ' : 
+    CometWrapper.IonSeries Type 'get ' : 
+    Int32 Number 'get ' : 
+    Double Intensity 'get ' : 
+    Double MZ  'get ' : 
+    Double Mass 'get ' : 
+  Methods:
+    get_Mass(): PrivateScope, Public, HideBySig, SpecialName
+    get_MZ(): PrivateScope, Public, HideBySig, SpecialName
+    get_Intensity(): PrivateScope, Public, HideBySig, SpecialName
+    get_Number(): PrivateScope, Public, HideBySig, SpecialName
+    get_Type(): PrivateScope, Public, HideBySig, SpecialName
+    get_Charge(): PrivateScope, Public, HideBySig, SpecialName
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class CometWrapper.CometSearchManagerWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(System.String): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    CreateIndex(): PrivateScope, Public, HideBySig
+    DoSearch(): PrivateScope, Public, HideBySig
+    InitializeSingleSpectrumSearch(): PrivateScope, Public, HideBySig
+    FinalizeSingleSpectrumSearch(): PrivateScope, Public, HideBySig
+    DoSingleSpectrumSearch(Int32, Double, Double[], Double[], Int32 IsConst, String&(Out), String&(Out), List`1&(Out), ScoreWrapper&(Out)): PrivateScope, Public, HideBySig
+    AddInputFiles(List`1): PrivateScope, Public, HideBySig
+    SetOutputFileBaseName(String): PrivateScope, Public, HideBySig
+    SetParam(String, String, List`1): PrivateScope, Public, HideBySig
+    SetParam(String, String, EnzymeInfoWrapper): PrivateScope, Public, HideBySig
+    SetParam(String, String, VarModsWrapper): PrivateScope, Public, HideBySig
+    SetParam(String, String, DoubleRangeWrapper): PrivateScope, Public, HideBySig
+    SetParam(String, String, IntRangeWrapper): PrivateScope, Public, HideBySig
+    SetParam(String, String, Double): PrivateScope, Public, HideBySig
+    SetParam(String, String, Int32): PrivateScope, Public, HideBySig
+    SetParam(String, String, String): PrivateScope, Public, HideBySig
+    GetParamValue(String, List`1&): PrivateScope, Public, HideBySig
+    GetParamValue(String, EnzymeInfoWrapper&): PrivateScope, Public, HideBySig
+    GetParamValue(String, VarModsWrapper&): PrivateScope, Public, HideBySig
+    GetParamValue(String, DoubleRangeWrapper&): PrivateScope, Public, HideBySig
+    GetParamValue(String, IntRangeWrapper&): PrivateScope, Public, HideBySig
+    GetParamValue(String, Double&): PrivateScope, Public, HideBySig
+    GetParamValue(String, Int32&): PrivateScope, Public, HideBySig
+    GetParamValue(String, String&): PrivateScope, Public, HideBySig
+    ValidateCometVersion(String, Boolean&): PrivateScope, Public, HideBySig
+    IsSearchError(Boolean&): PrivateScope, Public, HideBySig
+    GetStatusMessage(String&): PrivateScope, Public, HideBySig
+    CancelSearch(): PrivateScope, Public, HideBySig
+    IsCancelSearch(Boolean&): PrivateScope, Public, HideBySig
+    ResetSearchStatus(): PrivateScope, Public, HideBySig
+    LoadParameters(SByte*, ICometSearchManager*): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Struct CometWrapper.InputType: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+    CometWrapper.InputType Unknown = -1 : Public, Static, Literal, HasDefault
+    CometWrapper.InputType MS2 = 0 : Public, Static, Literal, HasDefault
+    CometWrapper.InputType MZXML = 1 : Public, Static, Literal, HasDefault
+    CometWrapper.InputType MZML = 2 : Public, Static, Literal, HasDefault
+    CometWrapper.InputType CMS2 = 3 : Public, Static, Literal, HasDefault
+Struct CometWrapper.AnalysisType: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+    CometWrapper.AnalysisType Unknown = 0 : Public, Static, Literal, HasDefault
+    CometWrapper.AnalysisType DTA = 1 : Public, Static, Literal, HasDefault
+    CometWrapper.AnalysisType SpecificScan = 2 : Public, Static, Literal, HasDefault
+    CometWrapper.AnalysisType SpecificScanRange = 3 : Public, Static, Literal, HasDefault
+    CometWrapper.AnalysisType EntireFile = 4 : Public, Static, Literal, HasDefault
+Struct CometWrapper.IonSeries: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+    CometWrapper.IonSeries a = 0 : Public, Static, Literal, HasDefault
+    CometWrapper.IonSeries b = 1 : Public, Static, Literal, HasDefault
+    CometWrapper.IonSeries c = 2 : Public, Static, Literal, HasDefault
+    CometWrapper.IonSeries x = 3 : Public, Static, Literal, HasDefault
+    CometWrapper.IonSeries y = 4 : Public, Static, Literal, HasDefault
+    CometWrapper.IonSeries z = 5 : Public, Static, Literal, HasDefault
+Class CometWrapper.Peak_T_Wrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(MSToolkit.Peak_T*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    get_Peak_T_Ptr(): PrivateScope, Public, HideBySig
+    get_mz(): PrivateScope, Public, HideBySig
+    set_mz(Double): PrivateScope, Public, HideBySig
+    get_intensity(): PrivateScope, Public, HideBySig
+    set_intensity(Single): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class CometWrapper.MSFileReaderWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    ReadPeaks(String, Int32, MSSpectrumTypeWrapper, List`1): PrivateScope, Public, HideBySig
+    ReadPrecursorPeaks(String, Int32, MSSpectrumTypeWrapper, List`1, Int32&): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Struct CometWrapper.MSSpectrumTypeWrapper: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+    CometWrapper.MSSpectrumTypeWrapper MS1 = 0 : Public, Static, Literal, HasDefault
+    CometWrapper.MSSpectrumTypeWrapper MS2 = 1 : Public, Static, Literal, HasDefault
+    CometWrapper.MSSpectrumTypeWrapper MS3 = 2 : Public, Static, Literal, HasDefault
+    CometWrapper.MSSpectrumTypeWrapper ZS = 3 : Public, Static, Literal, HasDefault
+    CometWrapper.MSSpectrumTypeWrapper UZS = 4 : Public, Static, Literal, HasDefault
+    CometWrapper.MSSpectrumTypeWrapper IonSpec = 5 : Public, Static, Literal, HasDefault
+    CometWrapper.MSSpectrumTypeWrapper SRM = 6 : Public, Static, Literal, HasDefault
+    CometWrapper.MSSpectrumTypeWrapper REFERENCE = 7 : Public, Static, Literal, HasDefault
+    CometWrapper.MSSpectrumTypeWrapper Unspecified = 8 : Public, Static, Literal, HasDefault
+    CometWrapper.MSSpectrumTypeWrapper MSX = 9 : Public, Static, Literal, HasDefault
