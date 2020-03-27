@@ -32,7 +32,7 @@ namespace MealTimeMS.Util
         public static bool SeeExclusionFormat = false;
         public static bool SetExclusionTable = false;
         public static int NUM_MISSED_CLEAVAGES = 1;
-        public static double ppmTolerance = 5.0/1000000;
+        public static double ppmTolerance = 5.0/1000000.0;
         public static double retentionTimeWindowSize = 0.75;
         public static int MinimumPeptideLength = 6;
 		public static String DecoyString = "DECOY_";

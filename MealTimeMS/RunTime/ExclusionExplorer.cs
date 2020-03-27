@@ -259,17 +259,6 @@ namespace MealTimeMS.RunTime
 			}
 #endif   
 
-			//if(expType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
-			//{
-			//	Dictionary<String, double[]> peptideRT = ((NoExclusion)exclusionProfile).peptideRT;
-			//	WriterClass.writeln("peptide\tRT", writerClassOutputFile.peptideRTTime);
-			//	foreach(String pepseq in peptideRT.Keys)
-			//	{
-			//		double rt = peptideRT[pepseq][0];
-			//		double xcorr = peptideRT[pepseq][1];
-			//		WriterClass.writeln(String.Format("{0}\t{1}\t{2}",pepseq,rt,xcorr), writerClassOutputFile.peptideRTTime);
-			//	}
-			//}
 			if (expType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
 			{
 				List<double[]> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;

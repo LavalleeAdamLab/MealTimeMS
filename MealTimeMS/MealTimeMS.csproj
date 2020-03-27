@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MealTimeMS</RootNamespace>
     <AssemblyName>MealTimeMS</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -109,6 +109,9 @@
     </Reference>
     <Reference Include="CometWrapper">
       <HintPath>..\Dependencies\CometWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="ESAPI-1.0, Version=1.0.0.27, Culture=neutral, PublicKeyToken=4928eef831aedd73, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -368,6 +371,7 @@
     <Compile Include="ExclusionProfiles\TestProfile\SequenceExclusion.cs" />
     <Compile Include="IO\ConfigParser.cs" />
     <Compile Include="IO\IOUtils.cs" />
+    <Compile Include="IO\MealTimeMSParamsParser.cs" />
     <Compile Include="IO\PartialPepXMLWriter.cs" />
     <Compile Include="IO\Writer.cs" />
     <Compile Include="Program.cs" />
@@ -423,6 +427,9 @@
     <Compile Include="Util\PerformDigestion.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="EmbeddedDataFiles\CometQualityCheck.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Tools\chainsaw.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

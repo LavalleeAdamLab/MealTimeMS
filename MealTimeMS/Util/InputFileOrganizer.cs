@@ -26,29 +26,25 @@ namespace MealTimeMS.Util
 		//Files that are absolutely required
 		public static String FASTA_FILE = DataRoot + "uniprot_SwissProt_Human_1_11_2017.fasta"; //the fasta used for external program generation.
 		public static String CometParamsFile = DataRoot + "2019.comet.params";
-		public static String logisticRegressionClassifierSaveFile; // depricated, using Accord.net instead
 		public static String AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile;
 		public static String dbFasta; //the fasta used to construct the in-program database graph. in most circumstances will be set to the same as FASTA_FILE
 		//quality check files
-		public static String CometQualityCheckFile = DataRoot + "CometQualityCheck.txt";
+		public const String CometQualityCheckFile =  "EmbeddedDataFiles\\CometQualityCheck.txt";
 
 		//Tools
-		//public const String RTCalc = "Tools\\RTCalc.exe";
-		//public const String RTCalcCoeff = "Tools\\RTCalc.coeff";
-		public const String RTCalc = "Tools\\RTCalc_2019.exe";
-		public const String RTCalcCoeff = "Tools\\rtcalc_120minTraining.coeff";
+		public const String RTCalc = "Tools\\RTCalc.exe";
+		public const String RTCalcCoeff = "Tools\\RTCalc.coeff";
+		//public const String RTCalc = "Tools\\RTCalc_2019.exe";
+		//public const String RTCalcCoeff = "Tools\\rtcalc_120minTraining.coeff";
 		public const String ChainSaw = "Tools\\chainsaw.exe";
 		public const String CometExe = "Tools\\comet.2019011.win32.exe";
-		public const String DecoyDatabaseOpenMSEXE = "Tools\\DecoyDatabase.exe"; //depricated
 		private const String TPPBinFolder = "C:\\TPP\\bin\\";
 		public const String XInteract = TPPBinFolder + "xinteract.exe";
 		public const String ProteinProphet = TPPBinFolder + "ProteinProphet.exe";
-		public const String TPPDecoyGenerator = TPPBinFolder + "decoyFASTA.exe"; //depricated
 
 		//pre computed files
 		public static String RTCalcResult;
 		public static String ChainSawResult;
-		public static String RTRecordFile;
 		public static String OriginalCometOutput;
 		public static String ProtXML;
 		public static String DecoyFasta;
@@ -65,7 +61,6 @@ namespace MealTimeMS.Util
 		public static String PepXMLSuffix = ".pep.xml";
 
 		//test files
-		public static String ExperimentResultFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\MLGESequentialRun_Full.txt_Summary.txt";
 		public static String SVMSavedFile = "";
 
 		public static void SetWorkDir(String workDir)
@@ -82,7 +77,6 @@ namespace MealTimeMS.Util
 
 			//Crucial files for simulation and experiment
 			CometParamsFile = DataRoot + "2019.comet.params";
-			logisticRegressionClassifierSaveFile = DataRoot + "model.zip";
 			AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = DataRoot + "AccordWeight_DCN240Testing_prThr0.561.txt";
 			//AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = DataRoot + "AccordWeight_StDevCorrectedTraining.txt";
 			//AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = DataRoot + "AccordWeight_NoStDev.txt";
@@ -90,7 +84,6 @@ namespace MealTimeMS.Util
 			
 			FASTA_FILE = DataRoot + "uniprot_SwissProt_Human_1_11_2017.fasta";
 			dbFasta = FASTA_FILE;
-			CometQualityCheckFile = DataRoot + "CometQualityCheck.txt";
 			//FASTA_FILE = DataRoot + "PreComputedFiles\\uniprot_SwissProt_Human_1_11_2017_decoyConcacenated.fasta";
 
 			//data files for simulation
@@ -107,9 +100,6 @@ namespace MealTimeMS.Util
 			//RTCalcResult = PreComputedFilesRoot + "tempOutputPeptideList_rtOutput_120minTrained.txt";
 			ProtXML = PreComputedFilesRoot + "MS_QC_120min_interact.prot.xml";
 			OriginalCometOutput = PreComputedFilesRoot + "MS_QC_120min.pep.xml";
-
-			//output files
-			RTRecordFile = OutputRoot + "RTRecord.txt";
 		}
 
 		//public const String IDXDataBase = dataRoot + "tinyDB.fasta.idx";
