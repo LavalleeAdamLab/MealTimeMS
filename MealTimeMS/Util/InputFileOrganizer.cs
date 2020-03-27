@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using MealTimeMS.Properties;
 
 namespace MealTimeMS.Util
 {
@@ -18,6 +19,7 @@ namespace MealTimeMS.Util
 		public static String OutputRoot = WorkingDirectory + "Output\\";
 		public static String OutputFolderOfTheRun;
 		public static String preExperimentFilesFolder;
+		public static String AssemblyDirectory = Path.GetDirectoryName( System.Reflection.Assembly.GetEntryAssembly().Location);
 
 		//simulation files
 		public static String MS2SimulationTestFile;
@@ -28,8 +30,8 @@ namespace MealTimeMS.Util
 		public static String CometParamsFile = DataRoot + "2019.comet.params";
 		public static String AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile;
 		public static String dbFasta; //the fasta used to construct the in-program database graph. in most circumstances will be set to the same as FASTA_FILE
-		//quality check files
-		public const String CometQualityCheckFile =  "EmbeddedDataFiles\\CometQualityCheck.txt";
+									  //quality check files
+		public static  String CometQualityCheckFile = "";
 
 		//Tools
 		public const String RTCalc = "Tools\\RTCalc.exe";
@@ -77,6 +79,8 @@ namespace MealTimeMS.Util
 
 			//Crucial files for simulation and experiment
 			CometParamsFile = DataRoot + "2019.comet.params";
+
+			CometQualityCheckFile = Path.Combine(AssemblyDirectory, "EmbeddedDataFiles", "CometQualityCheck.txt");
 			AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = DataRoot + "AccordWeight_DCN240Testing_prThr0.561.txt";
 			//AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = DataRoot + "AccordWeight_StDevCorrectedTraining.txt";
 			//AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = DataRoot + "AccordWeight_NoStDev.txt";

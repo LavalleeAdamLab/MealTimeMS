@@ -69,10 +69,12 @@ namespace MealTimeMS
         static void Main(string[] args)
 		{
 
-			CommandLine.Parser.Default.ParseArguments<PrintParams,Options>(args)
-			.WithParsed<PrintParams>(PrintParameters)
-			.WithParsed<Options>(RunOptions)
-			.WithNotParsed(HandleParseError);
+			//CommandLine.Parser.Default.ParseArguments<PrintParams,Options>(args)
+			//.WithParsed<PrintParams>(PrintParameters)
+			//.WithParsed<Options>(RunOptions)
+			//.WithNotParsed(HandleParseError);
+
+
 			//if (args ==null || args[0].Contains("-help"))
 			//{
 			//	Console.WriteLine("Usage: ");
@@ -82,14 +84,14 @@ namespace MealTimeMS
 			//	Console.WriteLine("-p To generate a params file template");
 
 			//}
-
-           
+			SetUpOptions(args);
+			
 			//Sets up the output directory and creates the output files
 			//WriterClass responsible for writing the any output to a file
-            WriterClass.ExperimentOutputSetUp();
+			WriterClass.ExperimentOutputSetUp();
 
 			//parses other options, only used when hooked on to actual machine
-			SetUpOptions(args);
+			
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -97,11 +99,13 @@ namespace MealTimeMS
 
 			Console.WriteLine("Bring the system to On mode and/or start an acquisition to see results.");
 			//ExclusionExplorer.RunExclusionExplorer(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
-			ExclusionExplorer.SingleSimulationRun(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
+			//ExclusionExplorer.SingleSimulationRun(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
 			//ExclusionExplorer.RunRealTimeExperiment();
-			//ExclusionExplorer.RunRandomExclusion(InputFileOrganizer.ExperimentResultFile);
-			
-            Thread.CurrentThread.Join(2000); // waits x seconds for DataProcessor to finish
+			ExclusionExplorer.RunRandomExclusion("C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\Workplace\\TestData\\DataForRandomExclusion - Sheet1.tsv");
+			//ExclusionExplorer.RunRandomExclusion("C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\Workplace\\TestData\\randomTest.tsv");
+
+
+			Thread.CurrentThread.Join(2000); // waits x seconds for DataProcessor to finish
             WriterClass.CloseWriter();
             Console.WriteLine("Program finished");
 
@@ -167,26 +171,29 @@ namespace MealTimeMS
 			public String workPlaceDir { get; set; }
 		}
 		public static void SetUpOptions(String[] args)
-        {
-            for(int i = 3; i < args.Length; i++)
-            {
-                String option = args[i];
-                if (option.Equals("E"))
-                {
-                    //see exclusion format
-                    GlobalVar.SeeExclusionFormat = true;
-                    WriterClass.writePrintln("Exclusion table detail set to true, details will be written");
-                }
+		{
+			for (int i = 3; i < args.Length; i++)
+			{
+				String option = args[i];
+				if (option.Equals("E"))
+				{
+					//see exclusion format
+					GlobalVar.SeeExclusionFormat = true;
+					WriterClass.writePrintln("Exclusion table detail set to true, details will be written");
+				}
 
-                else if (option.Equals("SE"))
-                {
-                    // set exclusion table
-                    GlobalVar.SetExclusionTable = true;
-                    WriterClass.writePrintln("Set Table set to true, app will attempt to set exclusion table");
+				else if (option.Equals("SE"))
+				{
+					// set exclusion table
+					GlobalVar.SetExclusionTable = true;
+					WriterClass.writePrintln("Set Table set to true, app will attempt to set exclusion table");
 
-                }
-            }
-        }
+				}
+			}
+			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(args[0]) + "\\");
+			GlobalVar.IsSimulation = bool.Parse(args[1]);
+			GlobalVar.ScansPerOutput = int.Parse(args[2]);
+		}
 		public static void SetNLogLevel(String _logLevel)
 		{
 			LogLevel logLevel;

@@ -12,7 +12,7 @@ using System.IO;
 using CometWrapper;
 using MealTimeMS.Data;
 using MealTimeMS.IO;
-
+using MealTimeMS.Properties;
 
 namespace MealTimeMS.Util
 {
@@ -74,6 +74,7 @@ namespace MealTimeMS.Util
 		public static bool QualityCheck()
 		{
 			String qcFile = InputFileOrganizer.CometQualityCheckFile;
+			
 			StreamReader sr = new StreamReader(qcFile);
 			String correctSeq = sr.ReadLine().Split("\t".ToCharArray())[2];
 			double correctXCorr= double.Parse(sr.ReadLine().Split("\t".ToCharArray())[2]);

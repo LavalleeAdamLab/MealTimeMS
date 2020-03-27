@@ -136,7 +136,7 @@ namespace MealTimeMS
                 GlobalVar.acquisitionStartTime = (Double)(DateTime.Now.TimeOfDay.TotalMinutes);
             }
 
-			WriterClass.writePrintln(String.Format("\n{0:HH:mm:ss,fff} {1}", DateTime.Now, "Acquisition stream opens (start of method)"));
+			//WriterClass.writePrintln(String.Format("\n{0:HH:mm:ss,fff} {1}", DateTime.Now, "Acquisition stream opens (start of method)"));
 		}
     }
 }

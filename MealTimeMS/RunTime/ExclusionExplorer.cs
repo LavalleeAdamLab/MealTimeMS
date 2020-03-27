@@ -419,7 +419,8 @@ namespace MealTimeMS.RunTime
 			{
 				StreamReader reader = new StreamReader(resultFile);
 				String header= reader.ReadLine();
-				while (!header.StartsWith("ExperimentName")){
+				while (!header.StartsWith("ExperimentName"))
+				{
 					header = reader.ReadLine();
 				}
 				 
