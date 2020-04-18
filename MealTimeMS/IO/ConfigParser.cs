@@ -8,7 +8,7 @@ namespace MealTimeMS.IO
 {
     class ConfigParser
     {
-		//currently not in use at all
+		//Depricated Class
         public static void PaseConfig(String configFile)
         {
             Dictionary<string, string> options= new Dictionary<string, string>();

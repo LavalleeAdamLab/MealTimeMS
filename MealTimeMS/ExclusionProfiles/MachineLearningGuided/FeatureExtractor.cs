@@ -16,38 +16,22 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 	class FeatureExtractor
 	{
 
-		static String OutputFile_Training = "";
-		static String OutputFile_Testing = "";
+		static String OutputFile_PositiveAndNegative = "";
+		static String OutputFile_PositiveAndNonPositive = "";
 		static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
-		static string mzmlFileBaseName="MS_QC_240min";
-		public static void ExtractFeatures(bool withDecoy)
+		//static string mzmlFileBaseName="MS_QC_240min";
+		public static void ExtractFeatures(String mzmlFile, String ms2File, out String extractedFeatureSavedFile_posAndNeg, out String extractedFeatureSavedFile_posAndNonPos)
 		{
-			InputFileOrganizer.MS2SimulationTestFile = InputFileOrganizer.DataRoot + mzmlFileBaseName+".ms2";
-			InputFileOrganizer.MZMLSimulationTestFile = InputFileOrganizer.DataRoot + mzmlFileBaseName+".mzML";
+			Console.WriteLine("Extracting features from {0} and {1}", mzmlFile, ms2File);
+			InputFileOrganizer.MS2SimulationTestFile = ms2File;
+			InputFileOrganizer.MZMLSimulationTestFile = mzmlFile;
+			String mzmlFileBaseName = Path.GetFileNameWithoutExtension(mzmlFile);
+			OutputFile_PositiveAndNegative = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,mzmlFileBaseName + "_extractedFeatures_PositiveAndNegative.tsv");
+			OutputFile_PositiveAndNonPositive = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,mzmlFileBaseName + "_extractedFeatures_positiveAndNonPositive.tsv");
 
-			InputFileOrganizer.ProtXML = InputFileOrganizer.PreComputedFilesRoot + mzmlFileBaseName+"_interact.prot.xml";
-			InputFileOrganizer.OriginalCometOutput = InputFileOrganizer.PreComputedFilesRoot + mzmlFileBaseName+".pep.xml";
-
-
-
-			OutputFile_Training = mzmlFileBaseName + "_TrainingSet.tsv";
-			OutputFile_Testing = mzmlFileBaseName+"_TestingSet.tsv";
-
-			OutputFile_Training = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,OutputFile_Training);
-			OutputFile_Testing = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, OutputFile_Testing);
-			if (withDecoy)
-			{
-				SimulationWithDecoyParamsSetUp();
-			}
-			else
-			{
-				Environment.Exit(45);
-				regularSetUp();
-			}
-			
-
-
-
+			//the current feature extraction will include decoy proteins in the database and testing set
+			SimulationWithDecoyParamsSetUp();
+		
 			log.Info("Running No Exclusion Simulation");
 			ExclusionProfile exclusionProfile = ExclusionExplorer.SingleSimulationRun(ExclusionProfileEnum.NO_EXCLUSION_PROFILE);
 
@@ -57,25 +41,26 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			idf = IdentificationFeatureExtractionUtil.recalibrateStDev(idf);
 			
 			writeFeatures(idf);
+			extractedFeatureSavedFile_posAndNeg = OutputFile_PositiveAndNegative;
+			extractedFeatureSavedFile_posAndNonPos = OutputFile_PositiveAndNonPositive;
+			Console.WriteLine("Extracted Feature written to {0} and {1}", OutputFile_PositiveAndNegative,OutputFile_PositiveAndNonPositive);
 
 		}
 
 		private static void SimulationWithDecoyParamsSetUp()
 		{
+
+			GlobalVar.isSimulationForFeatureExtraction = true;
 			String decoyConcatDB = DecoyConcacenatedDatabaseGenerator.GenerateConcacenatedDecoyFasta(InputFileOrganizer.FASTA_FILE, InputFileOrganizer.OutputFolderOfTheRun);
-			GlobalVar.useIDXComputedFile = true;
-			GlobalVar.useChainsawComputedFile = false;
-
-			GlobalVar.usePepXMLComputedFile = true;
-			
-
 			InputFileOrganizer.dbFasta = decoyConcatDB; //sets the in-program databse to one that contains decoy protein - for feature generation only
 			InputFileOrganizer.DecoyFasta = decoyConcatDB;
 			GlobalVar.useDecoyFastaComputedFile = true;
-			//remove these 2 lines
-			GlobalVar.useRTCalcComputedFile = true;
-			InputFileOrganizer.RTCalcResult = "C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\RealTimeMS\\TestData\\PreComputedFiles\\tempOutputPeptideList_rtOutput_240min.txt";
+			GlobalVar.useIDXComputedFile = false;
 
+			GlobalVar.useChainsawComputedFile = false;
+			GlobalVar.usePepXMLComputedFile = false;
+			GlobalVar.useRTCalcComputedFile = false;
+			//InputFileOrganizer.RTCalcResult = "C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\RealTimeMS\\TestData\\PreComputedFiles\\tempOutputPeptideList_rtOutput_240min.txt";
 		}
 
 		private static void regularSetUp()
@@ -111,7 +96,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 				String accession = i.getAccession();
 				if (i.getCardinality() > 0)
 				{
-					if (!accession.StartsWith(GlobalVar.DecoyString))
+					if (!accession.StartsWith(GlobalVar.DecoyPrefix))
 					{
 						//if this is a real protein
 						if (identifiedProteins.Contains(accession))
@@ -136,8 +121,8 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 					}
 				}
 			}
-			WriteIdentificationFeaturesFile(OutputFile_Training, positiveTrainingSet, negativeTrainingSet);
-			WriteIdentificationFeaturesFile(OutputFile_Testing, positiveTrainingSet, nonPositiveTrainingSet);
+			WriteIdentificationFeaturesFile(OutputFile_PositiveAndNegative, positiveTrainingSet, negativeTrainingSet);
+			WriteIdentificationFeaturesFile(OutputFile_PositiveAndNonPositive, positiveTrainingSet, nonPositiveTrainingSet);
 		}
 
 		/*

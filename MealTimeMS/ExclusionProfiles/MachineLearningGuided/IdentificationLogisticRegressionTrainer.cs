@@ -34,49 +34,43 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 		static MLContext mlContext = new MLContext();
 		static StreamWriter sw;
 		static String SVMSaveFile;
+		public static String TraingAndWriteAccordModel(String trainingFile, String savedWeightDirectory)
+		{
+			log.Info("Training Accord.Net logistic regression classifier using feature set {0}",trainingFile);
+			String trainingFileBaseName = Path.GetFileNameWithoutExtension(trainingFile);
+			String savedCoefficient = Path.Combine(savedWeightDirectory, trainingFileBaseName + "_ClassifierCoefficient.txt");
+			IDataView trainingSet = LoadData(mlContext, trainingFile);
+			var lrAccord = TrainAccordModel(trainingSet);
+			StreamWriter sw2 = new StreamWriter(savedCoefficient);
+			Console.WriteLine("Accord weights");
+			foreach (double w in lrAccord.Weights)
+			{
+				Console.WriteLine(w);
+				sw2.Write(w + "\t");
+			}
+			Console.WriteLine("intercept: {0}", lrAccord.Intercept);
+			sw2.WriteLine();
+			sw2.WriteLine(lrAccord.Intercept);
+			sw2.Close();
+			String savedFile = Path.Combine(savedWeightDirectory, "accordSerializerSavedFile.txt");
+			Serializer.Save(obj: lrAccord, path: savedFile);
+			return savedCoefficient;
+		}
+
 		public static void DoJob()
 		{
-			//String trainingFile = InputFileOrganizer.DataRoot + "TrainingSet240.tsv";
-			//String testingFile = InputFileOrganizer.DataRoot + "TestingSet120 - NoStDev.csv";
-			//String testingFile = InputFileOrganizer.DataRoot + "TestingSet120_NoStdev.csv";
-			//String testingFile = InputFileOrganizer.DataRoot + "TestingSet120 - StDEVCorrected.csv";
-			String testingFile = InputFileOrganizer.DataRoot + "DCN_TestingSet120_NoDecoy.csv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "PastFeatureExtractionFile\\2019-07-11_Training_MS_QC_240min_IdentificationFeaturesFile.csv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "PastFeatureExtractionFile\\2019-06-28_Training_MS_QC_240min_IdentificationFeaturesFile.csv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "MS_QC_240min_TrainingSet_Positive_negative.tsv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "MS_QC_240min_TestingSet_Postive_nonPositive.tsv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "BadPSMIncluded_MS_QC_240min_TrainingSet.tsv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "BadPSMIncluded_MS_QC_240min_TestingSet.tsv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "FE120_BadPSMIncluded_TestingSet.tsv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "FE120_BadPSMIncluded_TrainingSet.tsv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "BadPSMIncluded_MS_QC_240min_TestingSet - BadPSMIncluded_MS_QC_240min_TestingSet_CorrectedSt.csv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "BadPSMIncluded_MS_QC_240min_TestingSet_CorrectedStDev.csv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "DCN_BadPSMIncluded_MS_QC_240min_TestingSet.tsv";
-			String trainingFile = InputFileOrganizer.DataRoot + "240minTestingSetDCN_NoDecoy.csv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "BadPSMIncluded_MS_QC_240min_TestingSet - NoStDev.csv";
-			//String trainingFile = InputFileOrganizer.DataRoot + "TrainingSet240 - Joined.csv";
 
-			//String testingFile = InputFileOrganizer.DataRoot + "PastFeatureExtractionFile\\2019-07-11_Testing_MS_QC_120min_IdentificationFeaturesFile.csv";
+			//String testingFile = InputFileOrganizer.DataRoot + "DCN_TestingSet120_NoDecoy.csv";
+			//String trainingFile = InputFileOrganizer.DataRoot + "240minTestingSetDCN_NoDecoy.csv";
+			String testingFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\240minTestingSetDCN_NoDecoy.csv";
+			String trainingFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\240minTestingSetDCN_NoDecoy.csv";
+
+
 			IDataView trainingSet = LoadData(mlContext, trainingFile);
 			IDataView testingSet = LoadData(mlContext, testingFile);
 			sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "LogisticRegressionTrainerOutput.txt"));
 			StreamWriter sw2 = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "AccordWeight.txt"));
 
-
-			//LogisticRegression pp = TrainAccordModel(trainingSet);
-			//for(int i = 0; i < 2; i++)
-			//{
-
-			//	double bias = pp.GetCoefficient(0);
-			//	var weights = pp.Weights;
-			//	foreach(double w in weights)
-			//	{
-			//		sw.Write(w + "\t");
-			//	}
-			//	sw.Write(bias+"\n");
-			//	pp = TrainAccordModel(testingSet);
-			//}
-			//sw.Close();
 			double[] correctLabels = IDataViewToAccord(testingSet).labels;
 
 
@@ -657,6 +651,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 
 			DataTable dt = IdentificationFeatureExtractionUtil.loadDataTable(path);
 			IDataView dataView = IdentificationFeatureExtractionUtil.transformFeatures(dt, true);
+			
 			//TrainTestData splitDataView = mlContext.Data.TrainTestSplit(dataView, testFraction: 0.2);
 			return dataView;
 

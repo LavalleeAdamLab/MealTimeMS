@@ -52,7 +52,7 @@ public class Writer
          */
         public static String writePeptideList(List<Peptide> peptideList)
         {
-            String outputFileName = InputFileOrganizer.OutputRoot+ "tempOutputPeptideList.txt";
+            String outputFileName = InputFileOrganizer.OutputFolderOfTheRun+ "tempOutputPeptideList.txt";
             log.Debug("Writing peptide list to a file...");
             try
             {

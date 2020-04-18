@@ -45,7 +45,6 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			//lrAccord.Weights = new double[] { -0.014101223713988448, 0.40498899120575244, -0.4050931006103277, -0.6514251562095439, -1.4199639211914807, -0.00154170434120518, -0.0017589165180070616, -0.001427050540781882, -0.006890591731651152, 0.23434955458842885, 0.24386505335051745, 0.25265687551174654, 0.34976191542247076, 0.17989186249395828, 0.15598728100439885 };
 			//lrAccord.Intercept = -2.0771355924182346;
 			excludedProteinFeatureList = new List<object[]>();
-		
 
 		}
 
@@ -84,7 +83,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 
             Peptide pep = getPeptideFromIdentification(id); // id is null, it already returned
 
-			log.Info("Peptide Observed Time: {0}\tPredicted Time: {1} -----------------", id.getScanTime(),pep.getRetentionTime().getRetentionTimeStart());
+			//log.Info("Peptide Observed Time: {0}\tPredicted Time: {1} -----------------", id.getScanTime(),pep.getRetentionTime().getRetentionTimeStart());
 
 
 			// add decoy or non-existent protein connections
@@ -149,6 +148,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			
 
         }
+
 
         override
         public String ToString()

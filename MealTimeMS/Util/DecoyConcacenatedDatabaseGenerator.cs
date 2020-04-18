@@ -63,7 +63,7 @@ namespace MealTimeMS.Util
 					}
 					sw.Write(sequence);
 
-					sw.WriteLine(">"+GlobalVar.DecoyString + accession.Substring(1));
+					sw.WriteLine(">"+GlobalVar.DecoyPrefix + accession.Substring(1));
 					String decoySequence = ReverseSequence(sequence.Replace("\n", ""));
 					for (int i = 0; i < decoySequence.Length; i++)
 					{
@@ -101,7 +101,7 @@ namespace MealTimeMS.Util
 				sw.WriteLine(line);
 
 				//write the decoy sequence
-				line = ">" + GlobalVar.DecoyString + targetSeq.getAccession();
+				line = ">" + GlobalVar.DecoyPrefix + targetSeq.getAccession();
 				sw.WriteLine(line);
 
 				line = ReverseSequence_keepCTerm(targetSeq.getSequence());

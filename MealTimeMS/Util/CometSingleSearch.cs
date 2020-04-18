@@ -170,7 +170,7 @@ namespace MealTimeMS.Util
 			//parses parent protein into a list and remove all decoys
 			HashSet<String> accessions = ParseAccession(protein);
 
-			if (!IsNonDecoyPSM(accessions))
+			if (!GlobalVar.isSimulationForFeatureExtraction && !IsNonDecoyPSM(accessions))
 			{
 				log.Debug("decoy peptide");
 				failedStatistic["DecoyNoParent"]++;
@@ -238,9 +238,9 @@ namespace MealTimeMS.Util
 			//return true;
 			foreach(String acc in accessions)
 			{
-				if (!acc.StartsWith(GlobalVar.DecoyString))
+				if (!acc.StartsWith(GlobalVar.DecoyPrefix))
 				{
-					//if has a single real parent protein
+					//if has at least a single real parent protein
 					return true;
 				}
 			}

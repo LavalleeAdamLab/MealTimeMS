@@ -201,7 +201,7 @@ public class Database
                 {
                     pep.addProtein(parentProtein);
                 }
-                else if (acc.Contains(GlobalVar.DecoyString))
+                else if (acc.Contains(GlobalVar.DecoyPrefix))
                 {
                     log.Info("WARNINGin Decoy parent protein for this peptide was not found!!");
                     log.Info(acc);
@@ -228,6 +228,19 @@ public class Database
             // }
             // }
         }
+		public List<String> getExcludedProteins()
+		{
+			List<String> excludedProts = new List<String>();
+			foreach(String accession in AccesstionToProtein.Keys)
+			{
+				Protein protein = AccesstionToProtein[accession];
+				if (protein.IsExcluded())
+				{
+					excludedProts.Add(accession);
+				}
+			}
+			return excludedProts;
+		}
 
         public Protein getProtein(String accession)
         {

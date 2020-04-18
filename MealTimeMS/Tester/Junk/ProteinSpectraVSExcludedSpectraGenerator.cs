@@ -28,7 +28,7 @@ namespace MealTimeMS.Tester.Junk
 			pepXMLFile = InputFileOrganizer.OriginalCometOutput;
 
 				excludedScanNumFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\Output\\MLGE_Golden_nonRTCheat_excludedSpectraIncluded.txt_output\\MLGE_Golden_nonRTCheat_excludedSpectraIncluded.txt_ExcludedSpectra.txt";
-			outputFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\Output\\MLGE_Golden_nonRTCheat_excludedSpectraIncluded.txt_output\\spectravsProtein.txt";
+				outputFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\Output\\MLGE_Golden_nonRTCheat_excludedSpectraIncluded.txt_output\\spectravsProtein.txt";
 				StreamReader sr = new StreamReader(pepXMLFile);
 				String line = sr.ReadLine();
 				Dictionary<String, ProteinFromPepXML> ls = new Dictionary<String, ProteinFromPepXML>();

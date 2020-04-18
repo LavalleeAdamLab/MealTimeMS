@@ -66,8 +66,8 @@ namespace MealTimeMS.Util
 
         private static Dictionary<Header, Object> data = new Dictionary<Header, Object>();
 
-        private static int numProteinsIdentifiedOriginalExperiment;
-        private static Dictionary<int, BaselineComparison> baselineComparisonSet = new Dictionary<int, BaselineComparison>();
+        private static int numProteinsIdentifiedOriginalExperiment;//original refers to original, fully-processed protein prophet result by using all MS data 
+        private static Dictionary<int, BaselineComparison> baselineComparisonSet = new Dictionary<int, BaselineComparison>(); //baseline refers to stuff like top 12 DDA or top 6 DDA with no exclusion ...etc
 
         public PerformanceEvaluator()
         {
@@ -319,13 +319,13 @@ namespace MealTimeMS.Util
 
 
         public void finalizePerformanceEvaluator(String experimentName, String experimentType, double analysisTime,
-                double totalRunTime, ExclusionList exclusionList, ProteinProphetResult ppr, int ddaNum)
+                double totalRunTime, ExclusionList exclusionList, ProteinProphetResult ppr, int ddaNum, ExclusionProfile exclusionProfile)
         {
             setExperimentName(experimentName, experimentType);
             setExperimentDuration(analysisTime, totalRunTime);
 			setExperimentParams();
             setExclusionList(exclusionList);
-            postProcessingCalculations(ddaNum, ppr);
+            postProcessingCalculations(ddaNum, ppr, exclusionProfile);
         }
 
         /*
@@ -407,7 +407,7 @@ namespace MealTimeMS.Util
 			ChangeValue(Header.ExclusionListFinalTotalSize, totalExclusionListSize);
         }
 
-        private void postProcessingCalculations(int ddaNum, ProteinProphetResult ppr)
+        private void postProcessingCalculations(int ddaNum, ProteinProphetResult ppr, ExclusionProfile exclusionProfile)
         {
 
             BaselineComparison bc = baselineComparisonSet[ddaNum];
@@ -450,7 +450,12 @@ namespace MealTimeMS.Util
 			ChangeValue(Header.ProteinIdentificationSensitivityLimitedDDA,
                     takeRatio((int)data[Header.ProteinsIdentifiedInLimitedDDA], numProteinsIdentifiedNaiveExperiment));
 
-        }
+			List<String> inProgramExcludedProteins = exclusionProfile.getDatabase().getExcludedProteins();
+			int proteinOverlap_inProgramExcluded_vs_NoExclusion = compareProteins(inProgramExcludedProteins, proteinsIdentifiedByNoExclusion);
+			ChangeValue(Header.NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins, proteinOverlap_inProgramExcluded_vs_NoExclusion);
+
+
+		}
 
         /*
          * Prevents divide by zero and integer division errors
@@ -706,6 +711,7 @@ namespace MealTimeMS.Util
 			{Header.xCorr, typeof( DataTypes.DoubleType) },
 			{Header.numDB, typeof( DataTypes.DoubleType) },
 			{Header.prThr, typeof( DataTypes.DoubleType) },
+			{Header.NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins, typeof( DataTypes.IntegerType) },
 
 		};
 
@@ -826,7 +832,8 @@ namespace MealTimeMS.Util
 		rtWin,
 		xCorr,
 		numDB,
-		prThr
+		prThr,
+		NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins
 
     }
 

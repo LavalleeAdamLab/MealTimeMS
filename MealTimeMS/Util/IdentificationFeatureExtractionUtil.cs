@@ -242,6 +242,7 @@ namespace MealTimeMS.Util
 		{
 			List<String> crossedHeaderNames = new List<string>();
 			DataTable crossedData = crossData(data, ref crossedHeaderNames); //cross interaction of features
+			
 			IDataViewWrapper[] dataViewWrapperSet = new IDataViewWrapper[crossedData.Rows.Count];
 
 			for (int i = 0; i < dataViewWrapperSet.Length; i++)
@@ -271,7 +272,15 @@ namespace MealTimeMS.Util
 			MLContext mlContext = new MLContext();
 			//Load Data
 			IDataView dv = mlContext.Data.LoadFromEnumerable<IDataViewWrapper>(dataViewWrapperSet);
+			//OutputCrossedHeaderNames(crossedHeaderNames);
 			return dv;
+		}
+		private static void OutputCrossedHeaderNames(List<String> crs)
+		{
+			String header = String.Join("\t", crs);
+			String outputFileName = "CrossedHeaderName.txt";
+			WriterClass.QuickWrite(header, outputFileName);
+			return;
 		}
 
 		// Returns Dataset<sql.Row> with the ids in idNames and their pairwise interactions

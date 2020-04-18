@@ -85,10 +85,10 @@ namespace MealTimeMS.ExclusionProfiles
         }
 
         public String getPerformanceVector(String experimentName, String experimentType, double analysisTime,
-                double totalRunTime, ProteinProphetResult ppr, int ddaNum)
+                double totalRunTime, ProteinProphetResult ppr, int ddaNum, ExclusionProfile exclusionProfile)
         {
             performanceEvaluator.finalizePerformanceEvaluator(experimentName, experimentType, analysisTime, totalRunTime,
-                    exclusionList, ppr, ddaNum);
+                    exclusionList, ppr, ddaNum, exclusionProfile);
             return performanceEvaluator.outputPerformance();
         }
 
@@ -190,7 +190,7 @@ namespace MealTimeMS.ExclusionProfiles
          * retention time offset. This offset will shift all retention time windows by
          * this value.
          */
-        protected void calibrateRetentionTime(Peptide pep)    //called when we observe a peptide that passes the xcorr threshold
+        protected  void calibrateRetentionTime(Peptide pep)    //called when we observe a peptide that passes the xcorr threshold
         {
             bool isPredictedRT = pep.getRetentionTime().IsPredicted(); //       if isPredictedRT is true, then that means this is the first time you observed it
                                                                         //      if false, then you already have observed it and would have already 

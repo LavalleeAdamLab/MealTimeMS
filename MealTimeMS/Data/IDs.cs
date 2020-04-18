@@ -150,7 +150,7 @@ namespace MealTimeMS.Data
 		{
 			foreach(String access in parent_proteins)
 			{
-				if (!access.Contains(GlobalVar.DecoyString))
+				if (!access.Contains(GlobalVar.DecoyPrefix))
 				{
 					//if there is a single parent protein that's not a decoy, it is not a decoy peptide
 					return false;

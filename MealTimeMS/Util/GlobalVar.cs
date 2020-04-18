@@ -8,15 +8,23 @@ namespace MealTimeMS.Util
 {
     public class GlobalVar
     {
+		//Program Info
+		public const String programVersion = "1.0";
+		public const String programName = "MealTimeMS";
+		
+		//Pre-experiment setup directions
         public static bool IsSimulation = true;
 		public static bool useRTCalcComputedFile = true;
 	    public static bool useChainsawComputedFile = true;
 		public static bool useIDXComputedFile = true;
 		public static bool useDecoyFastaComputedFile = true;
 		public static bool usePepXMLComputedFile = true;
+		public static bool useLogisticRegressionTrainedFile = false;
+
+		public static bool isSimulationForFeatureExtraction = false;
 
 
-		//scan info table header
+		//scan info table header -- do NOT change these values
 		public const String MSLevelHeader = "MSOrder";
         public const String PrecursorChargeHeader = "Charge State:";
         public const String PrecursorMZHeader = "Monoisotopic M/Z:";
@@ -35,7 +43,7 @@ namespace MealTimeMS.Util
         public static double ppmTolerance = 5.0/1000000.0;
         public static double retentionTimeWindowSize = 0.75;
         public static int MinimumPeptideLength = 6;
-		public static String DecoyString = "DECOY_";
+		public static String DecoyPrefix = "DECOY_";
 		public static String DBTargetProteinStartString = "sp|";
 		public static double LRModelDecisionThreshold = 0.70;
 		public static double AccordThreshold = 0.70;
@@ -55,6 +63,15 @@ namespace MealTimeMS.Util
 
 
 		//temp variables
+
+		//ExclusionExplorerParamsList
+		public static List<double> PPM_TOLERANCE_LIST;
+		public static List<double> RETENTION_TIME_WINDOW_LIST;
+
+		public static List<double> LR_PROBABILITY_THRESHOLD_LIST;
+
+		public static List<double> XCORR_THRESHOLD_LIST;
+		public static List<int> NUM_DB_THRESHOLD_LIST;
 
 
     }

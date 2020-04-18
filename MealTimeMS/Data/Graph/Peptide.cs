@@ -13,7 +13,7 @@ namespace MealTimeMS.Data.Graph
         private String sequence;
         private double mass;
         private RetentionTime retentionTime;
-        private List<Double> scores; // stores the the cross correlational score each time this peptide is identified, honestly don't know what this object is used for
+        private List<Double> scores; // stores the the cross correlational score each time this peptide is identified
 		private List<Double> dCNs;  // same thing as the score list, but stores the dCNs
         private bool fromFasta;
         private bool isUniquelyIdentifyingPeptide;

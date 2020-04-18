@@ -23,29 +23,29 @@ namespace MealTimeMS.RunTime
 		private static Database database;
 		private static ProteinProphetResult baseLinePpr;
 		static List<Spectra> ms2SpectraList;
-		static double startTime,analysisTime;
+		static double startTime, analysisTime;
 
 		//MLGE parameters:
-		static readonly List<double> PPM_TOLERANCE_LIST = new List<double>(new double[]{10.0 / 1000000.0 });
-		static readonly List<double> RETENTION_TIME_WINDOW_LIST = new List<double>(new double[] {0.75, 1.0, 2.0});
-		static readonly List<double> PROBABILITY_THRESHOLD_LIST = new List<double>(new double[] {0.3,0.5,0.7,0.9});
-		
+		static readonly List<double> PPM_TOLERANCE_LIST = new List<double>(new double[] { 10.0 / 1000000.0 });
+		static readonly List<double> RETENTION_TIME_WINDOW_LIST = new List<double>(new double[] { 0.75, 1.0, 2.0 });
+		static readonly List<double> LR_PROBABILITY_THRESHOLD_LIST = new List<double>(new double[] { 0.3, 0.5, 0.7, 0.9 });
+
 
 		//Nora parameters:
-		static readonly List<double> XCORR_THRESHOLD_LIST = new List<double>(new double[] {1.5, 2, 2.5});
+		static readonly List<double> XCORR_THRESHOLD_LIST = new List<double>(new double[] { 1.5, 2, 2.5 });
 		//static readonly List<double> XCORR_THRESHOLD_LIST = new List<double>(new double[] {1.5, 2.0 });
-		static readonly List<int> NUM_DB_THRESHOLD_LIST = new List<int>(new int[] {2});
+		static readonly List<int> NUM_DB_THRESHOLD_LIST = new List<int>(new int[] { 2 });
 
 		public static void RunExclusionExplorer(ExclusionProfileEnum exclusionType)
 		{
 			PreExperimentSetUp();
 			int experimentNumber = 0;
 
-			if(exclusionType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
+			if (exclusionType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
 			{
 				foreach (double ppmTol in PPM_TOLERANCE_LIST)
 					foreach (double rtWin in RETENTION_TIME_WINDOW_LIST)
-						foreach (double prThr in PROBABILITY_THRESHOLD_LIST)
+						foreach (double prThr in LR_PROBABILITY_THRESHOLD_LIST)
 						{
 							experimentNumber++;
 							startTime = getCurrentTime();
@@ -63,14 +63,8 @@ namespace MealTimeMS.RunTime
 							}
 							String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_MLGE:ppmTol_{0}_rtWin_{1}_prThr_{2}", ppmTol, rtWin, prThr);
 
-							if (GlobalVar.IsSimulation)
-							{
-								new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
-							}
-							else
-							{
-								new DataReceiver().DoJob(exclusionProfile);
-							}
+							new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+
 							analysisTime = getCurrentTime() - startTime;
 							PostExperimentProcessing(exclusionProfile, experimentName);
 							exclusionProfile.reset();
@@ -101,111 +95,102 @@ namespace MealTimeMS.RunTime
 								}
 								String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_Nora:xCorr_{0}_numDB_{1}_ppmTol_{2}_rtWin_{3}", xCorr, numDB, ppmTol, rtWin) + "_expNum" + experimentNumber;
 
-								if (GlobalVar.IsSimulation)
-								{
-									new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
-								}
-								else
-								{
-									new DataReceiver().DoJob(exclusionProfile);
-								}
+
+								new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+
 								analysisTime = getCurrentTime() - startTime;
 								PostExperimentProcessing(exclusionProfile, experimentName);
 								exclusionProfile.reset();
 								reset();
 							}
-			}else if(exclusionType == ExclusionProfileEnum.COMBINED_EXCLUSION)
+			}
+			else if (exclusionType == ExclusionProfileEnum.COMBINED_EXCLUSION)
 			{
 				foreach (double rtWin in RETENTION_TIME_WINDOW_LIST)
-					foreach (double prThr in PROBABILITY_THRESHOLD_LIST)
+					foreach (double prThr in LR_PROBABILITY_THRESHOLD_LIST)
 						foreach (int numDB in NUM_DB_THRESHOLD_LIST)
-					foreach ( double xCorr in XCORR_THRESHOLD_LIST)
+							foreach (double xCorr in XCORR_THRESHOLD_LIST)
 								foreach (double ppmTol in PPM_TOLERANCE_LIST)
 								{
-							experimentNumber++;
-							startTime = getCurrentTime();
+									experimentNumber++;
+									startTime = getCurrentTime();
 									GlobalVar.ppmTolerance = ppmTol;
 									GlobalVar.retentionTimeWindowSize = rtWin;
 
-						GlobalVar.AccordThreshold =prThr;
+									GlobalVar.AccordThreshold = prThr;
 
-						GlobalVar.XCorr_Threshold = xCorr;
-						GlobalVar.NumDBThreshold = numDB;
+									GlobalVar.XCorr_Threshold = xCorr;
+									GlobalVar.NumDBThreshold = numDB;
 
 
-						ExclusionProfile exclusionProfile = new CombinedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize, xCorr,numDB);
-							//ExclusionProfile exclusionProfile = new NoraExclusion(database, GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
-							//ExclusionProfile exclusionProfile = new RandomExclusion( database, ms2SpectraList, 9871, 27636, 12);
-							if (experimentNumber == 1)
-							{
-								WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().getHeader());
-							}
-							String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_Combined:xCorr_{0}_numDB_{1}_ppmTol_{2}_rtWin_{3}_prThr_{4}", xCorr,numDB, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize, GlobalVar.AccordThreshold);
+									ExclusionProfile exclusionProfile = new CombinedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize, xCorr, numDB);
+									//ExclusionProfile exclusionProfile = new NoraExclusion(database, GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
+									//ExclusionProfile exclusionProfile = new RandomExclusion( database, ms2SpectraList, 9871, 27636, 12);
+									if (experimentNumber == 1)
+									{
+										WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().getHeader());
+									}
+									String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_Combined:xCorr_{0}_numDB_{1}_ppmTol_{2}_rtWin_{3}_prThr_{4}", xCorr, numDB, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize, GlobalVar.AccordThreshold);
 
-							if (GlobalVar.IsSimulation)
-							{
-								new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
-							}
-							else
-							{
-								new DataReceiver().DoJob(exclusionProfile);
-							}
-							analysisTime = getCurrentTime() - startTime;
-							PostExperimentProcessing(exclusionProfile, experimentName);
-							exclusionProfile.reset();
-							reset();
-						}
-			}else if (exclusionType == ExclusionProfileEnum.SVMEXCLUSION)
+									
+									new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+									
+									analysisTime = getCurrentTime() - startTime;
+									PostExperimentProcessing(exclusionProfile, experimentName);
+									exclusionProfile.reset();
+									reset();
+								}
+			}
+			else if (exclusionType == ExclusionProfileEnum.SVMEXCLUSION)
 			{
 				foreach (double ppmTol in PPM_TOLERANCE_LIST)
 					foreach (double rtWin in RETENTION_TIME_WINDOW_LIST)
-						{
-							experimentNumber++;
-							startTime = getCurrentTime();
-							GlobalVar.ppmTolerance = ppmTol;
-							GlobalVar.retentionTimeWindowSize = rtWin;
+					{
+						experimentNumber++;
+						startTime = getCurrentTime();
+						GlobalVar.ppmTolerance = ppmTol;
+						GlobalVar.retentionTimeWindowSize = rtWin;
 
 
-							ExclusionProfile exclusionProfile = new SVMExclusion(InputFileOrganizer.SVMSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
+						ExclusionProfile exclusionProfile = new SVMExclusion(InputFileOrganizer.SVMSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
 						if (experimentNumber == 1)
-							{
-								WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().getHeader());
-							}
-							String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_SVM:ppmTol_{0}_rtWin_{1}", ppmTol, rtWin);
-
-							if (GlobalVar.IsSimulation)
-							{
-								new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
-							}
-							else
-							{
-								new DataReceiver().DoJob(exclusionProfile);
-							}
-							analysisTime = getCurrentTime() - startTime;
-							PostExperimentProcessing(exclusionProfile, experimentName);
-							exclusionProfile.reset();
-							reset();
+						{
+							WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().getHeader());
 						}
+						String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_SVM:ppmTol_{0}_rtWin_{1}", ppmTol, rtWin);
+
+						
+						new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+						
+						analysisTime = getCurrentTime() - startTime;
+						PostExperimentProcessing(exclusionProfile, experimentName);
+						exclusionProfile.reset();
+						reset();
+					}
 
 			}
 
 
 		}
-		
+
 		public static ExclusionProfile SingleSimulationRun(ExclusionProfileEnum expType)
 		{
 			PreExperimentSetUp();
 			int experimentNumber = 1;
 			startTime = getCurrentTime();
-			
+
 			//parameters:
-			GlobalVar.ppmTolerance = 5.0 / 1000000.0;
-			GlobalVar.retentionTimeWindowSize = 1.0;
+			//GlobalVar.ppmTolerance = 5.0 / 1000000.0;
+			//GlobalVar.retentionTimeWindowSize = 1.0;
+			//GlobalVar.AccordThreshold = 0.5;
+			//GlobalVar.XCorr_Threshold = 1.5;
+			//GlobalVar.NumDBThreshold = 2;
 
-			GlobalVar.AccordThreshold = 0.5;
-
-			GlobalVar.XCorr_Threshold = 1.5;
-			GlobalVar.NumDBThreshold = 2;
+			GlobalVar.ppmTolerance = GlobalVar.PPM_TOLERANCE_LIST[0];
+			GlobalVar.retentionTimeWindowSize = GlobalVar.RETENTION_TIME_WINDOW_LIST[0];
+			GlobalVar.AccordThreshold = GlobalVar.LR_PROBABILITY_THRESHOLD_LIST[0];
+			GlobalVar.XCorr_Threshold = GlobalVar.XCORR_THRESHOLD_LIST[0];
+			GlobalVar.NumDBThreshold = GlobalVar.NUM_DB_THRESHOLD_LIST[0];
 			//random
 			int numExcluded = 14826;
 			int numAnalyzed = 22681;
@@ -223,12 +208,12 @@ namespace MealTimeMS.RunTime
 					break;
 
 				case ExclusionProfileEnum.RANDOM_EXCLUSION_PROFILE:
-					
+
 					exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, 12);
 
 					break;
 				case ExclusionProfileEnum.NO_EXCLUSION_PROFILE:
-					exclusionProfile = new NoExclusion(database,GlobalVar.retentionTimeWindowSize);
+					exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
 					break;
 				case ExclusionProfileEnum.MLGE_SEQUENCE_EXCLUSION_PROFILE:
 					exclusionProfile = new MLGESequenceExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
@@ -248,6 +233,7 @@ namespace MealTimeMS.RunTime
 			analysisTime = getCurrentTime() - startTime;
 
 			WriteScanArrivalProcessedTime(DataProcessor.scanArrivalAndProcessedTimeList);
+			WriteExcludedProteinList(exclusionProfile.getDatabase().getExcludedProteins());
 
 #if IGNORE
 			WriteScanArrivalProcessedTime(DataProcessor.spectraNotAdded);
@@ -257,29 +243,24 @@ namespace MealTimeMS.RunTime
 				int scanNum = ms2SpectraList[(int)ignoredSpectra[0]-1].getScanNum();
 				exclusionProfile.getSpectraUsed().Add(scanNum);
 			}
-#endif   
+#endif
 
 			if (expType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
 			{
-				List<double[]> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;
-				
+				List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;
+
 				//actual arrival time, xcorr, rtCalc predicted RT, corrected RT, offset
-				WriterClass.writeln("arrivalTime\txcorr\trtPeak\tcorrectedRT\toffset\trtCalcPredicted\tisPredicted1", writerClassOutputFile.peptideRTTime);
-				foreach(double[] id in peptideIDRT)
+				WriterClass.writeln("pepSeq\tarrivalTime\txcorr\trtPeak\tcorrectedRT\toffset\trtCalcPredicted\tisPredicted1", writerClassOutputFile.peptideRTTime);
+				foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
 				{
-					String str = "";
-					foreach(double d in id)
-					{
-						str = str + "\t" + d;
-					}
-					str= str.Trim();
-					WriterClass.writeln(str, writerClassOutputFile.peptideRTTime);
+
+					WriterClass.writeln(observedPeptracker.ToString(), writerClassOutputFile.peptideRTTime);
 				}
 			}
 			//if (expType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
 			//{
 			//	List<double[]> peptideIDRT = ((MachineLearningGuidedExclusion)exclusionProfile).peptideIDRT;
-				
+
 			//	//actual arrival time, xcorr, rtCalc predicted RT, corrected RT, offset
 			//	WriterClass.writeln("arrivalTime\txcorr\trtPeak\tcorrectedRT\toffset\trtCalcPredicted\tisPredicted1", writerClassOutputFile.peptideRTTime);
 			//	foreach(double[] id in peptideIDRT)
@@ -319,7 +300,7 @@ namespace MealTimeMS.RunTime
 
 			return exclusionProfile;
 		}
-		
+
 		//actual experiment hooked up to the mass spec
 		public static void RunRealTimeExperiment()
 		{
@@ -327,20 +308,20 @@ namespace MealTimeMS.RunTime
 			Console.WriteLine("Running real time experiment");
 
 			startTime = getCurrentTime();
-			GlobalVar.ppmTolerance = 5.0/1000000.0;
+			GlobalVar.ppmTolerance = 5.0 / 1000000.0;
 			GlobalVar.retentionTimeWindowSize = 1.0;
 			GlobalVar.AccordThreshold = 0.5;
 
 			Console.WriteLine("Creating exclusion profile");
 			ExclusionProfile exclusionProfile = new MachineLearningGuidedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
 
-			
-			
+
+
 			String experimentName = GlobalVar.experimentName + String.Format("_MLGE:ppmTol_{0}_rtWin_{1}_prThr_{2}", GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize, GlobalVar.AccordThreshold);
 
-			
+
 			new DataReceiver().DoJob(exclusionProfile);
-			
+
 			analysisTime = getCurrentTime() - startTime;
 			try
 			{
@@ -348,12 +329,12 @@ namespace MealTimeMS.RunTime
 				WriteScanArrivalProcessedTime(DataProcessor.scanArrivalAndProcessedTimeList);
 				WriteScanArrivalProcessedTime(DataProcessor.spectraNotAdded);
 				WriteUsedSpectra(exclusionProfile);
-				WriterClass.writeln("ExclusionList size: "+exclusionProfile.getExclusionList().getExclusionList().Count);
-				WriterClass.writeln("Number of exclusion: "+exclusionProfile.getUnusedSpectra().Count);
-				WriterClass.writeln("Final rtoffset: "+RetentionTime.getRetentionTimeOffset());
+				WriterClass.writeln("ExclusionList size: " + exclusionProfile.getExclusionList().getExclusionList().Count);
+				WriterClass.writeln("Number of exclusion: " + exclusionProfile.getUnusedSpectra().Count);
+				WriterClass.writeln("Final rtoffset: " + RetentionTime.getRetentionTimeOffset());
 
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				Console.WriteLine("Writing exception catched at end of experiment");
 			}
@@ -376,7 +357,7 @@ namespace MealTimeMS.RunTime
 			{
 
 				//Do 5 random experiments per normal experiment
-				for(int i = 0 ; i < 10; i++)
+				for (int i = 0; i < 10; i++)
 				{
 					experimentNumber++;
 					startTime = getCurrentTime();
@@ -406,7 +387,7 @@ namespace MealTimeMS.RunTime
 					exclusionProfile.reset();
 					reset();
 				}
-				
+
 			}
 
 		}
@@ -415,19 +396,19 @@ namespace MealTimeMS.RunTime
 		public static List<ExperimentResult> ParseExperimentResult(params String[] resultFiles)
 		{
 			List<ExperimentResult> resultList = new List<ExperimentResult>();
-			foreach(String resultFile in resultFiles)
+			foreach (String resultFile in resultFiles)
 			{
 				StreamReader reader = new StreamReader(resultFile);
-				String header= reader.ReadLine();
+				String header = reader.ReadLine();
 				while (!header.StartsWith("ExperimentName"))
 				{
 					header = reader.ReadLine();
 				}
-				 
+
 				String line = reader.ReadLine();
-				while(line != null)
+				while (line != null)
 				{
-					if (line.Equals("")|| !line.Contains("\t"))
+					if (line.Equals("") || !line.Contains("\t"))
 					{
 						line = reader.ReadLine();
 						continue;
@@ -444,7 +425,7 @@ namespace MealTimeMS.RunTime
 
 		static void PreExperimentSetUp()
 		{
-			
+
 			if (GlobalVar.IsSimulation)
 			{
 				ms2SpectraList = Loader.parseMS2File(InputFileOrganizer.MS2SimulationTestFile).getSpectraArray();
@@ -455,12 +436,12 @@ namespace MealTimeMS.RunTime
 				//so in alex's original code, "original experiment" refers to original experiment without any exclusion or manipulation with this program
 				//"baseline comparison" refers to the results after "NoExclusion" run, which is a top 6 or top 12 DDA run, which is not implemented in this program
 				//So the two are the same in thie program
-				
+
 				int numMS2Analyzed = (int)GlobalVar.ExperimentTotalScans;
 				PerformanceEvaluator.setBaselineComparison(baseLinePpr, numMS2Analyzed, 12);
 				PerformanceEvaluator.setOriginalExperiment(baseLinePpr.getNum_proteins_identified());
 
-				
+
 			}
 			log.Debug("Setting up Database");
 			database = databaseSetUp(InputFileOrganizer.dbFasta);
@@ -507,7 +488,7 @@ namespace MealTimeMS.RunTime
 		//Construct IDX file required for real time comet
 		private static void ConstructIDX()
 		{
-			
+
 			if (!GlobalVar.useIDXComputedFile)
 			{
 				log.Debug("Converting concacenated decoy database to idx file.");
@@ -544,17 +525,17 @@ namespace MealTimeMS.RunTime
 
 			//WriterClass.writeln(exclusionProfile.ReportFailedCometSearchStatistics());
 			WriterClass.Flush();
-			
+
 			if (GlobalVar.IsSimulation)
 			{
 				ProteinProphetResult ppr = PostProcessingScripts.postProcessing(exclusionProfile, GlobalVar.experimentName, true);
 				
 				
-				
 
 				double totalTime = getCurrentTime() - startTime;
+
 				String result = exclusionProfile.getPerformanceVector(experimentName, exclusionProfile.getAnalysisType().getDescription()
-					, analysisTime, totalTime, ppr, 12);
+					, analysisTime, totalTime, ppr, 12, exclusionProfile);
 				Console.WriteLine(result);
 				WriterClass.writeln(result);
 			}
@@ -563,9 +544,9 @@ namespace MealTimeMS.RunTime
 				WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().outputPerformance());
 			}
 
-			
-			
-			
+
+
+
 
 		}
 		private static void WriteUsedSpectra(ExclusionProfile exclusionProfile)
@@ -579,24 +560,35 @@ namespace MealTimeMS.RunTime
 		{
 			foreach (int scanInd in exclusionProfile.getUnusedSpectra())
 			{
-				WriterClass.writeln(scanInd + "",writerClassOutputFile.ExcludedSpectraScanNum);
+				WriterClass.writeln(scanInd + "", writerClassOutputFile.ExcludedSpectraScanNum);
 			}
 		}
 		private static void WriteScanArrivalProcessedTime(List<double[]> list)
 		{
-			
+
 			String header = "ScanNum\tArrival\tProcessed";
 			WriterClass.writeln(header, writerClassOutputFile.scanArrivalAndProcessedTime);
 			foreach (double[] scan in list)
 			{
 				String data = "";
-				foreach(double d in scan)
+				foreach (double d in scan)
 				{
-					data = data+ d + "\t";
+					data = data + d + "\t";
 				}
-				WriterClass.writeln(data,writerClassOutputFile.scanArrivalAndProcessedTime);
+				WriterClass.writeln(data, writerClassOutputFile.scanArrivalAndProcessedTime);
 			}
 
+		}
+
+		private static void WriteExcludedProteinList(List<string> excludedProteins)
+		{
+			String outputFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"ExcludedProteinList.txt");
+			StreamWriter sw = new StreamWriter(outputFile);
+			foreach(String prot in excludedProteins)
+			{
+				sw.WriteLine(prot);
+			}
+			sw.Close();
 		}
 
 		private static double getCurrentTime()
@@ -608,7 +600,7 @@ namespace MealTimeMS.RunTime
 		}
 
 		public static bool isListening = true;
-		
+
 		public static void EndMealTimeMS()
 		{
 			isListening = false;

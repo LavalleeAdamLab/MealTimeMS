@@ -22,7 +22,7 @@ namespace MealTimeMS.Util
 		//	String enzyme = "Trypsin";
 		//	String outputFilePath = Path.Combine( outputFolder , IOUtils.getBaseName(fastaFilePath)+"_decoyConcacenated.fasta");
 		//	String method = "reverse";
-		//	String decoyString = GlobalVar.DecoyString;
+		//	String decoyString = GlobalVar.DecoyPrefix;
 
 		//	String command = DecoyDBGenerator+" -in "+ fastaFilePath + " -out " +outputFilePath + " -enzyme "+ enzyme + " -decoy_string " + decoyString +" -decoy_string_position prefix "
 		//		+" -method " +method  +" -Decoy:keepPeptideNTerm false -Decoy:keepPeptideCTerm true";
@@ -40,7 +40,7 @@ namespace MealTimeMS.Util
 		//{
 		//	String DecoyDBGenerator = IOUtils.getAbsolutePath(InputFileOrganizer.TPPDecoyGenerator);
 		//	String outputFilePath = Path.Combine(outputFolder, IOUtils.getBaseName(fastaFilePath) + "_TPPDECOY.fasta");
-		//	String decoyString = GlobalVar.DecoyString;
+		//	String decoyString = GlobalVar.DecoyPrefix;
 
 		//	String command = "\""+DecoyDBGenerator + "\" -t \"" + decoyString + "\" \"" + fastaFilePath + "\" \"" + outputFilePath + "\"";
 		

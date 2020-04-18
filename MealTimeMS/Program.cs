@@ -48,8 +48,11 @@ namespace MealTimeMS
 	//	[WorkDirectory (while developping, use the directory of this project)] [True or False (true if running a simulation, false if hooked on to actual MS)] [int (number of spectra for each display, not important, just enter a positive number)] 
 	static class Program
     {        
-        static void Tester(String str)
+        static void Tester()
         {
+			String workDir = "C:\\Coding\\2019LavalleeLab\\temp2";
+			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(workDir) + "\\");
+			WriterClass.ExperimentOutputSetUp();
 			//JunkTester.DoJob();
 			//Console.WriteLine("Logistic Regression Training");
 			//InputFileOrganizer.SetWorkDir(str);
@@ -59,8 +62,10 @@ namespace MealTimeMS
 			//ProteinProphetResultTester.DoJob();
 			//DecoyConcacenatedGeneratorTester.DoJob();
 			//FeatureExtractor.ExtractFeatures(true);
+			//IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel();
 			//IdentificationLogisticRegressionTrainer.DoJob();
-			ProteinSpectraVSExcludedSpectraGenerator.FilterForConfidentlyIdentifiedProteinOnly();
+			ExcludedProteinOverlapAnalyzer.DoJob();
+			//ProteinSpectraVSExcludedSpectraGenerator.FilterForConfidentlyIdentifiedProteinOnly();
 			Console.WriteLine("program finished, press any key to continute");
             Console.ReadKey();
             Environment.Exit(0);
@@ -69,11 +74,15 @@ namespace MealTimeMS
         static void Main(string[] args)
 		{
 
-			//CommandLine.Parser.Default.ParseArguments<PrintParams,Options>(args)
-			//.WithParsed<PrintParams>(PrintParameters)
-			//.WithParsed<Options>(RunOptions)
-			//.WithNotParsed(HandleParseError);
+			//Tester();
 
+			CommandLine.Parser.Default.ParseArguments<Options, PrintParams, TrainClassifier>(args)
+			.WithParsed<Options>(RunSimulation)
+			.WithParsed<PrintParams>(RunPrintParameters)
+			.WithParsed<TrainClassifier>(RunTrainClassifier)
+			.WithNotParsed(HandleParseError);
+
+			//SetUpOptions(args);
 
 			//if (args ==null || args[0].Contains("-help"))
 			//{
@@ -84,24 +93,24 @@ namespace MealTimeMS
 			//	Console.WriteLine("-p To generate a params file template");
 
 			//}
-			SetUpOptions(args);
-			
+
+
 			//Sets up the output directory and creates the output files
 			//WriterClass responsible for writing the any output to a file
 			WriterClass.ExperimentOutputSetUp();
 
-			//parses other options, only used when hooked on to actual machine
+
+
+
 			
 
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			//Tester(args[0]);
+			//
 
 			Console.WriteLine("Bring the system to On mode and/or start an acquisition to see results.");
 			//ExclusionExplorer.RunExclusionExplorer(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
-			//ExclusionExplorer.SingleSimulationRun(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
+			ExclusionExplorer.SingleSimulationRun(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
 			//ExclusionExplorer.RunRealTimeExperiment();
-			ExclusionExplorer.RunRandomExclusion("C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\Workplace\\TestData\\DataForRandomExclusion - Sheet1.tsv");
+			//ExclusionExplorer.RunRandomExclusion("C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\Workplace\\TestData\\DataForRandomExclusion - Sheet1.tsv");
 			//ExclusionExplorer.RunRandomExclusion("C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\Workplace\\TestData\\randomTest.tsv");
 
 
@@ -111,36 +120,65 @@ namespace MealTimeMS
 
 			ExitProgram(0);
         }
-		static void RunOptions(Options opts)
+		static void RunSimulation(Options opts)
 		{
 			//handle options
-			if (opts.paramsFile == null)
+			if (!File.Exists(opts.paramsFile))
 			{
-				Console.WriteLine("MealTime-MS param file missing, use option -p to generate a template param file in your workplace directory");
+				Console.WriteLine("MealTime-MS param file: \"{0}\"\nis missing or cannot be located, use option -p to generate a template param file in your workplace directory",opts.paramsFile);
 				ExitProgram(3);
 			}
 			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(opts.workPlaceDir) + "\\");
 			GlobalVar.IsSimulation = opts.isSimulation;
+			//for now, end program if it's not simulation
+			if (opts.isSimulation == false)
+			{
+				Console.WriteLine("Real-time experiment is not enabled in this version of the program, program will now exit.");
+				Console.WriteLine("Please set the simulation parameter to true to proceed with the in silico simulation");
+				Program.ExitProgram(1);
+			}
+
+
 			GlobalVar.ScansPerOutput = opts.scansPerOutput;
 			SetNLogLevel(opts.logLevel);
 
+			MealTimeMSParamsParser.ParseParamsFile(opts.paramsFile);
 			
 
-
 		}
-		static void PrintParameters(PrintParams pr)
+		static void RunPrintParameters(PrintParams pr)
 		{
 			String workDir = Path.GetFullPath(pr.workPlaceDir);
 			Console.WriteLine("Writing template params file to: {0}", workDir);
 			MealTimeMSParamsParser.WriteTemplateParamsFile(workDir);
 			ExitProgram(2);
 		}
+
+		static void RunTrainClassifier(TrainClassifier tc)
+		{
+			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(tc.workPlaceDir) + "\\");
+			WriterClass.ExperimentOutputSetUp();
+			InputFileOrganizer.FASTA_FILE = tc.fasta;
+			InputFileOrganizer.CometParamsFile = tc.cometParams;
+			String extractedFeatureSavedFile_posAndNeg;
+			String extractedFeatureSavedFile_posAndNonPos;
+			FeatureExtractor.ExtractFeatures(tc.MZML_ClassifierTraining, tc.MS2_ClassifierTraining, out extractedFeatureSavedFile_posAndNeg, out extractedFeatureSavedFile_posAndNonPos);
+			
+			String savedClassifierCoeff = IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel(extractedFeatureSavedFile_posAndNonPos, InputFileOrganizer.OutputFolderOfTheRun);
+			Console.WriteLine("Classifier training successful, coefficient written to {0}", savedClassifierCoeff);
+			Program.ExitProgram(0);
+
+		}
 		static void HandleParseError(IEnumerable<Error> errs)
 		{
 			//handle errors
+
 			Console.WriteLine("Incorrect Usage Format, program will now exit");
+			Console.WriteLine("Usage: \nMealTimeMS.exe -run [options] <workPlaceDirectory> <paramsFile>");
 			ExitProgram(3);
 		}
+
+		[Verb("-run", HelpText = "Runs the program")]
 		class Options
 		{
 			[Value(0, MetaName = "workPlaceDir",Required =true, HelpText = "Directory of the output folder")]
@@ -169,6 +207,25 @@ namespace MealTimeMS
 
 			[Value(0, MetaName = "workPlaceDir", Required = true,Default ="", HelpText = "Directory of the output folder to write the template params file")]
 			public String workPlaceDir { get; set; }
+		}
+
+		[Verb("-train", HelpText = "Trains the logistic regression classifier from a MS experiment spectral data and generates a coefficient file")]
+		class TrainClassifier
+		{ //normal options here
+
+			[Value(0, MetaName = "workPlaceDir", Required = true, Default = "", HelpText = "Directory of the output folder to write the template params file")]
+			public String workPlaceDir { get; set; }
+			[Value(1, MetaName = "MZMLFile", Required = true, Default = "", HelpText = "The MZML file from the experiment")]
+			public String MZML_ClassifierTraining { get; set; }
+			[Value(2, MetaName = "MS2File", Required = true, Default = "", HelpText = "The MS2 file from the experiment, converted from the MZML file")]
+			public String MS2_ClassifierTraining { get; set; }
+			[Value(3, MetaName = "FastaDatabase", Required = true, Default = "", HelpText = "The protein database in .fasta format")]
+			public String fasta{ get; set; }
+			[Value(4, MetaName = "CometParams", Required = true, Default = "", HelpText = "Comet parameters file version 2019")]
+			public String cometParams{ get; set; }
+
+
+			
 		}
 		public static void SetUpOptions(String[] args)
 		{

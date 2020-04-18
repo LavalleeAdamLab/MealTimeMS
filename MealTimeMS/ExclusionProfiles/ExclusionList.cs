@@ -189,8 +189,8 @@ public class ExclusionList
             // excludes it for 2*rt_window time
             pep.setRetentionTime(newRT);
 
-            addPeptide(pep); //personally i dont think this line is necessary, since the peptide would have already be added in 
-                                //MachineLearningGuidedExclusion EvaluateIdentification(), but whatever
+            //addPeptide(pep); //personally i dont think this line is necessary, since the peptide would have already be added in 
+                                //MachineLearningGuidedExclusion EvaluateIdentification()
                                 //Note that in the last line when re-setting the retention time of the peptide, isPredicted will be set to false
         }
 

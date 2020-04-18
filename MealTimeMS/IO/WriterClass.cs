@@ -112,9 +112,16 @@ namespace MealTimeMS
 				// Ensure that the lock is released.
 				rwl.ReleaseWriterLock();
 			}
-			
-				
         }
+		//Creates an instant of streamWriter and writer a string
+		public static void QuickWrite(String str, String outputFileName)
+		{
+			String outputDirectory = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, outputFileName);
+			StreamWriter tempSw = new StreamWriter(outputDirectory);
+			tempSw.WriteLine(str);
+			tempSw.Close();
+
+		}
 
         public static void CloseWriter()
         {
