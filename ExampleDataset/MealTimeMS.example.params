@@ -1,0 +1,45 @@
+#MealTimeMS_1.0
+#
+
+###CrucialFiles
+FastaFileName =  C:\ExampleDataSet\uniprot_SwissProt_Human_1_11_2017.fasta	#File path to the Protein sequence database Fasta file
+CometParamsFile = C:\ExampleDataSet\2019.comet.params	#File path to the comet parameters (2019 version). Make sure to set "decoy_search" to 0.
+#
+
+###DirectorySetUp
+TPPBinFolder = C:\TPP\bin\	#Directory of the bin folder of the Trans-Proteomic Pipeline installation
+#
+
+###SimulationParams
+MS2SimulationSpectraFile = C:\ExampleDataSet\MS_QC_120min.ms2	#Spectral data in .ms2 format, can be converted from .mzML (or .raw) to .ms2 using ProteoWizard's msconvert
+#
+
+###PreExperimentSetup
+DecoyPrefix = DECOY_	#Decoy prefix used in the Comet params
+RTCalcCoefficient = 	#Trained RTCalc model .coeff file, used by RTCalc to predict peptide retention time. The training should be done in seconds.
+NUM_MISSED_CLEAVAGES = 1	#This version of the MealTime MS is limited to a Trypsin digestion experiment. This number specifies the number of missed cleavage of the digestion
+MinimumPeptideLength = 6	#Minimum peptide length of the trypsin digestion
+#
+
+###ExperimentParameters
+ExclusionMethod = 1	#0: No Exclusion. 1: MealTimeMS. 2: Heuristic exclusion. 3: CombinedExclusion
+ppmTolerance = 5.0	#in ppm, so a value of 5.0 would become 5.0/1000000.0. Separate by comma if multiple values are provided
+retentionTimeWindowSize = 1.0	#The retention time window (minutes) allowed to deviate (beyond or below) from predicted peptide retention time. Separate by comma if multiple values are provided
+XCorr_Threshold = 2.0	#Separate by comma if multiple values are provided
+NumDBThreshold = 2	#Separate intergers by comma if multiple values are provided
+LogisticRegressionDecisionThreshold = 0.5	#Separate by comma if multiple values are provided
+#
+
+###LogisticRegressionClassifier
+LogisRegressionClassiferSavedCoefficient = C:\ExampleDataSet\MS_QC_240min_Trained_ClassifierCoefficient.txt	#File path to the saved coefficient file of a trained LR classifier model. To generate a traiend logistic regression classifier model saved coefficient file, use command: "MealTimeMS.exe -train" option
+#
+
+###PrecomputedFiles	*Leave all the parameters below blank when you run the program for the first time, only used to skip the overhead and speed up future simulations
+RTCalcPredictedPeptideRT = 	#RTCalc predicted peptide retention time result file, in seconds
+IDXDataBase =
+OriginalCometOutput =
+#
+
+###SpecialSimulation
+MeasuredPeptideRetentionTime = 	#A file with empirically measured peptide retention time in minutes. The first line should contain a header "peptide	RT", the rest of the file should containone peptide in each line with their respective retention time in minutes separated by tab: "VSEFYEETK	3.983788". These will be used to replace the some RT values in the RTCalcPredictedPeptideRT file, with the amount of perturbation specified below
+AmountPerturbation = 15.0	#A number (double >= 0.0) in seconds specifing the amount of perturnation around the measured retention time.
