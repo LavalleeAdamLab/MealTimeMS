@@ -20,7 +20,7 @@ namespace MealTimeMS.IO
 			//new Parameter("SimulationParams","MZMLSimulationTestFile",true,"","",true),
 			//new Parameter("PreExperimentSetup","UsePrecomputedFiles",true,"false","true: use the files in the PrecomputedFiles section instead of generating them with the program. false: generate them with the program automatically. Set to false if running the program for the first time"),
 			new Parameter("PreExperimentSetup","DecoyPrefix",true,"DECOY_","Decoy prefix used in the Comet params"),
-			new Parameter("PreExperimentSetup","RTCalcCoefficient",true,"","Trained RTCalc model .coeff file, used by RTCalc to predict peptide retention time. Make sure the training is done in seconds.",true),
+			new Parameter("PreExperimentSetup","RTCalcCoefficient",true,"","Trained RTCalc model .coeff file, used by RTCalc to predict peptide retention time. The training should be done in seconds.",true),
 			new Parameter("PreExperimentSetup","NUM_MISSED_CLEAVAGES",true,"1","This version of the MealTime MS is limited to a Trypsin digestion experiment. This number specifies the number of missed cleavage of the digestion"),
 			new Parameter("PreExperimentSetup","MinimumPeptideLength",true,"6","Minimum peptide length of the trypsin digestion"),
 			//new Parameter("ClassifierTrainingFiles","MS2_forClassifierTraining",true,"MS_QC_240min.ms2","",true),
@@ -31,7 +31,7 @@ namespace MealTimeMS.IO
 			new Parameter("ExperimentParameters","XCorr_Threshold",true,"2.0","Separate by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","NumDBThreshold",true,"2","Separate intergers by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","LogisticRegressionDecisionThreshold",true,"0.5","Separate by comma if multiple values are provided"),
-			new Parameter("PrecomputedFiles","LogisRegressionClassiferSavedCoefficient",false,"","File path to the saved coefficient file of a trained LR classifier model. " +
+			new Parameter("LogisticRegressionClassifier","LogisRegressionClassiferSavedCoefficient",false,"","File path to the saved coefficient file of a trained LR classifier model. " +
 				"To generate a traiend logistic regression classifier model saved coefficient file, use command: \"MealTimeMS.exe -train\" option",true),
 			//new Parameter("PrecomputedFiles","ChainSawResult",false,"","",true),
 			new Parameter("PrecomputedFiles","RTCalcPredictedPeptideRT",false,"","RTCalc predicted peptide retention time result file, in seconds",true),
@@ -39,7 +39,7 @@ namespace MealTimeMS.IO
 			new Parameter("PrecomputedFiles","IDXDataBase",false,"","",true),
 			new Parameter("PrecomputedFiles","OriginalCometOutput",false,"","",true),
 			//new Parameter("PrecomputedFiles","ProtXML",false,"","",true),
-			new Parameter("PrecomputedFiles","MeasuredPeptideRetentionTime",false,"","A file with empirically measured peptide retention time in minutes. The first line should be a number (double >= 0.0)in seconds specifing the " +
+			new Parameter("SpecialSimulation","MeasuredPeptideRetentionTime",false,"","A file with empirically measured peptide retention time in minutes. The first line should be a number (double >= 0.0)in seconds specifing the " +
 				"amount of perturbation around the retention time. The second line should contain a header \"peptide\tRT\", the rest of the file should contain" +
 				"one peptide in each line with their respective retention time in minutes separated by tab: \"VSEFYEETK\t3.983788\". These will be used to replace the some RT values in the RTCalcPredictedPeptideRT file, with the perturbation specified",true)
 
@@ -101,8 +101,16 @@ namespace MealTimeMS.IO
 							case "MS2SimulationSpectraFile":
 								InputFileOrganizer.MS2SimulationTestFile = value;
 								break;
+							case "LogisRegressionClassiferSavedCoefficient":
+								InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = value;
+								GlobalVar.useLogisticRegressionTrainedFile = true;
+								break;
+							case "MeasuredPeptideRetentionTime":
+								InputFileOrganizer.MeasuredPeptideRetentionTime = value;
+								GlobalVar.useMeasuredRT = true;
+								break;
 							//case "MZMLSimulationTestFile":
-								//InputFileOrganizer.MZMLSimulationTestFile = value;
+							//InputFileOrganizer.MZMLSimulationTestFile = value;
 							//	break;
 							//case "MS2_forClassifierTraining":
 							//	InputFileOrganizer.MS2_ClassifierTraining = value;
@@ -150,6 +158,7 @@ namespace MealTimeMS.IO
 							case "LogisticRegressionDecisionThreshold":
 								GlobalVar.LR_PROBABILITY_THRESHOLD_LIST = ParseDoubleListFromCSV(value);
 								break;
+
 							default:
 								Console.WriteLine("Warning! Cannot identify this line in MealTime-MS params file: \"{0}\"", ogLine);
 								Console.WriteLine("Params File at: " + paramsFile);
@@ -165,10 +174,7 @@ namespace MealTimeMS.IO
 							{
 								switch (name)
 								{
-									case "LogisRegressionClassiferSavedCoefficient":
-										InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = value;
-										GlobalVar.useLogisticRegressionTrainedFile = true;
-										break;
+									
 
 									//case "ChainSawResult":
 									//	InputFileOrganizer.ChainSawResult = value;
@@ -198,10 +204,7 @@ namespace MealTimeMS.IO
 									//case "ProtXML":
 									//	InputFileOrganizer.OriginalProtXMLFile = value;
 									//	break;
-									case "MeasuredPeptideRetentionTime":
-										InputFileOrganizer.MeasuredPeptideRetentionTime = value;
-										GlobalVar.useMeasuredRT = true;
-										break;
+								
 									default:
 										Console.WriteLine("Warning! Cannot identify this line in MealTime-MS params file: \"{0}\"", ogLine);
 										Console.WriteLine("Params File at: " + paramsFile);
@@ -242,11 +245,11 @@ namespace MealTimeMS.IO
 				{
 					if (param.category.Equals("PrecomputedFiles"))
 					{
-						sw.WriteLine("#\n#" + param.category + "\t*Leave all the parameters below (other than LogisticRegressionClassifierSavedCoefficient if you're running MealTimeMS or combined exclusion methods) blank when you run the program for the first time, only used to skip the overhead and speed up future simulations\n#");
+						sw.WriteLine("#\n\n###" + param.category + "\t*Leave all the parameters below blank when you run the program for the first time, only used to skip the overhead and speed up future simulations");
 					}
 					else
 					{
-						sw.WriteLine("#\n#" + param.category + "\n#");
+						sw.WriteLine("#\n\n###" + param.category + "");
 					}
 					lastCategory = param.category;
 				}

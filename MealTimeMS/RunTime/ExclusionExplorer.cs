@@ -116,33 +116,38 @@ namespace MealTimeMS.RunTime
 					}
 			}else if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
 			{
-				
-					foreach (double rtWin in GlobalVar.RETENTION_TIME_WINDOW_LIST)
+
+				foreach (double rtWin in GlobalVar.RETENTION_TIME_WINDOW_LIST)
+				{
+					experimentNumber++;
+					startTime = getCurrentTime();
+					GlobalVar.ppmTolerance = 0;
+					GlobalVar.retentionTimeWindowSize = rtWin;
+
+					ExclusionProfile exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
+					String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_NoExclusion:ppmTol_rtWin_{0}", rtWin);
+					RunSimulationAndPostProcess(exclusionProfile, experimentName, startTime, experimentNumber);
+
+					if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
 					{
-						experimentNumber++;
-						startTime = getCurrentTime();
-						GlobalVar.ppmTolerance = 0;
-						GlobalVar.retentionTimeWindowSize = rtWin;
+						List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;
 
-						ExclusionProfile exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
-						String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_NoExclusion:ppmTol_rtWin_{0}", rtWin);
-						RunSimulationAndPostProcess(exclusionProfile, experimentName, startTime, experimentNumber);
+						//actual arrival time, xcorr, rtCalc predicted RT, corrected RT, offset
+						//WriterClass.writeln("pepSeq\tarrivalTime\txcorr\trtPeak\tcorrectedRT\toffset\trtCalcPredicted\tisPredicted1", writerClassOutputFile.peptideRTTime);
+						//foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
+						//{
 
-						if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+						//	WriterClass.writeln(observedPeptracker.ToString(), writerClassOutputFile.peptideRTTime);
+						//}                           
+						WriterClass.writeln("peptideSequence\tObservedRetentionTime", writerClassOutputFile.peptideRTTime);
+						foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
 						{
-							List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;
-
-							//actual arrival time, xcorr, rtCalc predicted RT, corrected RT, offset
-							WriterClass.writeln("pepSeq\tarrivalTime\txcorr\trtPeak\tcorrectedRT\toffset\trtCalcPredicted\tisPredicted1", writerClassOutputFile.peptideRTTime);
-							foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
-							{
-
-								WriterClass.writeln(observedPeptracker.ToString(), writerClassOutputFile.peptideRTTime);
-							}
+							WriterClass.writeln(String.Format("{0}\t{1}", observedPeptracker.peptideSequence, observedPeptracker.arrivalTime), writerClassOutputFile.peptideRTTime);
 						}
-
 					}
-						
+					break;
+				}
+
 			}
 		}
 
