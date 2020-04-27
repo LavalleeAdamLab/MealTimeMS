@@ -6,7 +6,9 @@ The current version of this application only supports simulation of data acquisi
 *Preprocessor directives: *SIMULATION*
 *Use Preprocessor directive *WIN32* if compiling on a x86 computer
 After compiling, if using Visual Studio and compiled as x64, the MealTimeMS.exe can be located at *MealTimeMS\bin\x64\Release*
+
 ___
+
 ## Files and software required to run MealTimeMS
 *A protein sequence database file in FASTA format.
 *A parameter file for [Comet](http://comet-ms.sourceforge.net/) sequence database search, 2019 version.
@@ -24,6 +26,7 @@ There are 3 usages
 1. Creating a MealTimeMS parameter file.
 2. Training a logistic regression classifier (lr) and creating a lr model coefficient file necessary for data acquisition simulation using MealTimeMS.
 3. Simulating data acquisition of a MS experiment.
+
 ___
 
 ### Creating and using a MealTimeMS parameter file
@@ -37,8 +40,10 @@ ___
 
 ### Training the classifier for MealTimeMS
 This command trains the classifier and generates a logistic regression classifier coefficient file.
+
 `MealTimeMS.exe -train <workPlaceDirectory> <MS2 file> <Protein Fasta database> <Comet parameter file>`
 The trained coefficient file will be titled "*.ClassifierCoefficient.txt", located in the output folder you specified in the workplace directory.
+
 ___
 
 ### Setting up and running data acquisition simulation with MealTimeMS
