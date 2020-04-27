@@ -2,12 +2,12 @@
 Mass spectrometry-based proteomics technologies are the prime methods for the high-throughput identification of proteins expressed in complex biological samples. Nevertheless, mass spectrometry’s technical limitations still hinder its ability to identify low abundance proteins in complex samples. Characterizing such proteins is essential to provide a comprehensive understanding of the biological processes taking place in a sample. Still today, a large part of the mass spectrometry-based proteomics performed use a data-dependent approach that favors the acquisition of mass spectra and detection of proteins of higher abundance. Combined to the fact that the computational identification of proteins from mass spectrometry data is typically performed after mass spectrometry data acquisition, large numbers of mass spectra are redundantly collected from the same abundant proteins and little to no mass spectra are acquired for proteins of lower abundance. To address this problem, we propose a novel supervised learning algorithm, MealTime-MS, that identifies proteins in real-time as mass spectrometry data is acquired and prevents the further data acquisition related to confidently identified proteins to improve the identification sensitivity of low abundance proteins. 
 The current version of this application only supports simulation of data acquisition and exclusion, it does not support in-instrument exclusion. 
 
-##Compiling MealTimeMS
+## Compiling MealTimeMS
 *Preprocessor directives: *SIMULATION*
 *Use Preprocessor directive *WIN32* if compiling on a x86 computer
 After compiling, if using Visual Studio and compiled as x64, the MealTimeMS.exe can be located at *MealTimeMS\bin\x64\Release*
 ___
-##Files and software required to run MealTimeMS
+## Files and software required to run MealTimeMS
 *A protein sequence database file in FASTA format.
 *A parameter file for [Comet](http://comet-ms.sourceforge.net/) sequence database search, 2019 version.
 *Install [Trans-Proteomic Pipeline](http://tools.proteomecenter.org/software.php)(TPP).
@@ -18,7 +18,7 @@ ___
 An example dataset of all these files could be found under the ExampleDataset folder. 
 ___
 
-##Running MealTimeMS
+## Running MealTimeMS
 This is a command line application.
 There are 3 usages
 1. Creating a MealTimeMS parameter file.
@@ -26,50 +26,54 @@ There are 3 usages
 3. Simulating data acquisition of a MS experiment.
 ___
 
-###Creating and using a MealTimeMS parameter file
+### Creating and using a MealTimeMS parameter file
 1. In commandline, run `MealTimeMS.exe -p <workplace directory>`
 2. A parameter file would be generated in the *<workplace directory>* named MealTimeMS.template.params
+
+Most parameters are will be explained below. However, please note that a coefficient file (*RTCalcCoefficient*) of a trained RTCalc model will be required. 
+The file could be generated with TPP, and the unit used in the training should be in seconds. The training is beyond the scope of this project. 
+A new RTCalc Coefficient file is required for an experiment using a different column type and liquid chromatography gradient.
 ___
 
-###Training the classifier for MealTimeMS
+### Training the classifier for MealTimeMS
 This command trains the classifier and generates a logistic regression classifier coefficient file.
 `MealTimeMS.exe -train <workPlaceDirectory> <MS2 file> <Protein Fasta database> <Comet parameter file>`
 The trained coefficient file will be titled "*.ClassifierCoefficient.txt", located in the output folder you specified in the workplace directory.
 ___
 
-###Setting up and running data acquisition simulation with MealTimeMS
+### Setting up and running data acquisition simulation with MealTimeMS
 There are 4 exclusion methods to choose from: 
 0: No Exclusion. 1: MealTimeMS. 2: Heuristic exclusion. 3: CombinedExclusion
 Indicate the desired exclusion method in the MealTimeMS.params file, under the *ExclusionMethod* parameter.
 Fill in the other parameters. Note a LogisRegressionClassiferSavedCoefficient file is required to run MealTimeMS or CombinedExclusion.
 
-####Setup specification for the *ExperimentParameters* section in the MealTimeMS.params file for each exclusion method:
+#### Setup specification for the *ExperimentParameters* section in the MealTimeMS.params file for each exclusion method:
 0. No Exclusion: Leave the *ExperimentParameters* as it is or set as -1, the values will not be used
 1. MealTimeMS: ppmTolerance, retentionTimeWindowSize, and LogisticRegressionDecisionThreshold are required.
 2. Heuristic exclusion: ppmTolerance, retentionTimeWindowSize, XCorr_Threshold, NumDBThreshold required.
 3. CombinedExclusion: All *ExperimentParameters* required.
 
-Note: Only one exclusion method can be run at a time. However, is multiple values for a parameter is provided, eg:
+Note: Only one exclusion method can be run at a time. However, if multiple values for a parameter is provided, eg:
 `ppmTolerance = 5.0,10.0`
 `retentionTimeWindow = 1.0,2.0`
 The software will run all combinations of the parameters (4 simulations in this case) using the specified exclusion method.
 
-####Starting the program
+#### Starting the program
 Run the program with the following command:
 `MealTimeMS.exe -run [options] <workPlaceDirectory> <paramsFile>`
 
 Options:
--l [Info|Debug]  #A defaults to Info
--r [int] # a positive integer r specifying the frequency of simulation progress reporting. Reports after progressing every r ms2 spectra.
+-l [Info|Debug]  #Defaults to Info
+-r [int] # a positive integer r specifying the frequency of simulation progress reporting. Program displays a message after progressing every r ms2 spectra.
 
-####After the program finishes
+#### After the program finishes
 After the program finishes, there will be several files and sub-folders inside the output folder with your specified Experiment Name:
 *ExperimentName_Summary.txt: A tsv containing the information of the simulation, namely the percentage of MS2 spectra used/excluded, and the number of proteins identified
-*ExperimentName_PeptideRTTime.txt: If *No Exclusion* exclusion method was selected, a list of peptide with their observed retention time (minutes) is generated. Can be used in Special Simulation. 
+*ExperimentName_PeptideRTTime.txt: If *No Exclusion* exclusion method was selected, a list of peptide with their observed retention time (minutes) is generated. Can be used in Special Simulation, see special simulation section. 
 *preExperimentFiles folder: Inside the folder contains several files that can be reused as Precomputed Files to reduce the overhead of the program, see section below. 
 ___
 
-###Precomputed Files
+### Precomputed Files
 Before a simulation, MealTimeMS takes a while to generate some files necessary for the simulation such as retention time prediction of peptides.
 The result of these processes are the same when you re-run the program using different exclusion methods, so we can reuse some of the files to skip these processes. 
 You can provide the below three files in the MealTimeMS.params file after you have already run the program once before. 
@@ -87,7 +91,14 @@ Note: This section is purely used to speed up the program preprocessing if you a
 ⋅⋅⋅If you run the simulation once before, this file could be found at "Output/ExperimentName/preExperimentFiles/*.pep.xml"
 ___
 
-##Running MealTimeMS with the Example Dataset
+### Special Simulation
+To investigate how a more accurate peptide retention time prediction could improve MealTimeMS's performance, measured retention time, rather than predicted retention time generated by RTCalc, is used to facilitate peptide exclusion.
+In the MealTimeMS.params's *SpecialSimulation* section, a file could be provided under *MeasuredPeptideRetentionTime* that includes a list of peptides with their observed retention time, these values will be used to facilitate exclusion.
+⋅⋅⋅To obtain this file, run a simulation with No Exclusion. In the output folder, a file named "*_PeptideRTTime.txt" could be found".
+AmountPerturbation: A double value could be provided to add a perturbation around the measured retention time. 
+
+___
+## Running MealTimeMS with the Example Dataset
 1. Download the ExampleDataset folder
 2. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer.
 3. A trained coefficient file is already provided in the ExampleDataset folder named "MS_QC_240min_Trained_ClassifierCoefficient.txt". It is trained using spectral data from a 240min HEK293 analysis experiment, MS_QC_240min.ms2, also provided in ExampleDataset.
