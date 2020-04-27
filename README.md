@@ -104,7 +104,7 @@ AmountPerturbation: A double value could be provided to add a perturbation aroun
 
 ___
 ## Running MealTimeMS with the Example Dataset
-1. Read and follow the *Compiling MealTimeMS* and *Files and software required to run MealTimeMS* sections of this README.md
+1. Read and follow the "*Compiling MealTimeMS*" and "*Files and software required to run MealTimeMS*" sections of this README.md
 2. Download spectral data *MS_QC_120min_PreviouslyAcquiredDataset.raw* from [PRIDE repository](https://www.ebi.ac.uk/pride/archive/projects/PXD017673/private) with login credentials provided in the paper "MealTime-MS: A Machine Learning-Guided Real-Time Mass Spectrometry Analysis for Protein Identification and Efficient Dynamic Exclusion".
 3. Convert *MS_QC_120min_PreviouslyAcquiredDataset.raw* to .ms2 format using *msconvert* from [ProteoWizard](http://proteowizard.sourceforge.net/) or other file conversion software.
 4. Download the ExampleDataset folder from this gitHub repo if not already downloaded.
