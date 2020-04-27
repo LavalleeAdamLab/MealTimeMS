@@ -17,7 +17,7 @@ namespace MealTimeMS.Tester
 			//String file = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\NoExclusionWithRT.txt_PeptideRTTime.txt";
 			String file = InputFileOrganizer.MeasuredPeptideRetentionTime;
 			StreamReader sr = new StreamReader(file);
-			double perturbation = double.Parse(sr.ReadLine());
+			double perturbation = GlobalVar.amountPerturbationAroundMeasuredRetentionTimeInSeconds;
 			sr.ReadLine(); //reads the header then ignores it
 			String line = sr.ReadLine();
 			Random rnd = new Random();

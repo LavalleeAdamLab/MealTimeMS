@@ -25,6 +25,8 @@ namespace MealTimeMS.Util
 
 		public static bool isSimulationForFeatureExtraction = false;
 
+		public static double amountPerturbationAroundMeasuredRetentionTimeInSeconds = 0.0;
+
 
 		//scan info table header -- do NOT change these values
 		public const String MSLevelHeader = "MSOrder";
@@ -47,7 +49,7 @@ namespace MealTimeMS.Util
         public static int MinimumPeptideLength = 6;
 		public static String DecoyPrefix = "DECOY_";
 		public static String DBTargetProteinStartString = "sp|";
-		public static double LRModelDecisionThreshold = 0.70;
+		//public static double LRModelDecisionThreshold = 0.70;
 		public static double AccordThreshold = 0.70;
 		//Nora Parameters
 		public static double XCorr_Threshold = 2.5;
@@ -61,8 +63,6 @@ namespace MealTimeMS.Util
 
 		//Simulation var
 		public static double ExperimentTotalScans = -1;
-		public static double ExperimentTotalTimeInMinutes = 120;
-        public static int milisecondsPerScan = 30;
 		
 
 

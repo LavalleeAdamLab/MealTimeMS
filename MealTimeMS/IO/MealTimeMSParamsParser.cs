@@ -39,10 +39,11 @@ namespace MealTimeMS.IO
 			new Parameter("PrecomputedFiles","IDXDataBase",false,"","",true),
 			new Parameter("PrecomputedFiles","OriginalCometOutput",false,"","",true),
 			//new Parameter("PrecomputedFiles","ProtXML",false,"","",true),
-			new Parameter("SpecialSimulation","MeasuredPeptideRetentionTime",false,"","A file with empirically measured peptide retention time in minutes. The first line should be a number (double >= 0.0)in seconds specifing the " +
-				"amount of perturbation around the retention time. The second line should contain a header \"peptide\tRT\", the rest of the file should contain" +
-				"one peptide in each line with their respective retention time in minutes separated by tab: \"VSEFYEETK\t3.983788\". These will be used to replace the some RT values in the RTCalcPredictedPeptideRT file, with the perturbation specified",true)
-
+			new Parameter("SpecialSimulation","MeasuredPeptideRetentionTime",false,"","A file with empirically measured peptide retention time in minutes. The first line should " +
+				"contain a header \"peptide\tRT\", the rest of the file should contain" +
+				"one peptide in each line with their respective retention time in minutes separated by tab: \"VSEFYEETK\t3.983788\". These will be used to replace the some RT values in the RTCalcPredictedPeptideRT file, with the amount of perturbation specified below",true),
+			new Parameter("SpecialSimulation","AmountPerturbation",false,"0.0","A number (double >= 0.0) in seconds specifing the amount of perturnation around the measured retention time.")
+			//amountPerturbationAroundMeasuredRetentionTimeInSeconds
 		};
 		//Parses the params file for MealTimeMS
 		public static void ParseParamsFile(String paramsFile)
@@ -108,6 +109,9 @@ namespace MealTimeMS.IO
 							case "MeasuredPeptideRetentionTime":
 								InputFileOrganizer.MeasuredPeptideRetentionTime = value;
 								GlobalVar.useMeasuredRT = true;
+								break;
+							case "AmountPerturbation":
+								GlobalVar.amountPerturbationAroundMeasuredRetentionTimeInSeconds = Double.Parse(value);
 								break;
 							//case "MZMLSimulationTestFile":
 							//InputFileOrganizer.MZMLSimulationTestFile = value;

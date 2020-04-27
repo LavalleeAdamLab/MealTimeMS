@@ -347,7 +347,7 @@ namespace MealTimeMS.Util
 			foreach (ProteinPrediction r in predictionList)
 			{
 				String accession = (String)r.Accession;
-				Boolean prediction = r.Probability >= GlobalVar.LRModelDecisionThreshold;
+				Boolean prediction = r.Probability >= GlobalVar.AccordThreshold;//TODO shouldn't be accord threshold, but this function is depricated anyways
 				predictions.Add(accession, prediction);
 			}
 			return predictions;
