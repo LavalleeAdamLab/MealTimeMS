@@ -63,7 +63,7 @@ Note: Only one exclusion method can be run at a time. However, if multiple value
 `retentionTimeWindow = 1.0,2.0`
 The software will run all combinations of the parameters (4 simulations in this case) using the specified exclusion method.
 
-#### Starting the program
+#### Starting the simulation
 Run the program with the following command:
 `MealTimeMS.exe -run [options] <workPlaceDirectory> <paramsFile>`
 
@@ -71,7 +71,7 @@ Options:
 -l [Info|Debug]  #Defaults to Info
 -r [int] # a positive integer r specifying the frequency of simulation progress reporting. Program displays a message after progressing every r ms2 spectra.
 
-#### After the program finishes
+#### After the simulation finishes
 After the program finishes, there will be several files and sub-folders inside the output folder with your specified Experiment Name:
 *ExperimentName_Summary.txt: A tsv containing the information of the simulation, namely the percentage of MS2 spectra used/excluded, and the number of proteins identified
 *ExperimentName_PeptideRTTime.txt: If *No Exclusion* exclusion method was selected, a list of peptide with their observed retention time (minutes) is generated. Can be used in Special Simulation, see special simulation section. 
@@ -104,11 +104,14 @@ AmountPerturbation: A double value could be provided to add a perturbation aroun
 
 ___
 ## Running MealTimeMS with the Example Dataset
-1. Download the ExampleDataset folder
-2. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer.
-3. A trained coefficient file is already provided in the ExampleDataset folder named "MS_QC_240min_Trained_ClassifierCoefficient.txt". It is trained using spectral data from a 240min HEK293 analysis experiment, MS_QC_240min.ms2, also provided in ExampleDataset.
-4. Specify the desired exclusion method under the "ExclusionMethod" parameter in the MealTimeMS.example.params file  
-5. Simulate an data acquisition experiment with MealTimeMS using 
+1. Read and follow the *Compiling MealTimeMS* and *Files and software required to run MealTimeMS* section of this README.md
+2. Download spectral data *MS_QC_120min_PreviouslyAcquiredDataset.raw* from [PRIDE repository](https://www.ebi.ac.uk/pride/archive/projects/PXD017673/private) with login credentials provided in the paper "MealTime-MS: A Machine Learning-Guided Real-Time Mass Spectrometry Analysis for Protein Identification and Efficient Dynamic Exclusion".
+3. Convert *MS_QC_120min_PreviouslyAcquiredDataset.raw* to .ms2 format using *msconvert* from [ProteoWizard](http://proteowizard.sourceforge.net/) or other file conversion software.
+4. Download the ExampleDataset folder from this gitHub repo if not already downloaded.
+5. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer. And set the "MS2SimulationSpectraFile = " to the file path of the .ms2 file acquired in step 2. 
+6. A trained coefficient file is already provided in the ExampleDataset folder named "MS_QC_240min_Trained_ClassifierCoefficient.txt". It is trained using spectral data from a 240min HEK293 analysis experiment, MS_QC_240min_PreviouslyAcquiredDataset.raw. This file could also be found in the PRIDE repository. (Read *Training the classifier for MealTimeMS* section to reproduce the training process)
+7. Specify the desired exclusion method under the "ExclusionMethod" parameter in the MealTimeMS.example.params file  
+8. Start simulation of an data acquisition experiment with MealTimeMS using 
 `MealTimeMS.exe -run -r 100 <workPlaceDirectory> <MealTimeMS.example.params>`
 ___
 
