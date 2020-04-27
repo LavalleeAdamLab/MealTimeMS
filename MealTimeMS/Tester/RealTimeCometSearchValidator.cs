@@ -20,7 +20,7 @@ namespace MealTimeMS.Tester
 			String logOutput = "C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\RealTimeMS\\Output\\CometValidationOutput.txt";
 			StreamWriter sw = new StreamWriter(logOutput);
 			String TSVFile = "C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\RealTimeMS\\TestData\\MS_QC_120min.tsv\\MSQC120min.tsv"; //obtained from standard comet search
-			List<IDs> idList = PSMTSVReader.ParseTSV(TSVFile);
+			List<IDs> idList = PSMTSVReaderWriter.ParseTSV(TSVFile);
 			sw.WriteLine("OriginalCometOutput has {0} PSMs", idList.Count);
 			int sdDecoyCount = 0;
 			foreach(IDs id in idList)

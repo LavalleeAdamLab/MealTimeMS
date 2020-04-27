@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MealTimeMS.ExclusionProfiles;
 
 namespace MealTimeMS.Util
 {
@@ -14,12 +15,13 @@ namespace MealTimeMS.Util
 		
 		//Pre-experiment setup directions
         public static bool IsSimulation = true;
-		public static bool useRTCalcComputedFile = true;
-	    public static bool useChainsawComputedFile = true;
-		public static bool useIDXComputedFile = true;
-		public static bool useDecoyFastaComputedFile = true;
-		public static bool usePepXMLComputedFile = true;
+		public static bool useRTCalcComputedFile = false;
+	    public static bool useChainsawComputedFile = false;
+		public static bool useIDXComputedFile = false;
+		public static bool useDecoyFastaComputedFile = false;
+		public static bool usePepXMLComputedFile = false;
 		public static bool useLogisticRegressionTrainedFile = false;
+		public static bool useMeasuredRT = false;
 
 		public static bool isSimulationForFeatureExtraction = false;
 
@@ -54,12 +56,14 @@ namespace MealTimeMS.Util
 		public static double acquisitionStartTime = -1;
         public static double listeningDuration = 60000000; //in seconds
         public static String experimentName = "experiment_name";
+		public static ExclusionProfileEnum ExclusionMethod;
 
 
 		//Simulation var
 		public static double ExperimentTotalScans = -1;
 		public static double ExperimentTotalTimeInMinutes = 120;
         public static int milisecondsPerScan = 30;
+		
 
 
 		//temp variables

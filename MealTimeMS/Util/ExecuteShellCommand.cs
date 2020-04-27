@@ -50,8 +50,6 @@ namespace MealTimeMS.Util
 			return output.ToString();
 
 		}
-
-
 		//public static String executeCommand(String command)
 		//{
 
@@ -132,6 +130,12 @@ namespace MealTimeMS.Util
 			ExecuteShellCommand.executeCommand(command);
 		}
 
+		public static void CopyFile(String filePath, String newDirectory)
+		{
+			String command = "copy " + Path.GetFullPath(filePath) + " " + newDirectory;
+			executeCommand(command);
+			return;
+		}
 
 	}
 }

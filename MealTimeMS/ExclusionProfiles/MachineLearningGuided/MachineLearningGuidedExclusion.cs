@@ -16,6 +16,9 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 
     //// Uses logistic regression and training data to guide MS data acquisition
 	//// Implements ExclusionProfile
+	//Optimal values: 5 ppm, 1 rtWin, 0.5 prThr
+	/// <summary>
+	/// </summary>
     public class MachineLearningGuidedExclusion : ExclusionProfile
     {
 
@@ -92,7 +95,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			Double xCorr = id.getXCorr();
 			double dCN = id.getDeltaCN();
             pep.addScore(xCorr, dCN);
-#if (SIMULATION || EVALUATE)
+#if (!DONTEVALUATE)
 			performanceEvaluator.evaluateAnalysis(exclusionList, pep);
 #endif
 

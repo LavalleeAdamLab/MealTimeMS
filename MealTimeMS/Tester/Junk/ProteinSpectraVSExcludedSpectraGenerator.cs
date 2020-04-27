@@ -126,8 +126,8 @@ namespace MealTimeMS.Tester.Junk
 
 		public static void FilterForConfidentlyIdentifiedProteinOnly()
 		{
-			List<String> ppr= ProteinProphetEvaluator.extractIdentifiedProteinNames(InputFileOrganizer.ProtXML);
-			String excludedSpectraPerProteinAll = Path.Combine(InputFileOrganizer.DataRoot, "ProteinTotalSpectraAgainstExcludedSpectra.txt");
+			List<String> ppr= ProteinProphetEvaluator.extractIdentifiedProteinNames(InputFileOrganizer.OriginalProtXMLFile);
+			String excludedSpectraPerProteinAll = Path.Combine("ProteinTotalSpectraAgainstExcludedSpectra.txt");
 			String outputFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "FilteredProteinWithExcludedSpectraCount.txt");
 			StreamReader sr = new StreamReader(excludedSpectraPerProteinAll);
 			StreamWriter sw = new StreamWriter(outputFile);

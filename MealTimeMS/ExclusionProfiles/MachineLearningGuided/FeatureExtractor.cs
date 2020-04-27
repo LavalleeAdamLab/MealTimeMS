@@ -18,20 +18,32 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 
 		static String OutputFile_PositiveAndNegative = "";
 		static String OutputFile_PositiveAndNonPositive = "";
+		static String OutputFile_PositiveAndNonPositive_NoDecoy = "";
+
 		static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 		//static string mzmlFileBaseName="MS_QC_240min";
-		public static void ExtractFeatures(String mzmlFile, String ms2File, out String extractedFeatureSavedFile_posAndNeg, out String extractedFeatureSavedFile_posAndNonPos)
+		public static void ExtractFeatures(String ms2File, out String extractedFeatureSavedFile_posAndNeg, out String extractedFeatureSavedFile_posAndNonPos)
 		{
-			Console.WriteLine("Extracting features from {0} and {1}", mzmlFile, ms2File);
+			Console.WriteLine("Extracting features from {0}", ms2File);
+			
 			InputFileOrganizer.MS2SimulationTestFile = ms2File;
-			InputFileOrganizer.MZMLSimulationTestFile = mzmlFile;
-			String mzmlFileBaseName = Path.GetFileNameWithoutExtension(mzmlFile);
-			OutputFile_PositiveAndNegative = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,mzmlFileBaseName + "_extractedFeatures_PositiveAndNegative.tsv");
-			OutputFile_PositiveAndNonPositive = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,mzmlFileBaseName + "_extractedFeatures_positiveAndNonPositive.tsv");
+			//InputFileOrganizer.MZMLSimulationTestFile = mzmlFile;
+			String ms2FileBaseName = Path.GetFileNameWithoutExtension(ms2File);
+			OutputFile_PositiveAndNegative = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, ms2FileBaseName + "_extractedFeatures_PositiveAndNegative.tsv");
+			OutputFile_PositiveAndNonPositive = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, ms2FileBaseName + "_extractedFeatures_positiveAndNonPositive.tsv");
+			OutputFile_PositiveAndNonPositive_NoDecoy = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, ms2FileBaseName + "_extractedFeatures_positiveAndNonPositive_NoDecoy.tsv");
 
 			//the current feature extraction will include decoy proteins in the database and testing set
 			SimulationWithDecoyParamsSetUp();
-		
+
+			//placeholder values, dont matter
+			GlobalVar.ppmTolerance = 1;
+			GlobalVar.retentionTimeWindowSize = 1;
+			GlobalVar.AccordThreshold = 1;
+			GlobalVar.XCorr_Threshold = 1;
+			GlobalVar.NumDBThreshold = 1;
+			//
+
 			log.Info("Running No Exclusion Simulation");
 			ExclusionProfile exclusionProfile = ExclusionExplorer.SingleSimulationRun(ExclusionProfileEnum.NO_EXCLUSION_PROFILE);
 
@@ -52,7 +64,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 
 			GlobalVar.isSimulationForFeatureExtraction = true;
 			String decoyConcatDB = DecoyConcacenatedDatabaseGenerator.GenerateConcacenatedDecoyFasta(InputFileOrganizer.FASTA_FILE, InputFileOrganizer.OutputFolderOfTheRun);
-			InputFileOrganizer.dbFasta = decoyConcatDB; //sets the in-program databse to one that contains decoy protein - for feature generation only
+			InputFileOrganizer.ExclusionDBFasta = decoyConcatDB; //sets the in-program databse to one that contains decoy protein - for feature generation only
 			InputFileOrganizer.DecoyFasta = decoyConcatDB;
 			GlobalVar.useDecoyFastaComputedFile = true;
 			GlobalVar.useIDXComputedFile = false;
@@ -76,10 +88,10 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 		{
 			log.Info("Classifying positive and negative sets");
 			// Extract which proteins were confidently identified at 0.01 FDR with protein prophet
-			List<String> identifiedProteins = ProteinProphetEvaluator.extractIdentifiedProteinNames(InputFileOrganizer.ProtXML);
+			List<String> identifiedProteins = ProteinProphetEvaluator.extractIdentifiedProteinNames(InputFileOrganizer.OriginalProtXMLFile);
 			// Extract which proteins were not confidently identified, with a specified FDR
 			// threshold
-			List<String> negativeTrainingSetProteins = ProteinProphetEvaluator.extractNegativeTrainingSetProteinNames(InputFileOrganizer.ProtXML, 0.25);
+			List<String> negativeTrainingSetProteins = ProteinProphetEvaluator.extractNegativeTrainingSetProteinNames(InputFileOrganizer.OriginalProtXMLFile, 0.25);
 			// 2019-05-23 FOUND IT! Here is where we filter the negative training set with
 			// above 20% FDR
 
@@ -89,6 +101,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			List<IdentificationFeatures> negativeTrainingSet = new List<IdentificationFeatures>();
 
 			List<IdentificationFeatures> nonPositiveTrainingSet = new List<IdentificationFeatures>();
+		
 
 			// Determine which features are in positive or negative training set
 			foreach (IdentificationFeatures i in idf)
@@ -123,6 +136,26 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			}
 			WriteIdentificationFeaturesFile(OutputFile_PositiveAndNegative, positiveTrainingSet, negativeTrainingSet);
 			WriteIdentificationFeaturesFile(OutputFile_PositiveAndNonPositive, positiveTrainingSet, nonPositiveTrainingSet);
+
+			List<IdentificationFeatures> positiveSetNoDecoy= new List<IdentificationFeatures>();
+			List<IdentificationFeatures> nonPositiveSetNoDecoy= new List<IdentificationFeatures>();
+			foreach (IdentificationFeatures i in positiveTrainingSet)
+			{
+				if (!i.getAccession().Contains(GlobalVar.DecoyPrefix))
+				{
+					positiveSetNoDecoy.Add(i);
+				}
+			}
+			foreach (IdentificationFeatures i in nonPositiveTrainingSet)
+			{
+				if (!i.getAccession().Contains(GlobalVar.DecoyPrefix))
+				{
+					nonPositiveSetNoDecoy.Add(i);
+				}
+			}
+			
+			WriteIdentificationFeaturesFile(OutputFile_PositiveAndNonPositive_NoDecoy, positiveSetNoDecoy,nonPositiveSetNoDecoy);
+
 		}
 
 		/*

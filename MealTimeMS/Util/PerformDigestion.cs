@@ -63,11 +63,11 @@ public class PerformDigestion
             String chainsawCommand = chainsaw + " -c " + enzyme + " -s " + specificity + " -m " + minimumPeptideLength
                     + " -M " + maximumPeptideLength + " -n " + numMissedCleavages + " " + fastaFilePath;
 
-            log.Info("Digesting database");
+            log.Info("Digesting database using ChainSaw");
             // perform in-silico digestion
             String chainsawOutput = ExecuteShellCommand.executeCommand(chainsawCommand);
             log.Info(chainsawCommand);
-            log.Info(chainsawOutput);
+            log.Debug(chainsawOutput);
 
             // parse new tsv file
             DigestedFastaFile df = Loader.parseDigestedFasta(outputTSVFile);

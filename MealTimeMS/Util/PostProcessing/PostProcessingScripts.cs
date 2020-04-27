@@ -23,7 +23,7 @@ namespace MealTimeMS.Util.PostProcessing
 		//I think this tool looks into the file specified in the pepxml for the original mzML file, so make sure it's there
 		private static String executePeptideProphet(String directory, String cometFile)
 		{
-			const String programName = InputFileOrganizer.XInteract;
+			String programName = InputFileOrganizer.XInteract;
 			String database = InputFileOrganizer.FASTA_FILE;
 			String peptideProphetOutputDirectory = IOUtils.getAbsolutePath(directory) + "\\peptide_prophet_output\\";
 			if (!Directory.Exists(peptideProphetOutputDirectory))
@@ -45,7 +45,7 @@ namespace MealTimeMS.Util.PostProcessing
 
 		private static String executeProteinProphet(String directory, String peptideProphetFile)
 		{
-			const String programName = InputFileOrganizer.ProteinProphet;
+			String programName = InputFileOrganizer.ProteinProphet;
 			String proteinProphetOutputDirectory = IOUtils.getAbsolutePath(directory) + "\\protein_prophet_output\\";
 			if (!Directory.Exists(proteinProphetOutputDirectory))
 			{
@@ -69,8 +69,9 @@ namespace MealTimeMS.Util.PostProcessing
 		{
 			String outputCometFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,
 				   GlobalVar.experimentName + "_partial" + InputFileOrganizer.PepXMLSuffix);
+		
 			PartialPepXMLWriter.writePartialPepXMLFile(InputFileOrganizer.OriginalCometOutput, exclusionProfile.getSpectraUsed(),
-				outputCometFile, InputFileOrganizer.MZMLSimulationTestFile, InputFileOrganizer.FASTA_FILE, outputCometFile);
+				outputCometFile, InputFileOrganizer.MS2SimulationTestFile, InputFileOrganizer.FASTA_FILE, outputCometFile); //TODO was using MZML instead of MS2
 
 			ProteinProphetResult ppr =RunProteinProphet(outputCometFile, InputFileOrganizer.OutputFolderOfTheRun,keepResults);
 			// delete these files if this flag is false

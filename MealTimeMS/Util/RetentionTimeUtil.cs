@@ -121,11 +121,12 @@ public class RetentionTimeUtil
         public static Dictionary<String, Double> calculateRetentionTime(String peptideList)
         {
             log.Debug("Calculating retention times using RTCalc...");
-            // Dictionary<String, RetentionTime> rtmap = new Dictionary<String,
-            // RetentionTime>();
+			Console.WriteLine("Calculating peptide retention times using RTCalc... This might take a while");
+			// Dictionary<String, RetentionTime> rtmap = new Dictionary<String,
+			// RetentionTime>();
 
-            // This is the output file path
-            String rtOutput = InputFileOrganizer.preExperimentFilesFolder +"\\" + IOUtils.getBaseName(peptideList) + "_rtOutput.txt";
+			// This is the output file path
+			String rtOutput = InputFileOrganizer.preExperimentFilesFolder +"\\" + IOUtils.getBaseName(peptideList) + "_rtOutput.txt";
             String rtCalc = InputFileOrganizer.RTCalc; // tool location
 
             // This is the RTCalc command to be run on the terminal

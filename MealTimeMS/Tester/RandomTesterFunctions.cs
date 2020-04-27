@@ -14,8 +14,10 @@ namespace MealTimeMS.Tester
 
 		public static void LoadAndReplaceRT(ref Dictionary<string, double> pepRTList)
 		{
-			String file = Path.Combine(InputFileOrganizer.DataRoot, "NoExclusionWithRT.txt_PeptideRTTime.txt");
+			//String file = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\NoExclusionWithRT.txt_PeptideRTTime.txt";
+			String file = InputFileOrganizer.MeasuredPeptideRetentionTime;
 			StreamReader sr = new StreamReader(file);
+			double perturbation = double.Parse(sr.ReadLine());
 			sr.ReadLine(); //reads the header then ignores it
 			String line = sr.ReadLine();
 			Random rnd = new Random();
@@ -25,7 +27,7 @@ namespace MealTimeMS.Tester
 				double rtInMinutes = double.Parse(line.Split("\t".ToCharArray())[1]);
 				if (pepRTList.ContainsKey(pep))
 				{
-					double randomizedDeviation = (-15.0 + rnd.NextDouble() * 30.0) / 60.0;
+					double randomizedDeviation = (rnd.NextDouble() *2*perturbation - perturbation) / 60.0;
 					//Console.WriteLine(randomizedDeviation);
 					pepRTList[pep] = rtInMinutes + randomizedDeviation;
 				}

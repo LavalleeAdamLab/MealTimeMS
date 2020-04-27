@@ -19,7 +19,7 @@ namespace MealTimeMS
 		public static void initiateWriter(String filePath)
         {
            
-            Console.WriteLine("Writing results to:" + filePath);
+            Console.WriteLine("Writing results to: {0}\\",Path.GetDirectoryName( filePath));
           
 
             sw = new StreamWriter(filePath+"_Summary.txt");
@@ -38,12 +38,12 @@ namespace MealTimeMS
             {
                 Console.WriteLine("Enter an output file name");
                 name = Console.ReadLine();
-                if (!name.Contains(".txt"))
-                {
-                    name = name + ".txt";
-                }
+                //if (!name.Contains(".txt"))
+                //{
+                //    name = name + ".txt";
+                //}
 
-                outputFolder = Path.Combine(InputFileOrganizer.OutputRoot, name+"_output");
+                outputFolder = Path.Combine(InputFileOrganizer.OutputRoot, name);
                
                 
                 if (Directory.Exists(outputFolder))

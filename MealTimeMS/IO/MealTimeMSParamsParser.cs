@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using MealTimeMS.ExclusionProfiles;
 using MealTimeMS.Util;
 
 namespace MealTimeMS.IO
@@ -12,68 +13,37 @@ namespace MealTimeMS.IO
 	{
 		public static List<Parameter> paramList = new List<Parameter>()
 		{
-			new Parameter("CrucialFiles","FastaFileName",true,"uniprot_SwissProt_Human_1_11_2017.fasta","",true),
-			new Parameter("CrucialFiles","CometParamsFile",true,"2019.comet.params","",true),
-			new Parameter("SimulationParams","MS2SimulationTestFile",true,"MS_QC_120min.ms2","",true),
-			new Parameter("SimulationParams","MZMLSimulationTestFile",true,"MS_QC_120min.mzML","",true),
-			new Parameter("PreExperimentSetup","UsePrecomputedFiles",true,"false","true: use the files in the PrecomputedFiles section instead of generating them with the program. false: generate them with the program automatically. Set to false if running the program for the first time"),
+			new Parameter("CrucialFiles","FastaFileName",true,"","File path to the Protein sequence database Fasta file",true),
+			new Parameter("CrucialFiles","CometParamsFile",true,"","File path to the comet parameters (2019 version)",true),
+			new Parameter("DirectorySetUp","TPPBinFolder",true,"C:\\TPP\\bin\\","Directory of the bin folder of the Trans-Proteomic Pipeline installation",false),
+			new Parameter("SimulationParams","MS2SimulationTestFile",true,"","",true),
+			//new Parameter("SimulationParams","MZMLSimulationTestFile",true,"","",true),
+			//new Parameter("PreExperimentSetup","UsePrecomputedFiles",true,"false","true: use the files in the PrecomputedFiles section instead of generating them with the program. false: generate them with the program automatically. Set to false if running the program for the first time"),
 			new Parameter("PreExperimentSetup","DecoyPrefix",true,"DECOY_","Decoy prefix used in the Comet params"),
-			new Parameter("ClassifierTrainingFiles","MS2_forClassifierTraining",true,"MS_QC_240min.ms2","",true),
-			new Parameter("ClassifierTrainingFiles","MZML_forClassifierTraining",true,"MS_QC_240min.mzML","",true),
+			//new Parameter("ClassifierTrainingFiles","MS2_forClassifierTraining",true,"MS_QC_240min.ms2","",true),
+			//new Parameter("ClassifierTrainingFiles","MZML_forClassifierTraining",true,"MS_QC_240min.mzML","",true),
 
-			new Parameter("ExperimentParameters","ppmTolerance",true,"5.0","in ppm, so a value of 5.0 would become 5.0/1000000.0. Separate by comma if multiple values are provided"),
-			new Parameter("ExperimentParameters","retentionTimeWindowSize",true,"1.0","The retention time window allowed to deviate (beyond or below) from predicted peptide retention time. Separate by comma if multiple values are provided"),
-			new Parameter("ExperimentParameters","MinimumPeptideLength",true,"6",""),
 			new Parameter("ExperimentParameters","NUM_MISSED_CLEAVAGES",true,"1",""),
+			new Parameter("ExperimentParameters","MinimumPeptideLength",true,"6",""),
+			new Parameter("ExperimentParameters","ExclusionMethod",true,"1","0: No Exclusion. 1: MealTimeMS. 2: Heuristic exclusion. 3: CombinedExclusion"),
+			new Parameter("ExperimentParameters","ppmTolerance",true,"5.0","in ppm, so a value of 5.0 would become 5.0/1000000.0. Separate by comma if multiple values are provided"),
+			new Parameter("ExperimentParameters","retentionTimeWindowSize",true,"1.0","The retention time window (minutes) allowed to deviate (beyond or below) from predicted peptide retention time. Separate by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","XCorr_Threshold",true,"2.0","Separate by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","NumDBThreshold",true,"2","Separate intergers by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","LogisticRegressionDecisionThreshold",true,"0.5","Separate by comma if multiple values are provided"),
-			new Parameter("PrecomputedFiles","LogisRegressionClassiferSavedWeights",false,"AccordWeight_DCN240Testing_prThr0.561.txt","",true),
-			new Parameter("PrecomputedFiles","ChainSawResult",false,"uniprot_SwissProt_Human_1_11_2017.fasta_digestedPeptides.tsv","",true),
-			new Parameter("PrecomputedFiles","RTCalcResult",false,"tempOutputPeptideList_rtOutput.txt","",true),
-			new Parameter("PrecomputedFiles","DecoyFasta",false,"uniprot_SwissProt_Human_1_11_2017_decoyConcacenated.fasta","",true),
-			new Parameter("PrecomputedFiles","IDXDataBase",false,"uniprot_SwissProt_Human_1_11_2017_decoyConcacenated.fasta.idx","",true),
-			new Parameter("PrecomputedFiles","OriginalCometOutput",false,"MS_QC_120min.pep.xml","",true),
-			new Parameter("PrecomputedFiles","ProtXML",false,"MS_QC_120min_interact.prot.xml","",true)
+			new Parameter("PrecomputedFiles","LogisRegressionClassiferSavedCoefficient",false,"","File path to the saved coefficient file of a trained LR classifier model. " +
+				"To generate a traiend logistic regression classifier model saved coefficient file, use command: \"MealTimeMS.exe -train\" option",true),
+			//new Parameter("PrecomputedFiles","ChainSawResult",false,"","",true),
+			new Parameter("PrecomputedFiles","RTCalcPredictedPeptideRT",false,"","RTCalc predicted peptide retention time result file, in seconds (parsed into minutes in-program)",true),
+			//new Parameter("PrecomputedFiles","DecoyFasta",false,"","",true),
+			new Parameter("PrecomputedFiles","IDXDataBase",false,"","",true),
+			new Parameter("PrecomputedFiles","OriginalCometOutput",false,"","",true),
+			//new Parameter("PrecomputedFiles","ProtXML",false,"","",true),
+			new Parameter("PrecomputedFiles","MeasuredPeptideRetentionTime",false,"","A file with empirically measured peptide retention time in minutes. The first line should be a number (double >= 0.0)in seconds specifing the " +
+				"amount of perturbation around the retention time. The second line should contain a header \"peptide\tRT\", the rest of the file should contain" +
+				"one peptide in each line with their respective retention time in minutes separated by tab: \"VSEFYEETK\t3.983788\". These will be used to replace the some RT values in the RTCalcPredictedPeptideRT file, with the perturbation specified",true)
+
 		};
-		
-		//public static Dictionary<String, String[]> CrucialFiles = new Dictionary<String, String[]>() {
-		//	//These are the necessary files
-		//	{ "FastaFileName",new String[]{"uniprot_SwissProt_Human_1_11_2017.fasta" } },
-		//	{ "CometParamsFile", new String[]{"2019.comet.params" } },
-		//	{ "LogisRegressionClassiferSavedWeights",new String[]{ "AccordWeight_DCN240Testing_prThr0.561.txt" } },
-		//};
-		//public static Dictionary<String, String[]> SimulationFiles = new Dictionary<String, String[]>() {
-		//	//below are simulations only
-		//	{ "MS2SimulationTestFile", new String[]{"MS_QC_120min.ms2" } },
-		//	{ "MZMLSimulationTestFile", new String[]{"MS_QC_120min.mzML" } },
-		//};
-		//public static Dictionary<String, String[]> MLTrainingFiles = new Dictionary<String, String[]>() {
-		//	//idFeatureTraining
-
-		//};
-		//public static Dictionary<String, String[]> PrecomputedFiles = new Dictionary<String, String[]>() {
-		//	{ "UsePrecomputedFiles", new String[]{"false", "true: use the files below instead of generating them with the program. false: generate them with the program automatically. Set to false if running the program for the first time" } },
-		//	{ "ChainSawResult", new String[]{ "uniprot_SwissProt_Human_1_11_2017.fasta_digestedPeptides.tsv" } },
-		//	{ "RTCalcResult", new String[]{ "tempOutputPeptideList_rtOutput.txt" } },
-		//	{ "DecoyFasta", new String[]{ "uniprot_SwissProt_Human_1_11_2017_decoyConcacenated.fasta" } },
-		//	{ "IDXDataBase", new String[]{ "uniprot_SwissProt_Human_1_11_2017_decoyConcacenated.fasta.idx" } },
-		//	{ "OriginalCometOutput", new String[]{ "MS_QC_120min.pep.xml" } },
-		//	{ "ProtXML", new String[]{ "MS_QC_120min_interact.prot.xml" } },
-		//};
-		//public static Dictionary<String, String[]> ExperimentParameters = new Dictionary<String, String[]>() {
-		//	//idFeatureTraining
-		//	{ "ppmTolerance", new String[]{"5.0","in ppm, so a value of 5.0 would become 5.0/1000000.0" } },
-		//	{ "retentionTimeWindowSize", new String[]{"1.0", "The retention time window (+- value) allowed to deviate from predicted peptide retention time" } },
-		//	{ "MinimumPeptideLength", new String[]{"6" } },
-		//	{ "NUM_MISSED_CLEAVAGES", new String[]{"1", } },
-		//	{ "XCorr_Threshold", new String[]{"2.0","double" } },
-		//	{ "NumDBThreshold", new String[]{"2","Integer" } },
-		//	{ "LogisticRegressionDecisionThreshold", new String[]{"0.50" } },
-
-		//};
-
-
 		//Parses the params file for MealTimeMS
 		public static void ParseParamsFile(String paramsFile)
 		{
@@ -100,9 +70,9 @@ namespace MealTimeMS.IO
 						line = line.Substring(0, line.IndexOf("#"));
 					}
 					line = line.Trim();
-					String[] splitedLine = line.Split(" ".ToCharArray());
-					String name = splitedLine[0];
-					String value = splitedLine[splitedLine.Length - 1];
+					String[] splitedLine = line.Split("=".ToCharArray());
+					String name = splitedLine[0].Trim();
+					String value = splitedLine[1].Trim();
 					Parameter param = GetParamContractFromName(name);
 					if (param.crucial && value.Equals("="))
 					{
@@ -118,35 +88,45 @@ namespace MealTimeMS.IO
 						{
 							case "FastaFileName":
 								InputFileOrganizer.FASTA_FILE = value;
-								InputFileOrganizer.dbFasta = value;
+								InputFileOrganizer.ExclusionDBFasta = value;
 								break;
 							case "CometParamsFile":
 								InputFileOrganizer.CometParamsFile = value;
 								break;
+							case "TPPBinFolder":
+								InputFileOrganizer.TPPBinFolder = value;
+								InputFileOrganizer.ProteinProphet = Path.Combine(value, "ProteinProphet.exe");
+								InputFileOrganizer.XInteract = Path.Combine(value, "xinteract.exe");
+								break;
 							case "MS2SimulationTestFile":
 								InputFileOrganizer.MS2SimulationTestFile = value;
 								break;
-							case "MZMLSimulationTestFile":
-								InputFileOrganizer.MZMLSimulationTestFile = value;
-								break;
-							case "MS2_forClassifierTraining":
-								InputFileOrganizer.MS2_ClassifierTraining = value;
-								break;
-							case "MZML_forClassifierTraining":
-								InputFileOrganizer.MZML_ClassifierTraining = value;
-								break;
-							case "UsePrecomputedFiles":
-								UsePrecomputedFiles = Boolean.Parse(value);
+							//case "MZMLSimulationTestFile":
+								//InputFileOrganizer.MZMLSimulationTestFile = value;
+							//	break;
+							//case "MS2_forClassifierTraining":
+							//	InputFileOrganizer.MS2_ClassifierTraining = value;
+							//	break;
+							//case "MZML_forClassifierTraining":
+							//	InputFileOrganizer.MZML_ClassifierTraining = value;
+							//	break;
+							//case "UsePrecomputedFiles":
+							//	UsePrecomputedFiles = Boolean.Parse(value);
+							//	break;
+							case "ExclusionMethod":
+
+								GlobalVar.ExclusionMethod = ParseExclusionMethod(int.Parse(value));
+
 								break;
 							case "DecoyPrefix":
 								GlobalVar.DecoyPrefix = value;
 								break;
 							case "ppmTolerance":
 								GlobalVar.PPM_TOLERANCE_LIST = new List<double>();
-								List<double> userInputLS= ParseDoubleListFromCSV(value);
-								foreach(double ppm in userInputLS)
+								List<double> userInputLS = ParseDoubleListFromCSV(value);
+								foreach (double ppm in userInputLS)
 								{
-									GlobalVar.PPM_TOLERANCE_LIST.Add((double)((double)ppm / (double)1000000.0));	
+									GlobalVar.PPM_TOLERANCE_LIST.Add((double)((double)ppm / (double)1000000.0));
 								}
 								Console.WriteLine("first ppm set to: {0}", GlobalVar.PPM_TOLERANCE_LIST[0]);
 								//GlobalVar.ppmTolerance = double.Parse(value);
@@ -177,57 +157,73 @@ namespace MealTimeMS.IO
 					}
 					else
 					{
-						if (UsePrecomputedFiles)
-						{
-							
-							CheckParamValid(name, value);
-							switch (name)
+						//if (UsePrecomputedFiles)
+						//{
+
+							if (CheckParamValid(name, value))
 							{
-								case "LogisRegressionClassiferSavedWeights":
-									InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = value;
-									GlobalVar.useLogisticRegressionTrainedFile = true;
-									break;
+								switch (name)
+								{
+									case "LogisRegressionClassiferSavedCoefficient":
+										InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = value;
+										GlobalVar.useLogisticRegressionTrainedFile = true;
+										break;
 
-								case "ChainSawResult":
-									InputFileOrganizer.ChainSawResult = value;
-									GlobalVar.useChainsawComputedFile = true;
-									break;
+									//case "ChainSawResult":
+									//	InputFileOrganizer.ChainSawResult = value;
+									//	GlobalVar.useChainsawComputedFile = true;
+									//	break;
 
-								case "RTCalcResult":
-									InputFileOrganizer.RTCalcResult = value;
-									GlobalVar.useRTCalcComputedFile = true;
+									case "RTCalcPredictedPeptideRT":
+										InputFileOrganizer.RTCalcResult = value;
+										GlobalVar.useRTCalcComputedFile = true;
 
-									break;
-								case "DecoyFasta":
-									InputFileOrganizer.DecoyFasta = value;
-									GlobalVar.useDecoyFastaComputedFile = true;
+										break;
+									//case "DecoyFasta":
+									//	InputFileOrganizer.DecoyFasta = value;
+									//	GlobalVar.useDecoyFastaComputedFile = true;
 
-									break;
-								case "IDXDataBase":
-									InputFileOrganizer.IDXDataBase = value;
-									GlobalVar.useIDXComputedFile = true;
+									//	break;
+									case "IDXDataBase":
+										InputFileOrganizer.IDXDataBase = value;
+										GlobalVar.useIDXComputedFile = true;
 
-									break;
-								case "OriginalCometOutput":
-									InputFileOrganizer.OriginalCometOutput = value;
-									GlobalVar.usePepXMLComputedFile = true;
+										break;
+									case "OriginalCometOutput":
+										InputFileOrganizer.OriginalCometOutput = value;
+										GlobalVar.usePepXMLComputedFile = true;
 
-									break;
-								case "ProtXML":
-									InputFileOrganizer.ProtXML = value;
-
-									break;
-								default:
-									Console.WriteLine("Warning! Cannot identify this line in MealTime-MS params file: \"{0}\"", ogLine);
-									Console.WriteLine("Params File at: " + paramsFile);
-									break;
+										break;
+									//case "ProtXML":
+									//	InputFileOrganizer.OriginalProtXMLFile = value;
+									//	break;
+									case "MeasuredPeptideRetentionTime":
+										InputFileOrganizer.MeasuredPeptideRetentionTime = value;
+										GlobalVar.useMeasuredRT = true;
+										break;
+									default:
+										Console.WriteLine("Warning! Cannot identify this line in MealTime-MS params file: \"{0}\"", ogLine);
+										Console.WriteLine("Params File at: " + paramsFile);
+										break;
+								}
 							}
-						}
+						//}
 					}
 
 
 				}
 				line = sr.ReadLine();
+			}
+
+			if(GlobalVar.ExclusionMethod.Equals(ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)|| GlobalVar.ExclusionMethod.Equals(ExclusionProfileEnum.COMBINED_EXCLUSION))
+			{
+				if(!File.Exists(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile))
+				{
+					Console.WriteLine("LogisRegressionClassiferSavedCoefficient in the MealTimeMS.params is required to run the MealTime-MS exclusion or Combined exclusion methods, please provide a valid file");
+					Console.WriteLine("To generate a traiend logistic regression classifier model saved coefficient file, use command: \n\"MealTimeMS.exe -train\" option");
+					Program.ExitProgram(7);
+				}
+
 			}
 		}
 
@@ -245,7 +241,7 @@ namespace MealTimeMS.IO
 				{
 					if (param.category.Equals("PrecomputedFiles"))
 					{
-						sw.WriteLine("#\n#" + param.category + "\t*Ignore this section when you run the program for the first time, only used to skip the overhead and speed up future simulations\n#");
+						sw.WriteLine("#\n#" + param.category + "\t*Leave all the parameters below (other than LogisticRegressionClassifierSavedCoefficient if you're running MealTimeMS or combined exclusion methods) blank when you run the program for the first time, only used to skip the overhead and speed up future simulations\n#");
 					}
 					else
 					{
@@ -291,20 +287,51 @@ namespace MealTimeMS.IO
 				sw.WriteLine(line);
 			}
 		}
-		private static void CheckFileExists(String file)
+
+		private static ExclusionProfileEnum ParseExclusionMethod(int exclusionMethod)
+		{
+			switch (exclusionMethod)
+			{
+				case 0:
+					return ExclusionProfileEnum.NO_EXCLUSION_PROFILE;
+					break;
+				case 1:
+					return ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE;
+					break;
+				case 2:
+					return ExclusionProfileEnum.NORA_EXCLUSION_PROFILE;
+					break;
+				case 3:
+					return ExclusionProfileEnum.COMBINED_EXCLUSION;
+					break;
+			}
+			Console.WriteLine("Specified ExclusionMethod param \"{0}\" is invalid, select between 1~3", exclusionMethod);
+			Program.ExitProgram(6);
+
+			return ExclusionProfileEnum.NO_EXCLUSION_PROFILE;
+		}
+		private static bool CheckFileExists(String file)
 		{
 			if (!File.Exists(file))
 			{
-				Console.WriteLine("File {0} in params file cannot be found", file);
-				Program.ExitProgram(6);
+				Console.WriteLine("File \"{0}\" in params file cannot be found", file);
+				return false;
 			}
+			return true;
 		}
 		private static bool CheckParamValid(String name, String value)
 		{
 			Parameter param = GetParamContractFromName(name);
 			if (param.thisIsAFile)
 			{
-				CheckFileExists(value); //if the file does not exist, system would exit
+				if (value.Trim().Equals(""))
+				{
+					return false;
+				}
+				if (!CheckFileExists(value))//if the file does not exist, ignore 
+				{
+					return false;
+				}
 			}
 			return true;
 		}
@@ -335,7 +362,7 @@ namespace MealTimeMS.IO
 		{
 			List<int> ls = new List<int>();
 			var doubleList = ParseDoubleListFromCSV(str);
-			foreach(double val in doubleList)
+			foreach (double val in doubleList)
 			{
 				ls.Add((int)val);
 			}

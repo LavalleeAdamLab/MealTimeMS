@@ -136,9 +136,11 @@ public class Database
                 if (peptideRetentionTimes == null)
                 {
                     peptideRetentionTimes = RetentionTimeUtil.calculateRetentionTime(peptides);
-#if CHEATINGRTTIME
-					MealTimeMS.Tester.RandomTesterFunctions.LoadAndReplaceRT(ref peptideRetentionTimes);
-#endif
+
+					if (GlobalVar.useMeasuredRT)
+					{
+						MealTimeMS.Tester.RandomTesterFunctions.LoadAndReplaceRT(ref peptideRetentionTimes);
+					}
 
 				}
 

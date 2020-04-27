@@ -10,8 +10,9 @@ namespace MealTimeMS.Tester
 {	
 	//meant to be used to read a PSM file in tsv format
 	//comet result pepxml can be converted into .tsv using crux.exe psm-convert command
-	class PSMTSVReader
+	static class PSMTSVReaderWriter
 	{
+		static StreamWriter IDWriter;
 		public static List<IDs> ParseTSV(String fileDir) {
 			List<IDs> idList = new List<IDs>();
 			StreamReader sr = new StreamReader(fileDir);
@@ -28,11 +29,11 @@ namespace MealTimeMS.Tester
 					continue;
 				}
 				lastScanNum = scanNum;
-				double startTime = -1;
+				double startTime = double.Parse(info[header.IndexOf("start time")]);
 				String pepSeq = info[header.IndexOf("sequence")];
 				double pep_mass = double.Parse(info[header.IndexOf("peptide mass")]); 
 				double x_Corr = double.Parse(info[header.IndexOf("xcorr score")]);
-				double dCN = -1;
+				double dCN = double.Parse(info[header.IndexOf("dCN")]);
 				String parentProtein = info[header.IndexOf("protein id")];
 				HashSet<String> accessions = new HashSet<string>( parentProtein.Split(",".ToCharArray()));
 				IDs id = new IDs(startTime, scanNum, pepSeq, pep_mass, x_Corr, dCN, accessions);
@@ -41,6 +42,23 @@ namespace MealTimeMS.Tester
 			}
 			return idList;
 		}
+		static String[] headerArr = new String[] { "scan","start time","sequence","peptide mass","xcorr score","dCN", "protein id" };
+		public static void InitiatePSMWriter(String outputFile)
+		{
+			IDWriter = new StreamWriter(outputFile);
+			IDWriter.WriteLine(String.Join("\t", headerArr));
+		}
+
+		public static void WritePSM(IDs id)
+		{
+			IDWriter.WriteLine(String.Join("\t",id.getScanNum().ToString(),id.getScanTime().ToString(),id.getPeptideSequence().ToString(),
+				id.getPeptideMass().ToString(), id.getXCorr().ToString(), id.getDeltaCN().ToString(), String.Join(",",id.getParentProteinAccessions())));
+		}
+
+		public static void ClosePSMWriter() {
+			IDWriter.Close();
+		}
+		
 
 		public static void TestParseTSV()
 		{

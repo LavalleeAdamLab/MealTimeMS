@@ -106,7 +106,7 @@ namespace MealTimeMS.Data
 			String pp = "";
 			foreach(String acc in parent_proteins)
 			{
-				pp = pp + " : " + acc;
+				pp = pp + "," + acc;
 			}
 			return pp;
 		}

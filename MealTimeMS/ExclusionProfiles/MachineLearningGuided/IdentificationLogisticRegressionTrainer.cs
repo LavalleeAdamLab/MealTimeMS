@@ -36,7 +36,11 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 		static String SVMSaveFile;
 		public static String TraingAndWriteAccordModel(String trainingFile, String savedWeightDirectory)
 		{
+			String TrainingResultOutputFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"ClassifierTrainingLog.txt");
+			StreamWriter trainingLog = new StreamWriter(TrainingResultOutputFile);
+
 			log.Info("Training Accord.Net logistic regression classifier using feature set {0}",trainingFile);
+			trainingLog.WriteLine("Training Accord.Net logistic regression classifier using feature set {0}", trainingFile);
 			String trainingFileBaseName = Path.GetFileNameWithoutExtension(trainingFile);
 			String savedCoefficient = Path.Combine(savedWeightDirectory, trainingFileBaseName + "_ClassifierCoefficient.txt");
 			IDataView trainingSet = LoadData(mlContext, trainingFile);
@@ -54,7 +58,35 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			sw2.Close();
 			String savedFile = Path.Combine(savedWeightDirectory, "accordSerializerSavedFile.txt");
 			Serializer.Save(obj: lrAccord, path: savedFile);
+
+			
+			List<ROCDataPoint> AccordROC = ROCCurve(lrAccord, trainingSet);
+			double lrAUC = GetAUCFromROC(AccordROC);
+			double settedThreshold = ThresholdFromROC(AccordROC, minimumSpecificity: 0.95);
+			trainingLog.WriteLine("Area-under-the-curve: {0}", lrAUC);
+			trainingLog.WriteLine("Classifier threshold at 0.95 specificity: {0}", settedThreshold);
+			trainingLog.WriteLine("Classifier Coefficient file saved at:\n{0}\nInclude this coefficient file in the parameters to run MealTimeMS");
+			trainingLog.Close();
 			return savedCoefficient;
+		}
+
+		public static void TestLRModel(String lrSavedCoeff,String trainingFile, String testingFile)
+		{
+			var lr = Loader.LoadAccordNetLogisticRegressionModel(lrSavedCoeff);
+
+			IDataView trainingSet = LoadData(mlContext, trainingFile);
+			IDataView testingSet = LoadData(mlContext, testingFile);
+			double[] correctLabels = IDataViewToAccord(testingSet).labels;
+	
+			List<ROCDataPoint> AccordROC = ROCCurve(lr, trainingSet);
+			double settedThreshold = ThresholdFromROC(AccordROC, minimumSpecificity: 0.95);
+			double lrAUC = GetAUCFromROC(AccordROC);
+			bool[] lrOutput = AccordDecide( lr, testingSet, settedThreshold);
+			MLPerformance accordEvaluation = EvaluateResults(correctLabels, lrOutput);
+
+			Console.WriteLine("AUC:{0}\tSpecificity:{1}\tAccuracy:{2}\tThreshold:{3}", lrAUC, accordEvaluation.getSpecificity(), accordEvaluation.getAccuracy(), settedThreshold);
+			
+
 		}
 
 		public static void DoJob()
@@ -302,7 +334,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 
 				tempThreshold -= tick;
 			} while (tempThreshold >= 0);
-			sw.Flush();
+			//sw.Flush();
 			return rocDataPoints;
 		}
 

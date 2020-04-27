@@ -13,6 +13,7 @@ using CometWrapper;
 using MealTimeMS.Data;
 using MealTimeMS.IO;
 using MealTimeMS.Properties;
+using MealTimeMS.Tester;
 
 namespace MealTimeMS.Util
 {
@@ -59,7 +60,9 @@ namespace MealTimeMS.Util
 
 
 		}
-		
+
+
+
 		public static void reset()
 		{
 			failedStatistic.Clear();
@@ -255,6 +258,37 @@ namespace MealTimeMS.Util
 				str = str + key + "\t" + failedStatistic[key] + "\n";
 			}
 			return str;
+		}
+
+		static Dictionary<int, IDs> searchResultTable;
+		public static void InitializeComet_NonRealTime(String resultTable)
+		{
+			List<IDs> IDList = PSMTSVReaderWriter.ParseTSV(resultTable);
+			searchResultTable = new Dictionary<int, IDs>();
+			foreach (IDs id in IDList)
+			{
+				searchResultTable.Add(id.getScanNum(), id);
+			}
+			failedStatistic = new Dictionary<String, int>();
+		}
+
+		public static bool Search_NonRealTime(Spectra spec, out IDs id)
+		{
+			if (searchResultTable.ContainsKey(spec.getScanNum()))
+			{
+				id = searchResultTable[spec.getScanNum()];
+				return true;
+			}
+			else
+			{
+				id = null;
+				return false;
+			}
+
+		}
+		public static bool QualityCheck_NonRealTime()
+		{
+			return true;
 		}
 
 		class SearchSettings

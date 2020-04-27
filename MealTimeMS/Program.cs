@@ -21,10 +21,10 @@
 #endregion legal notice
 
 //possible pre-processor directives
-//SIMULATION,EVALUATE,STDEVINCLUDED,WRITE_RT_TIME,IGNORE,CHEATINGRTTIME,TRACKEXCLUDEDPROTEINFEATURE
+//SIMULATION,DONTEVALUATE,STDEVINCLUDED,WRITE_RT_TIME,IGNORE,CHEATINGRTTIME,TRACKEXCLUDEDPROTEINFEATURE
 //for a real time test, use either 
-	//IGNORE,EVALUATE   or
-	//IGNORE
+//IGNORE,DONTEVALUATE   or
+//IGNORE
 using System;
 using System.Globalization;
 using System.Threading;
@@ -64,7 +64,10 @@ namespace MealTimeMS
 			//FeatureExtractor.ExtractFeatures(true);
 			//IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel();
 			//IdentificationLogisticRegressionTrainer.DoJob();
-			ExcludedProteinOverlapAnalyzer.DoJob();
+			//ExcludedProteinOverlapAnalyzer.DoJob();
+			IdentificationLogisticRegressionTrainer.TestLRModel("C:\\Coding\\2019LavalleeLab\\temp2\\Output\\ModdedTraining_PreExFile_output\\MS_QC_240min_extractedFeatures_positiveAndNonPositive_ClassifierCoefficient.txt", 
+				"C:\\Coding\\2019LavalleeLab\\temp2\\Output\\ModdedTraining_PreExFile_output\\MS_QC_240min_extractedFeatures_positiveAndNonPositive.tsv",
+				"C:\\Coding\\2019LavalleeLab\\temp2\\Output\\Modded_120FeatureExtraction_output\\MS_QC_120min_extractedFeatures_positiveAndNonPositive_NoDecoy.tsv");
 			//ProteinSpectraVSExcludedSpectraGenerator.FilterForConfidentlyIdentifiedProteinOnly();
 			Console.WriteLine("program finished, press any key to continute");
             Console.ReadKey();
@@ -84,35 +87,20 @@ namespace MealTimeMS
 
 			//SetUpOptions(args);
 
-			//if (args ==null || args[0].Contains("-help"))
-			//{
-			//	Console.WriteLine("Usage: ");
-			//	Console.WriteLine("MealTimeMS.exe <Workplace directory> <paramsFileFullPath> [options]");
-			//	Console.WriteLine("\n Optional arguments:");
-			//	Console.WriteLine("[--report]\n\tnumber of scans processed for every info output (default 1)");
-			//	Console.WriteLine("-p To generate a params file template");
-
-			//}
-
-
 			//Sets up the output directory and creates the output files
 			//WriterClass responsible for writing the any output to a file
 			WriterClass.ExperimentOutputSetUp();
 
 
+			//Console.WriteLine("Bring the system to On mode and/or start an acquisition to see results.");
 
+			ExecuteShellCommand.CopyFile(InputFileOrganizer.MealTimeMSParamsFile, InputFileOrganizer.OutputFolderOfTheRun);
+			ExclusionExplorer.RunExclusionExplorer(GlobalVar.ExclusionMethod);
 
-			
-
-			//
-
-			Console.WriteLine("Bring the system to On mode and/or start an acquisition to see results.");
-			//ExclusionExplorer.RunExclusionExplorer(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
-			ExclusionExplorer.SingleSimulationRun(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
+			//ExclusionExplorer.SingleSimulationRun(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
 			//ExclusionExplorer.RunRealTimeExperiment();
 			//ExclusionExplorer.RunRandomExclusion("C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\Workplace\\TestData\\DataForRandomExclusion - Sheet1.tsv");
 			//ExclusionExplorer.RunRandomExclusion("C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\Workplace\\TestData\\randomTest.tsv");
-
 
 			Thread.CurrentThread.Join(2000); // waits x seconds for DataProcessor to finish
             WriterClass.CloseWriter();
@@ -141,9 +129,11 @@ namespace MealTimeMS
 
 			GlobalVar.ScansPerOutput = opts.scansPerOutput;
 			SetNLogLevel(opts.logLevel);
-
+			InputFileOrganizer.MealTimeMSParamsFile = opts.paramsFile; 
 			MealTimeMSParamsParser.ParseParamsFile(opts.paramsFile);
-			
+			GlobalVar.isSimulationForFeatureExtraction = false;
+
+
 
 		}
 		static void RunPrintParameters(PrintParams pr)
@@ -162,7 +152,7 @@ namespace MealTimeMS
 			InputFileOrganizer.CometParamsFile = tc.cometParams;
 			String extractedFeatureSavedFile_posAndNeg;
 			String extractedFeatureSavedFile_posAndNonPos;
-			FeatureExtractor.ExtractFeatures(tc.MZML_ClassifierTraining, tc.MS2_ClassifierTraining, out extractedFeatureSavedFile_posAndNeg, out extractedFeatureSavedFile_posAndNonPos);
+			FeatureExtractor.ExtractFeatures(tc.MS2_ClassifierTraining, out extractedFeatureSavedFile_posAndNeg, out extractedFeatureSavedFile_posAndNonPos);
 			
 			String savedClassifierCoeff = IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel(extractedFeatureSavedFile_posAndNonPos, InputFileOrganizer.OutputFolderOfTheRun);
 			Console.WriteLine("Classifier training successful, coefficient written to {0}", savedClassifierCoeff);
@@ -174,7 +164,10 @@ namespace MealTimeMS
 			//handle errors
 
 			Console.WriteLine("Incorrect Usage Format, program will now exit");
-			Console.WriteLine("Usage: \nMealTimeMS.exe -run [options] <workPlaceDirectory> <paramsFile>");
+			Console.WriteLine("Usage_Create a MealTimeMS param template file:\n\tMealTimeMS.exe -p <Directory To Create the param file>\n");
+			Console.WriteLine("Usage_Training Classifier:\n\tMealTimeMS.exe -train <workPlaceDirectory> <MS2 file> <Protein Fasta database> <Comet parameter file>\n");
+			Console.WriteLine("Usage_Running Simulation:\n\tMealTimeMS.exe -run [options] <workPlaceDirectory> <paramsFile>\n");
+
 			ExitProgram(3);
 		}
 
@@ -209,22 +202,24 @@ namespace MealTimeMS
 			public String workPlaceDir { get; set; }
 		}
 
-		[Verb("-train", HelpText = "Trains the logistic regression classifier from a MS experiment spectral data and generates a coefficient file")]
+		[Verb("-train", HelpText = "Trains the logistic regression classifier from a MS experiment spectral data and generates a coefficient file\n" +
+			"Usage:\n" +
+			"-train <Work Place Directory> <MS2 File Directory> <Fasta Database> <Comet Parameter File>")]
 		class TrainClassifier
 		{ //normal options here
 
 			[Value(0, MetaName = "workPlaceDir", Required = true, Default = "", HelpText = "Directory of the output folder to write the template params file")]
 			public String workPlaceDir { get; set; }
-			[Value(1, MetaName = "MZMLFile", Required = true, Default = "", HelpText = "The MZML file from the experiment")]
-			public String MZML_ClassifierTraining { get; set; }
-			[Value(2, MetaName = "MS2File", Required = true, Default = "", HelpText = "The MS2 file from the experiment, converted from the MZML file")]
+			//[Value(1, MetaName = "MZMLFile", Required = true, Default = "", HelpText = "The MZML file from the experiment")]
+			//public String MZML_ClassifierTraining { get; set; }
+			[Value(1, MetaName = "MS2File", Required = true, Default = "", HelpText = "The MS2 file from the experiment, converted from the MZML file")]
 			public String MS2_ClassifierTraining { get; set; }
-			[Value(3, MetaName = "FastaDatabase", Required = true, Default = "", HelpText = "The protein database in .fasta format")]
+			[Value(2, MetaName = "FastaDatabase", Required = true, Default = "", HelpText = "The protein database in .fasta format")]
 			public String fasta{ get; set; }
-			[Value(4, MetaName = "CometParams", Required = true, Default = "", HelpText = "Comet parameters file version 2019")]
+			[Value(3, MetaName = "CometParams", Required = true, Default = "", HelpText = "Comet parameters file version 2019")]
 			public String cometParams{ get; set; }
 
-
+				
 			
 		}
 		public static void SetUpOptions(String[] args)

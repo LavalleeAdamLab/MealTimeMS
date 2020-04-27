@@ -12,7 +12,7 @@ namespace MealTimeMS.Tester
 	{
 		public static void DoJob()
 		{
-			String proteinProphetFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\Output\\Temp\\protein_prophet_output\\MS_QC_120min_interact.prot.xml";
+			String proteinProphetFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\PreComputedFiles\\MS_QC_240min_interact.prot.xml";
 			ProteinProphetResult ppr = ProteinProphetEvaluator.getProteinProphetResult(proteinProphetFile);
 			Console.WriteLine(ppr.ToString());
 		}

@@ -25,7 +25,7 @@ public class Protein
         private String dbseqid;
         // Points to peptides that can result by the digestion of this protein
         private Dictionary<String, Peptide> peptides;
-        // TODO how to identify the peptides?
+     
         private bool isExcluded; // prevents redundant adding of peptides to the exclusion list
 
         private int numDB = 0;

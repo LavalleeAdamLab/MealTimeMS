@@ -30,9 +30,9 @@ namespace MealTimeMS.Tester.Junk
 			//protein prophet
 			Console.WriteLine("Perform a protein prophet search on full pepxml");
 			String fullProteinProphetFile = PostProcessingScripts.ProteinProphetSearch(fullCometFile, InputFileOrganizer.OutputFolderOfTheRun, true);
-			InputFileOrganizer.ProtXML =fullProteinProphetFile;
+			InputFileOrganizer.OriginalProtXMLFile =fullProteinProphetFile;
 
-			ProteinProphetResult baseLinePpr = ProteinProphetEvaluator.getProteinProphetResult(InputFileOrganizer.ProtXML);
+			ProteinProphetResult baseLinePpr = ProteinProphetEvaluator.getProteinProphetResult(InputFileOrganizer.OriginalProtXMLFile);
 
 			//load spectra
 			Console.WriteLine("loading spectra array");

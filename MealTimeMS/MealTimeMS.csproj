@@ -52,7 +52,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SIMULATION</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SIMULATION,DEBUG,DONTEVALUATE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -356,6 +356,7 @@
     <Compile Include="ExclusionProfiles\ExclusionList.cs" />
     <Compile Include="ExclusionProfiles\ExclusionProfile.cs" />
     <Compile Include="ExclusionProfiles\ExclusionProfileEnum.cs" />
+    <Compile Include="ExclusionProfiles\ExperimentScheduler.cs" />
     <Compile Include="ExclusionProfiles\MachineLearningGuided\FeatureExtractor.cs" />
     <Compile Include="ExclusionProfiles\MachineLearningGuided\LRModel.cs" />
     <Compile Include="ExclusionProfiles\MachineLearningGuided\MachineLearningGuidedExclusion.cs" />
@@ -392,6 +393,7 @@
     <Compile Include="RunTime\Connection.cs" />
     <Compile Include="Tester\DecoyConcacenatedGeneratorTester.cs" />
     <Compile Include="Tester\ExcludedProteinOverlapAnalyzer.cs" />
+    <Compile Include="Tester\ExtractNumberOfPeptidePerIdentifiedProtein.cs" />
     <Compile Include="Tester\JunkTester.cs" />
     <Compile Include="Tester\Junk\ms1Counter.cs" />
     <Compile Include="Tester\Junk\ProcessedScanMS2Parser.cs" />
@@ -401,7 +403,7 @@
     <Compile Include="Tester\PartialPepXMLWriterTester.cs" />
     <Compile Include="Tester\PostProcessingTester.cs" />
     <Compile Include="Tester\ProteinProphetResultTester.cs" />
-    <Compile Include="Tester\PSMTSVReader.cs" />
+    <Compile Include="Tester\PSMTSVReaderWriter.cs" />
     <Compile Include="Tester\RandomTesterFunctions.cs" />
     <Compile Include="Tester\ReadLessLines.cs" />
     <Compile Include="Tester\RealTimeCometSearchValidator.cs" />
@@ -441,13 +443,13 @@
     <Content Include="Tools\chainsaw.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Tools\chainsaw_x64.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Tools\comet.2019011.win32.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Tools\comet.2019011.win64.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Tools\DecoyDatabase.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Tools\RTCalc.exe">

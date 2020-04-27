@@ -132,6 +132,7 @@ namespace MealTimeMS.Util
 
                 log.Debug("Peptide sequence was not found on any of the lists! It was wrongly excluded!");
                 // TODO figure out why this is happening.........
+				// Solved: if a peptide not on the ex list has a similar mass within ppm tolorence of a peptide that's supposed to be excluded, this will happen
                 incrementValue(Header.EvaluateExclusion_NotFoundOnExclusionList);
             }
             incrementValue(Header.TotalNumEvaluateExclusion);

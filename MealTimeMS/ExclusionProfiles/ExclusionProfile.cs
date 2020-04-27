@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MealTimeMS.Data.Graph;
 using MealTimeMS.Data;
 using MealTimeMS.Util;
-
+using MealTimeMS.Tester;
 namespace MealTimeMS.ExclusionProfiles
 {
 
@@ -20,7 +20,9 @@ namespace MealTimeMS.ExclusionProfiles
         static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
         protected readonly static double DEFAULT_PPMTOLERANCE = (5.0 / 1000000.0);
 
-        protected PerformanceEvaluator performanceEvaluator;
+		public String ExperimentName;
+		public double ExperimentNumber;
+		protected PerformanceEvaluator performanceEvaluator;
         protected ExclusionList exclusionList;
         protected Database database;
 
@@ -146,13 +148,12 @@ namespace MealTimeMS.ExclusionProfiles
         protected IDs performDatabaseSearch(Spectra spec)
         {
             IDs id = null;
-            
+       
             if (CometSingleSearch.Search(spec, out id))
             {
                 log.Debug("MS2 scan was identified.");
                 log.Debug(id);
-                performanceEvaluator.countMS2Identified();
-				
+				performanceEvaluator.countMS2Identified();
             }
             else
             {
@@ -229,19 +230,19 @@ namespace MealTimeMS.ExclusionProfiles
             }
 
             Peptide pep = getPeptideFromIdentification(id);
-            performanceEvaluator.evaluateExclusion(exclusionList, pep);
-            // no peptide retention time calibration since it was excluded
-        }
+#if (!DONTEVALUATE)
+			performanceEvaluator.evaluateExclusion(exclusionList, pep);
+#endif
+			// no peptide retention time calibration since it was excluded
+		}
 
         protected void processMS1(Spectra spec)
         {
 #if DEBUG
 			log.Debug("MS1 scan, unused");
 #endif
-#if SIMULATION
 			performanceEvaluator.countMS1();
             includedSpectra.Add(spec.getScanNum());
-#endif
 		}
 
         protected virtual bool processMS2(Spectra spec)
@@ -261,7 +262,7 @@ namespace MealTimeMS.ExclusionProfiles
 			
             if (isExcluded)
             {
-#if (SIMULATION || EVALUATE)
+#if (SIMULATION)
 				IDs id = performDatabaseSearch(spec);
 				
                 log.Debug("Mass " + spectraMass + " is on the exclusion list. Scan " + spec.getScanNum() + " excluded.");
