@@ -238,9 +238,9 @@ namespace MealTimeMS.ExclusionProfiles
 
         protected void processMS1(Spectra spec)
         {
-#if DEBUG
+
 			log.Debug("MS1 scan, unused");
-#endif
+
 			performanceEvaluator.countMS1();
             includedSpectra.Add(spec.getScanNum());
 		}

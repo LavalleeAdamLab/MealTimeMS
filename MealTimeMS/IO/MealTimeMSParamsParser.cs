@@ -14,17 +14,17 @@ namespace MealTimeMS.IO
 		public static List<Parameter> paramList = new List<Parameter>()
 		{
 			new Parameter("CrucialFiles","FastaFileName",true,"","File path to the Protein sequence database Fasta file",true),
-			new Parameter("CrucialFiles","CometParamsFile",true,"","File path to the comet parameters (2019 version)",true),
+			new Parameter("CrucialFiles","CometParamsFile",true,"","File path to the comet parameters (2019 version). Make sure to set \"decoy_search\" to 0.",true),
 			new Parameter("DirectorySetUp","TPPBinFolder",true,"C:\\TPP\\bin\\","Directory of the bin folder of the Trans-Proteomic Pipeline installation",false),
-			new Parameter("SimulationParams","MS2SimulationTestFile",true,"","",true),
+			new Parameter("SimulationParams","MS2SimulationSpectraFile",true,"","Spectral data in .ms2 format, can be converted from .mzML (or .raw) to .ms2 using ProteoWizard's msconvert",true),
 			//new Parameter("SimulationParams","MZMLSimulationTestFile",true,"","",true),
 			//new Parameter("PreExperimentSetup","UsePrecomputedFiles",true,"false","true: use the files in the PrecomputedFiles section instead of generating them with the program. false: generate them with the program automatically. Set to false if running the program for the first time"),
 			new Parameter("PreExperimentSetup","DecoyPrefix",true,"DECOY_","Decoy prefix used in the Comet params"),
+			new Parameter("PreExperimentSetup","RTCalcCoefficient",true,"","Trained RTCalc model .coeff file, used by RTCalc to predict peptide retention time. Make sure the training is done in seconds.",true),
+			new Parameter("PreExperimentSetup","NUM_MISSED_CLEAVAGES",true,"1","This version of the MealTime MS is limited to a Trypsin digestion experiment. This number specifies the number of missed cleavage of the digestion"),
+			new Parameter("PreExperimentSetup","MinimumPeptideLength",true,"6","Minimum peptide length of the trypsin digestion"),
 			//new Parameter("ClassifierTrainingFiles","MS2_forClassifierTraining",true,"MS_QC_240min.ms2","",true),
 			//new Parameter("ClassifierTrainingFiles","MZML_forClassifierTraining",true,"MS_QC_240min.mzML","",true),
-
-			new Parameter("ExperimentParameters","NUM_MISSED_CLEAVAGES",true,"1",""),
-			new Parameter("ExperimentParameters","MinimumPeptideLength",true,"6",""),
 			new Parameter("ExperimentParameters","ExclusionMethod",true,"1","0: No Exclusion. 1: MealTimeMS. 2: Heuristic exclusion. 3: CombinedExclusion"),
 			new Parameter("ExperimentParameters","ppmTolerance",true,"5.0","in ppm, so a value of 5.0 would become 5.0/1000000.0. Separate by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","retentionTimeWindowSize",true,"1.0","The retention time window (minutes) allowed to deviate (beyond or below) from predicted peptide retention time. Separate by comma if multiple values are provided"),
@@ -34,7 +34,7 @@ namespace MealTimeMS.IO
 			new Parameter("PrecomputedFiles","LogisRegressionClassiferSavedCoefficient",false,"","File path to the saved coefficient file of a trained LR classifier model. " +
 				"To generate a traiend logistic regression classifier model saved coefficient file, use command: \"MealTimeMS.exe -train\" option",true),
 			//new Parameter("PrecomputedFiles","ChainSawResult",false,"","",true),
-			new Parameter("PrecomputedFiles","RTCalcPredictedPeptideRT",false,"","RTCalc predicted peptide retention time result file, in seconds (parsed into minutes in-program)",true),
+			new Parameter("PrecomputedFiles","RTCalcPredictedPeptideRT",false,"","RTCalc predicted peptide retention time result file, in seconds",true),
 			//new Parameter("PrecomputedFiles","DecoyFasta",false,"","",true),
 			new Parameter("PrecomputedFiles","IDXDataBase",false,"","",true),
 			new Parameter("PrecomputedFiles","OriginalCometOutput",false,"","",true),
@@ -74,7 +74,7 @@ namespace MealTimeMS.IO
 					String name = splitedLine[0].Trim();
 					String value = splitedLine[1].Trim();
 					Parameter param = GetParamContractFromName(name);
-					if (param.crucial && value.Equals("="))
+					if (param.crucial && value.Equals(""))
 					{
 						Console.WriteLine("Error! Value for \"{0}\" is missing in the MealTimeMS param file", name);
 						Program.ExitProgram(6);
@@ -98,7 +98,7 @@ namespace MealTimeMS.IO
 								InputFileOrganizer.ProteinProphet = Path.Combine(value, "ProteinProphet.exe");
 								InputFileOrganizer.XInteract = Path.Combine(value, "xinteract.exe");
 								break;
-							case "MS2SimulationTestFile":
+							case "MS2SimulationSpectraFile":
 								InputFileOrganizer.MS2SimulationTestFile = value;
 								break;
 							//case "MZMLSimulationTestFile":
@@ -114,12 +114,13 @@ namespace MealTimeMS.IO
 							//	UsePrecomputedFiles = Boolean.Parse(value);
 							//	break;
 							case "ExclusionMethod":
-
 								GlobalVar.ExclusionMethod = ParseExclusionMethod(int.Parse(value));
-
 								break;
 							case "DecoyPrefix":
 								GlobalVar.DecoyPrefix = value;
+								break;
+							case "RTCalcCoefficient":
+								InputFileOrganizer.RTCalcCoeff = value;
 								break;
 							case "ppmTolerance":
 								GlobalVar.PPM_TOLERANCE_LIST = new List<double>();

@@ -34,7 +34,7 @@ namespace MealTimeMS.Util
 
 		//Tools
 		public static String RTCalc = "Tools\\RTCalc.exe";
-		public static String RTCalcCoeff = "Tools\\RTCalc.coeff";
+		public static String RTCalcCoeff = "";
 		//public const String RTCalc = "Tools\\RTCalc_2019.exe";
 		//public const String RTCalcCoeff = "Tools\\rtcalc_120minTraining.coeff";
 		public static String ChainSaw = "";
@@ -70,7 +70,6 @@ namespace MealTimeMS.Util
 			}
 			CometQualityCheckFile = Path.Combine(AssemblyDirectory, "EmbeddedDataFiles", "CometQualityCheck.txt");
 			RTCalc = Path.Combine(AssemblyDirectory,"Tools","RTCalc.exe");
-			RTCalcCoeff = Path.Combine(AssemblyDirectory, "Tools", "RTCalc.coeff");
 
 #if WIN32
 			CometExe = Path.Combine(AssemblyDirectory, "Tools", "comet.2019011.win32.exe");

@@ -25,7 +25,6 @@ namespace MealTimeMS.Data
         {
             ID = _ID;
             
-#if DEBUG
             detailedString = new StringBuilder();
             simpleString = new StringBuilder();
             infoTable = new Dictionary<string, string>();
@@ -33,7 +32,6 @@ namespace MealTimeMS.Data
             DumpVars(imsScan); //do not comment this out, this parses the info table of the imsScan
                                //later on in development can parsee the two tables into one with only the information we wanted          
             BuildSimpleString();
-#endif
 
 
 

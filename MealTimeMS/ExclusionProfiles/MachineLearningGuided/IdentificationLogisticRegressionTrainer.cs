@@ -42,7 +42,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			log.Info("Training Accord.Net logistic regression classifier using feature set {0}",trainingFile);
 			trainingLog.WriteLine("Training Accord.Net logistic regression classifier using feature set {0}", trainingFile);
 			String trainingFileBaseName = Path.GetFileNameWithoutExtension(trainingFile);
-			String savedCoefficient = Path.Combine(savedWeightDirectory, trainingFileBaseName + "_ClassifierCoefficient.txt");
+			String savedCoefficient = Path.Combine(savedWeightDirectory, trainingFileBaseName + ".ClassifierCoefficient.txt");
 			IDataView trainingSet = LoadData(mlContext, trainingFile);
 			var lrAccord = TrainAccordModel(trainingSet);
 			StreamWriter sw2 = new StreamWriter(savedCoefficient);
