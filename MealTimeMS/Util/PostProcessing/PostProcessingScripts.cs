@@ -87,6 +87,7 @@ namespace MealTimeMS.Util.PostProcessing
 		public static ProteinProphetResult RunProteinProphet(String cometFilePath, String outputFolder, Boolean keepResults)
 		{
 			Logger.debug("Post processing comet file: ");
+			Console.WriteLine("Runnign protein prophet, if program doesn't respond for a long time, try pressing a typing a few keys into the command line");
 			String proteinProphetOutput = ProteinProphetSearch(cometFilePath,outputFolder,keepResults);
 			ProteinProphetResult ppr = ProteinProphetEvaluator.getProteinProphetResult(proteinProphetOutput);
 
