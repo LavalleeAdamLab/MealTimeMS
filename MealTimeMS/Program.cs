@@ -163,6 +163,10 @@ namespace MealTimeMS
 				}
 				Console.WriteLine(variableInfo);
 			}
+			if (GlobalVar.useMeasuredRT)
+			{
+				Console.WriteLine("Using measured peptide retention time with {0} seconds of perturbation from file:\n  {1}",GlobalVar.amountPerturbationAroundMeasuredRetentionTimeInSeconds, InputFileOrganizer.MeasuredPeptideRetentionTime);
+			}
 
 		}
 
