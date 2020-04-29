@@ -58,7 +58,7 @@ namespace MealTimeMS.Util
 		public static double acquisitionStartTime = -1;
         public static double listeningDuration = 60000000; //in seconds
         public static String experimentName = "experiment_name";
-		public static ExclusionProfileEnum ExclusionMethod;
+		public static ExclusionProfileEnum ExclusionMethod; //Synonomous with "ExclusionType"
 
 
 		//Simulation var

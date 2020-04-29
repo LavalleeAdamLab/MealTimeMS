@@ -32,6 +32,7 @@ using MealTimeMS.Tester;
 using MealTimeMS.IO;
 using MealTimeMS.Util;
 using MealTimeMS.RunTime;
+using MealTimeMS.ExclusionProfiles;
 using MealTimeMS.Tester.Junk;
 using System.Collections.Generic;
 using CommandLine;
@@ -133,9 +134,38 @@ namespace MealTimeMS
 			MealTimeMSParamsParser.ParseParamsFile(opts.paramsFile);
 			GlobalVar.isSimulationForFeatureExtraction = false;
 
+			Console.WriteLine("Running data acquisition simulation:");
+			Console.WriteLine("Exclusion Method: {0}", GlobalVar.ExclusionMethod);
+			Console.WriteLine("Simulation spectral file: {0}", InputFileOrganizer.MS2SimulationTestFile);
+			var paramsRequired = ExclusionProfileEnumExtension.getParamsRequired( GlobalVar.ExclusionMethod);
+			foreach (ExclusionTypeParamEnum e in paramsRequired)
+			{
+				String variableName = e.getShortDescription();
+				String variableInfo = "";
+				switch (e)
+				{
+					case ExclusionTypeParamEnum.ppmTol:
+						variableInfo = String.Format("{0}: {1}", variableName, String.Join(",",GlobalVar.PPM_TOLERANCE_LIST));
+						break;
+					case ExclusionTypeParamEnum.rtWin:
+						variableInfo = String.Format("{0}: {1}", variableName, String.Join(",", GlobalVar.RETENTION_TIME_WINDOW_LIST));
+						break;
+					case ExclusionTypeParamEnum.xCorr:
+						variableInfo = String.Format("{0}: {1}", variableName, String.Join(",", GlobalVar.XCORR_THRESHOLD_LIST));
+						break;
+					case ExclusionTypeParamEnum.numDB:
+						variableInfo = String.Format("{0}: {1}", variableName, String.Join(",", GlobalVar.NUM_DB_THRESHOLD_LIST));
+						break;
+					case ExclusionTypeParamEnum.prThr:
+						variableInfo = String.Format("{0}: {1}", variableName, String.Join(",", GlobalVar.LR_PROBABILITY_THRESHOLD_LIST));
+						break;
 
+				}
+				Console.WriteLine(variableInfo);
+			}
 
 		}
+
 		static void RunPrintParameters(PrintParams pr)
 		{
 			String workDir = Path.GetFullPath(pr.workPlaceDir);

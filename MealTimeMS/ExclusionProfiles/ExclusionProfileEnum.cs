@@ -18,6 +18,8 @@ namespace MealTimeMS.ExclusionProfiles
             return Enum.GetName(typeof(ExclusionProfileEnum),e);
         }
 
+		
+
         public static String getShortDescription(this ExclusionProfileEnum e)
         {
             
@@ -32,14 +34,57 @@ namespace MealTimeMS.ExclusionProfiles
             }
             return e.getDescription();
         }
-
         
         public static String ToString(this ExclusionProfileEnum e)
         {
             return e.getDescription();
         }
+		public static List<ExclusionTypeParamEnum> getParamsRequired(ExclusionProfileEnum e)
+		{
+			List<ExclusionTypeParamEnum> paramsRequired = new List<ExclusionTypeParamEnum>();
+			if (e.Equals(ExclusionProfileEnum.NO_EXCLUSION_PROFILE))
+			{
+				return paramsRequired;
+			}
 
-    }
+			paramsRequired.Add(ExclusionTypeParamEnum.ppmTol);
+			paramsRequired.Add(ExclusionTypeParamEnum.rtWin);
+			switch (e)
+			{
+				case ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
+					paramsRequired.Add(ExclusionTypeParamEnum.prThr);
+					break;
+				case ExclusionProfileEnum.NORA_EXCLUSION_PROFILE:
+					paramsRequired.Add(ExclusionTypeParamEnum.xCorr);
+					paramsRequired.Add(ExclusionTypeParamEnum.numDB);
+					break;
+				case ExclusionProfileEnum.COMBINED_EXCLUSION:
+					paramsRequired.Add(ExclusionTypeParamEnum.xCorr);
+					paramsRequired.Add(ExclusionTypeParamEnum.numDB);
+					paramsRequired.Add(ExclusionTypeParamEnum.prThr);
+					break;
+			}
+			return paramsRequired;
+		}
+		public static String getShortDescription(this ExclusionTypeParamEnum e)
+		{
+
+			switch (e)
+			{
+				case ExclusionTypeParamEnum.ppmTol:
+					return "ppmTol";
+				case ExclusionTypeParamEnum.rtWin:
+					return "rtWin";
+				case ExclusionTypeParamEnum.xCorr:
+					return "xCorr";
+				case ExclusionTypeParamEnum.numDB:
+					return "numDB";
+				case ExclusionTypeParamEnum.prThr:
+					return "prThr";
+			}
+			return "";
+		}
+	}
     public enum ExclusionProfileEnum
     {
         [Description("MachineLearningGuidedExclusionProfile")]
@@ -60,48 +105,61 @@ namespace MealTimeMS.ExclusionProfiles
 		SVMEXCLUSION
 
 	};
+	public enum ExclusionTypeParamEnum
+	{
+		[Description("PPM tolerance")]
+		ppmTol,
+		[Description("Retention time window")]
+		rtWin,
+		[Description("XCorr Threshold")]
+		xCorr,
+		[Description("Number of ms2 above xCorr threshold")]
+		numDB,
+		[Description("Classifier probability threshold")]
+		prThr
+	};
 
-    //public class ExclusionProfileEnum
-    //{
-        
+	//public class ExclusionProfileEnum
+	//{
 
-    //    public ProfileEnum profileEnum;
-    //    private readonly String description;
 
-    //    private ExclusionProfileEnum(String description, ProfileEnum _profileEnum)
-    //    {
-    //        this.description = description;
-    //        this.profileEnum = _profileEnum;
-            
-    //    }
+	//    public ProfileEnum profileEnum;
+	//    private readonly String description;
 
-    //    public String getDescription()
-    //    {
-    //        return description;
-    //    }
+	//    private ExclusionProfileEnum(String description, ProfileEnum _profileEnum)
+	//    {
+	//        this.description = description;
+	//        this.profileEnum = _profileEnum;
 
-    //    public String getShortDescription()
-    //    {
-    //        switch (this.profileEnum)
-    //        {
-    //            case ProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
-    //                return "MLGE";
-    //            case ProfileEnum.NORA_EXCLUSION_PROFILE:
-    //                return "Nora";
-    //            case ProfileEnum.NO_EXCLUSION_PROFILE:
-    //                return "NoEx";
-    //        }
-    //        return description;
-    //    }
+	//    }
 
-    //    override
-    //    public String ToString()
-    //    {
-    //        return getDescription();
-    //    }
-    //}
+	//    public String getDescription()
+	//    {
+	//        return description;
+	//    }
 
-   
+	//    public String getShortDescription()
+	//    {
+	//        switch (this.profileEnum)
+	//        {
+	//            case ProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
+	//                return "MLGE";
+	//            case ProfileEnum.NORA_EXCLUSION_PROFILE:
+	//                return "Nora";
+	//            case ProfileEnum.NO_EXCLUSION_PROFILE:
+	//                return "NoEx";
+	//        }
+	//        return description;
+	//    }
+
+	//    override
+	//    public String ToString()
+	//    {
+	//        return getDescription();
+	//    }
+	//}
+
+
 }
 
 

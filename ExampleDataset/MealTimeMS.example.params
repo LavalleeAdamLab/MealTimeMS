@@ -16,7 +16,7 @@ MS2SimulationSpectraFile = C:\ExampleDataSet\MS_QC_120min.ms2	#Spectral data in 
 
 ###PreExperimentSetup
 DecoyPrefix = DECOY_	#Decoy prefix used in the Comet params
-RTCalcCoefficient = 	#Trained RTCalc model .coeff file, used by RTCalc to predict peptide retention time. The training should be done in seconds.
+RTCalcCoefficient = C:\ExampleDataSet\RTCalc.coeff	#Trained RTCalc model .coeff file, used by RTCalc to predict peptide retention time. The training should be done in seconds.
 NUM_MISSED_CLEAVAGES = 1	#This version of the MealTime MS is limited to a Trypsin digestion experiment. This number specifies the number of missed cleavage of the digestion
 MinimumPeptideLength = 6	#Minimum peptide length of the trypsin digestion
 #

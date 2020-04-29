@@ -135,13 +135,7 @@ namespace MealTimeMS.IO
 								InputFileOrganizer.RTCalcCoeff = value;
 								break;
 							case "ppmTolerance":
-								GlobalVar.PPM_TOLERANCE_LIST = new List<double>();
-								List<double> userInputLS = ParseDoubleListFromCSV(value);
-								foreach (double ppm in userInputLS)
-								{
-									GlobalVar.PPM_TOLERANCE_LIST.Add((double)((double)ppm / (double)1000000.0));
-								}
-								Console.WriteLine("first ppm set to: {0}", GlobalVar.PPM_TOLERANCE_LIST[0]);
+								GlobalVar.PPM_TOLERANCE_LIST = ParseDoubleListFromCSV(value);
 								//GlobalVar.ppmTolerance = double.Parse(value);
 								break;
 							case "retentionTimeWindowSize":
