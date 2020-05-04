@@ -153,7 +153,7 @@ namespace MealTimeMS.RunTime
 
 		public static void RunSimulationAndPostProcess(ExclusionProfile exclusionProfile, String experimentName, double startTime, double experimentNumber)
 		{
-			Console.WriteLine("Simulating \"{0}\"",experimentName);
+			Console.WriteLine("\nSimulating \"{0}\"",experimentName);
 			new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
 
 			analysisTime = getCurrentTime() - startTime;

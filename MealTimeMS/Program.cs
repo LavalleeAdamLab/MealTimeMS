@@ -135,7 +135,7 @@ namespace MealTimeMS
 			GlobalVar.isSimulationForFeatureExtraction = false;
 
 			Console.WriteLine("Running data acquisition simulation:");
-			Console.WriteLine("Exclusion Method: {0}", GlobalVar.ExclusionMethod);
+			Console.WriteLine("Exclusion Method: {0}", GlobalVar.ExclusionMethod.getDescription());
 			Console.WriteLine("Simulation spectral file: {0}", InputFileOrganizer.MS2SimulationTestFile);
 			var paramsRequired = ExclusionProfileEnumExtension.getParamsRequired( GlobalVar.ExclusionMethod);
 			foreach (ExclusionTypeParamEnum e in paramsRequired)

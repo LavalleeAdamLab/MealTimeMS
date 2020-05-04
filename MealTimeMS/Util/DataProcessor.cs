@@ -49,7 +49,7 @@ namespace MealTimeMS
 
 			log.Debug("Initiating up DataProcessor Variables");
 			reset();
-			Console.WriteLine("\n\nPre-Experiment setup finished");
+			
             //Console.ReadKey();
 
             preExperimentSetupFinished = true;

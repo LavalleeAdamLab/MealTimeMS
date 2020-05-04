@@ -28,7 +28,7 @@ namespace MealTimeMS.ExclusionProfiles
                 case ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
                     return "MLGE";
                 case ExclusionProfileEnum.NORA_EXCLUSION_PROFILE:
-                    return "Nora";
+                    return "Heuristic";
                 case ExclusionProfileEnum.NO_EXCLUSION_PROFILE:
                     return "NoEx";
             }
@@ -89,7 +89,7 @@ namespace MealTimeMS.ExclusionProfiles
     {
         [Description("MachineLearningGuidedExclusionProfile")]
         MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE,
-        [Description("NoraExclusionProfile")]
+        [Description("HeuristicExclusionProfile")]
         NORA_EXCLUSION_PROFILE,
         [Description("NoExclusionProfile")]
         NO_EXCLUSION_PROFILE,
