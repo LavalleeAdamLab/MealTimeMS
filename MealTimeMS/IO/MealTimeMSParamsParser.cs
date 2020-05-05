@@ -63,7 +63,7 @@ namespace MealTimeMS.IO
 			bool UsePrecomputedFiles = false; //default value, might be changed from params file value
 			while (line != null)
 			{
-				if (!line.StartsWith("#") && !line.Trim().Equals(""))
+				if (!line.StartsWith("#") && !line.Trim().Equals("") &&!line.StartsWith("@"))
 				{
 					String ogLine = line;
 					if (line.Contains("#"))
@@ -234,6 +234,28 @@ namespace MealTimeMS.IO
 
 
 				}
+
+				//debug instructions
+				if (line.StartsWith("@"))
+				{
+					line = line.Trim();
+					line = line.Trim("@".ToCharArray());
+					String[] splitedLine = line.Split("=".ToCharArray());
+					String name = splitedLine[0].Trim();
+					String value = splitedLine[1].Trim();
+					value = value.Trim("\"".ToCharArray());
+					if (name.Equals("Random"))
+					{
+						InputFileOrganizer.SummaryFileForRandomExclusion = value;
+						GlobalVar.ExclusionMethod = ExclusionProfileEnum.RANDOM_EXCLUSION_PROFILE;
+						Console.WriteLine("Running random exclusion simulations from:");
+						Console.WriteLine(InputFileOrganizer.SummaryFileForRandomExclusion);
+						Console.WriteLine("Enter the number of random simulations per experiment");
+						int randomRepeatsPerExperiment = int.Parse(Console.ReadLine());
+						GlobalVar.randomRepeatsPerExperiment = randomRepeatsPerExperiment ;
+					}
+				}
+
 				line = sr.ReadLine();
 			}
 

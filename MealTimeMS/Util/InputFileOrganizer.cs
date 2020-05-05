@@ -59,6 +59,9 @@ namespace MealTimeMS.Util
 		//test files
 		public static String SVMSavedFile = "";
 
+		public static String SummaryFileForRandomExclusion = "";
+
+
 		public static void SetWorkDir(String workDir)
 		{
 			WorkingDirectory = workDir;

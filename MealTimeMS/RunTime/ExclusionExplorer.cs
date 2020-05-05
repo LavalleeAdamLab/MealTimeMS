@@ -148,6 +148,28 @@ namespace MealTimeMS.RunTime
 					break;
 				}
 
+			}else if (exclusionType == ExclusionProfileEnum.RANDOM_EXCLUSION_PROFILE)
+			{
+				List<ExperimentResult> resultList = ParseExperimentResult(InputFileOrganizer.SummaryFileForRandomExclusion);
+				foreach (ExperimentResult expResult in resultList)
+				{
+
+					//Do 5 random experiments per normal experiment
+					for (int i = 0; i < 10; i++)
+					{
+						experimentNumber++;
+						startTime = getCurrentTime();
+						String originalExperimentName = expResult.experimentName;
+						int numExcluded = expResult.numSpectraExcluded;
+						int numAnalyzed = expResult.numSpectraAnalyzed;
+
+						ExclusionProfile exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, 12);
+						String experimentName = "EXP_" + experimentNumber + String.Format("Random:originalExperiment_{0}", originalExperimentName);
+
+						RunSimulationAndPostProcess(exclusionProfile, experimentName, startTime, experimentNumber);
+					}
+
+				}
 			}
 		}
 
@@ -347,8 +369,6 @@ namespace MealTimeMS.RunTime
 			PreExperimentSetUp();
 			int experimentNumber = 0;
 			List<ExperimentResult> resultList = ParseExperimentResult(usedResourcesFile);
-
-
 			foreach (ExperimentResult expResult in resultList)
 			{
 
@@ -394,6 +414,7 @@ namespace MealTimeMS.RunTime
 			List<ExperimentResult> resultList = new List<ExperimentResult>();
 			foreach (String resultFile in resultFiles)
 			{
+				
 				StreamReader reader = new StreamReader(resultFile);
 				String header = reader.ReadLine();
 				while (!header.StartsWith("ExperimentName"))

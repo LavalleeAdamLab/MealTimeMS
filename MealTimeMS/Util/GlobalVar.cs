@@ -63,11 +63,11 @@ namespace MealTimeMS.Util
 
 		//Simulation var
 		public static double ExperimentTotalScans = -1;
-		
+
 
 
 		//temp variables
-
+		public static int randomRepeatsPerExperiment =10;
 		//ExclusionExplorerParamsList
 		public static List<double> PPM_TOLERANCE_LIST;
 		public static List<double> RETENTION_TIME_WINDOW_LIST;
