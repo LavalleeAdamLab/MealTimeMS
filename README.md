@@ -21,8 +21,8 @@ eg. The default output path is under "bin\x64\Release\", so the MealTimeMS.exe c
 ___
 
 ## Files and software required to run MealTimeMS
-*A protein sequence database file in FASTA format.
-*A parameter file for [Comet](http://comet-ms.sourceforge.net/) sequence database search, 2019 version.
+*A protein sequence database file in FASTA format.\n
+*A parameter file for [Comet](http://comet-ms.sourceforge.net/) sequence database search, 2019 version.\n
 *Install [Trans-Proteomic Pipeline](http://tools.proteomecenter.org/software.php)(TPP).
 *A spectral data file in .ms2 format used to simulate data acquisition and exclusion. Can be converted from .raw or .mzML format to .ms2 formate using [ProteoWizard's](http://proteowizard.sourceforge.net/) msconvert app.
 *A spectral data file in .ms2 format used to train the MealTimeMS' logistic regression classifier.
