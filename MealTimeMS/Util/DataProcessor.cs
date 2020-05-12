@@ -16,6 +16,7 @@ using MealTimeMS.ExclusionProfiles.MachineLearningGuided;
 using MealTimeMS.ExclusionProfiles.TestProfile;
 using MealTimeMS.ExclusionProfiles.Nora;
 using MealTimeMS.ExclusionProfiles;
+using MealTimeMS.Simulation;
 using IMsScan = Thermo.Interfaces.InstrumentAccess_V2.MsScanContainer.IMsScan;
 
 
@@ -28,8 +29,8 @@ namespace MealTimeMS
 	//	This thread will be dequeing the parsedSpectra queue to process the Scans using Exclusion profile.
 	public static class DataProcessor
     {
-
-        static ConcurrentQueue<Spectra> parsedSpectra;
+		public static event EventHandler<MS2Evaluated> MS2EvaluatedEvent;
+		static ConcurrentQueue<Spectra> parsedSpectra;
         static long taskCounter;
         static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
@@ -60,10 +61,12 @@ namespace MealTimeMS
                 Spectra processedSpectra;
                 if (parsedSpectra.TryDequeue(out processedSpectra))
                 {
-                    exclusionProfile.evaluate(processedSpectra);
+                    bool analyzed = exclusionProfile.evaluate(processedSpectra);
 					double[] scanArrivalProcessedTime = { processedSpectra.getScanNum(), processedSpectra.getArrivalTime(), getCurrentMiliTime() };
 					scanArrivalAndProcessedTimeList.Add(scanArrivalProcessedTime);
                     Interlocked.Decrement(ref taskCounter);
+					//OnMS2Evaluated(processedSpectra.getScanNum(), analyzed); ;
+
                 }
             }
             log.Info("DataProcessor finished, processed {0} scans", scanIDCounter);
@@ -90,7 +93,11 @@ namespace MealTimeMS
 		//    return g;
 		//}
 
-
+		//static void OnMS2Evaluated(int scanNum, bool analyzed)
+		//{
+		//	MS2Evaluated args = new MS2Evaluated(scanNum,analyzed);
+		//	MS2EvaluatedEvent(null, args);
+		//}
 		static public List<double[]> spectraNotAdded;
 		static private bool ignore = false;
         //parses the IMsScan into a spectra object so IMSscan object can be released to free memory
@@ -232,4 +239,15 @@ namespace MealTimeMS
             }
         }
     }
+	public class MS2Evaluated : EventArgs
+	{
+		public int scanNum;
+		public bool analyzed;
+		public MS2Evaluated(int _scanNum, bool _analyzed)
+		{
+			scanNum = _scanNum;
+			analyzed = _analyzed;
+		}
+
+	}
 }

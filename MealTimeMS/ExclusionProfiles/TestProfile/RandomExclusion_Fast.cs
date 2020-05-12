@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MealTimeMS.Data;
 using MealTimeMS.Data.Graph;
+using MealTimeMS.Simulation;
 using MealTimeMS.Util;
 using MealTimeMS.IO;
 
@@ -22,8 +23,8 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 		public RandomExclusion_Fast(Database _database, List<Spectra> spectraArray,
 			int numExcluded, int numAnalyzed, int maxNumMS2PerMS1) : base(_database)
 		{
-			setUpRandomlyExcludedMS2_NoneDDA(spectraArray, numExcluded, numAnalyzed, maxNumMS2PerMS1);
-			//setUpRandomlyExcludedMS2(spectraArray, numExcluded, numAnalyzed, maxNumMS2PerMS1);
+			//setUpRandomlyExcludedMS2_NoneDDA(spectraArray, numExcluded, numAnalyzed, maxNumMS2PerMS1);
+			setUpRandomlyExcludedMS2(spectraArray, numExcluded, numAnalyzed, maxNumMS2PerMS1);
 		}
 
 
@@ -59,6 +60,7 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 		private void setUpRandomlyExcludedMS2(List<Spectra> spectraArray, int numExcluded, int numAnalyzed,
 				int maximumNumberOfMS2Spectra)
 		{
+			spectraArray = QuickDDAInstrumentSimulation.AddingMS1SpectraToMS2OnlyList(spectraArray);
 
 			List<List<Spectra>> groupedByMS1 = GroupedByMS1(spectraArray);
 			Dictionary<int, List<Spectra>> ms1ScanNumberToRemainingMS2 = new Dictionary<int, List<Spectra>>();
@@ -102,6 +104,7 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 				// find the parent MS1 spectra by backtracking in spectraArray
 				while (specArrIndex >= 0)
 				{
+					specArrIndex -= 1;
 					Spectra prevSpectra = spectraArray[specArrIndex];
 					if (prevSpectra.getMSLevel() == 1)
 					{

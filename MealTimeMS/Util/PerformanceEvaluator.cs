@@ -557,6 +557,11 @@ namespace MealTimeMS.Util
             return null;
         }
 
+		public Object getValue(Header h)
+		{
+			return data[h];
+		}
+
         public  String getHeader()
         {
             return Header.AnalysisTime.getHeader();

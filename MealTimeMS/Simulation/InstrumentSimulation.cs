@@ -19,7 +19,7 @@ using MealTimeMS.RunTime;
 namespace MealTimeMS
 {
     
-    public class InstrumentSimulation
+    public  class InstrumentSimulation
     {
 
         static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -28,17 +28,16 @@ namespace MealTimeMS
         public event EventHandler<EventArgs> AcquisitionStreamClosing;
 
         public List<Spectra> specList;
-        int maxMS2ToSimulate = 1000000000;
+        public int maxMS2ToSimulate = 3000;
 		public InstrumentSimulation(List<Spectra> _specList)
 		{
 			specList = _specList;
 		}
-        public void StopInstrument ()
-        {
-            running = false;   
-        }
-        private bool running = true;
-        public void StartInstrument()
+
+		public InstrumentSimulation()
+		{
+		}
+		public virtual void StartInstrument()
         {
 			
 			

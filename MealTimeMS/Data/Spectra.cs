@@ -96,6 +96,10 @@ namespace MealTimeMS.Data
 
 		}
 
+		public static Spectra CreateEmptyMS1(int _scanNum)
+		{
+			return new Spectra(-1, _scanNum, 1,-1,new double[] { 0,0}, new double[] { 0,0},-1,-1,-1);
+		}
 
 			// Functions to access the private values from class Spectra
 			public double getCalculatedPrecursorMass()

@@ -45,7 +45,7 @@ namespace MealTimeMS.Util
         public static bool SetExclusionTable = false;
         public static int NUM_MISSED_CLEAVAGES = 1;
         public static double ppmTolerance = 5.0/1000000.0;
-        public static double retentionTimeWindowSize = 0.75;
+        public static double retentionTimeWindowSize = 1.0;
         public static int MinimumPeptideLength = 6;
 		public static String DecoyPrefix = "DECOY_";
 		public static String DBTargetProteinStartString = "sp|";
@@ -60,9 +60,10 @@ namespace MealTimeMS.Util
         public static String experimentName = "experiment_name";
 		public static ExclusionProfileEnum ExclusionMethod; //Synonomous with "ExclusionType"
 
+		public static int ddaNum = 6;
 
 		//Simulation var
-		public static double ExperimentTotalScans = -1;
+		public static double ExperimentTotalMS2 = -1;
 
 
 

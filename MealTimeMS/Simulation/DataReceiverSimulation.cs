@@ -35,6 +35,7 @@ using IMsScan = Thermo.Interfaces.InstrumentAccess_V2.MsScanContainer.IMsScan;
 using ICentroid2 = Thermo.Interfaces.InstrumentAccess_V2.MsScanContainer.ICentroid;
 
 using MealTimeMS.Data;
+using MealTimeMS.Simulation;
 
 namespace MealTimeMS
 {

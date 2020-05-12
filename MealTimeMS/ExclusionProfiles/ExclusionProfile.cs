@@ -126,7 +126,7 @@ namespace MealTimeMS.ExclusionProfiles
 				if (spec.getIndex() % GlobalVar.ScansPerOutput == 0)
 				{
 #if SIMULATION
-					double progressPercent = spec.getIndex() / GlobalVar.ExperimentTotalScans * 100;
+					double progressPercent = spec.getIndex() / GlobalVar.ExperimentTotalMS2 * 100;
 					log.Info("Progress: {0:F2}% Processing ID: {1}\t ScanNum: {2} \t Excluded: {3}", progressPercent, spec.getIndex(), spec.getScanNum(),
 						excludedSpectra.Count);
 #else

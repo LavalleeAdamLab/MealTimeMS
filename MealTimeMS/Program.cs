@@ -98,11 +98,6 @@ namespace MealTimeMS
 			ExecuteShellCommand.CopyFile(InputFileOrganizer.MealTimeMSParamsFile, InputFileOrganizer.OutputFolderOfTheRun);
 			ExclusionExplorer.RunExclusionExplorer(GlobalVar.ExclusionMethod);
 
-			//ExclusionExplorer.SingleSimulationRun(ExclusionProfiles.ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE);
-			//ExclusionExplorer.RunRealTimeExperiment();
-			//ExclusionExplorer.RunRandomExclusion("C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\Workplace\\TestData\\DataForRandomExclusion - Sheet1.tsv");
-			//ExclusionExplorer.RunRandomExclusion("C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\Workplace\\TestData\\randomTest.tsv");
-
 			Thread.CurrentThread.Join(2000); // waits x seconds for DataProcessor to finish
             WriterClass.CloseWriter();
             Console.WriteLine("Program finished");
