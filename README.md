@@ -11,7 +11,7 @@ Instructions for compiling using [Visual Studio 2019](https://visualstudio.micro
 The solution requires the .NET platform. and .NET Framework 4.7.1.
 When installing visual studio for the first time (Or re-open the Visual Studio Installer), click on "Modify" in the Visual Studio Installer screen, 
 ![](images/VSInstaller_Screenshot.PNG)
-and make sure ".NET desktop development" is checked, and select ".NET Framework 4.7.1 development tools". Press Modify.
+and make sure ".NET desktop development" is checked, and select ".NET Framework 4.7.1 development tools" on the right hand side. Press Modify on the bottom right to apply.
 ![](images/VS_NETScreenshot.PNG)
 
 Compiling MealTimeMS for x64 platform:
