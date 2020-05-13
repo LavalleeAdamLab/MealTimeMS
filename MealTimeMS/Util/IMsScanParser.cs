@@ -53,7 +53,6 @@ namespace MealTimeMS.Data
 
 			double[] peakIntensity = new double[centroidCount];
 			double[] peakMZ = new double[centroidCount];
-
 			int counter = 0;
 			foreach (ICentroid2 cent in imsScan.Centroids)
 			{

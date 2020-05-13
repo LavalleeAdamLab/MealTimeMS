@@ -56,7 +56,7 @@ namespace MealTimeMS.RunTime
 				GlobalVar.retentionTimeWindowSize = GlobalVar.RETENTION_TIME_WINDOW_LIST[0];
 
 				ExclusionProfile exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
-				String experimentName = GlobalVar.experimentName + String.Format("_Baseline_NoExclusion:ppmTol_rtWin_{0}", GlobalVar.retentionTimeWindowSize);
+				String experimentName = GlobalVar.experimentName + String.Format("_Baseline_NoExclusion");
 				RunSimulationAndPostProcess(exclusionProfile, experimentName, startTime, 0);
 
 #if !DDA
