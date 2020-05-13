@@ -8,7 +8,8 @@ Instructions to running MealTimeMS DEMO with the Example Dataset at the bottom o
 *Preprocessor directives: *SIMULATION*
 *Use Preprocessor directive *WIN32* if compiling on a x86 computer
 Instructions for compiling using [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/), free community version: 
-The solution requires the .NET platform. and .NET Framework 4.7.1.
+
+The Program requires the .NET platform. and .NET Framework 4.7.1.
 When installing visual studio for the first time (Or re-open the Visual Studio Installer), click on "Modify" in the Visual Studio Installer screen, 
 ![](images/VSInstaller_Screenshot.PNG)
 In the modification page, make sure ".NET desktop development" is checked, and select ".NET Framework 4.7.1 development tools" on the right hand side. Press Modify on the bottom right to apply.
