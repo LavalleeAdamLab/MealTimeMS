@@ -7,8 +7,14 @@ Instructions to running MealTimeMS DEMO with the Example Dataset at the bottom o
 ## Compiling MealTimeMS
 *Preprocessor directives: *SIMULATION*
 *Use Preprocessor directive *WIN32* if compiling on a x86 computer
-Instructions for compiling using [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/), free community version:
-Compiling as x64:
+Instructions for compiling using [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/), free community version: 
+The solution requires the .NET platform. and .NET Framework 4.7.1.
+When installing visual studio for the first time (Or re-open the Visual Studio Installer), click on "Modify" in the Visual Studio Installer screen, 
+![](images/VSInstaller_Screenshot.PNG)
+and make sure ".NET desktop development" is checked, and select ".NET Framework 4.7.1 development tools". Press Modify.
+![](images/VS_NETScreenshot.PNG)
+
+Compiling MealTimeMS for x64 platform:
 1. Clone or download this GitHub repository
 2. Open MealTimeMS.sln in the downloaded folder with Visual Studio.
 3. In the solution explorer window, right click on Solution 'MealTimeMS', click "Properties"
