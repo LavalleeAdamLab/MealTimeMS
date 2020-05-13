@@ -7,8 +7,15 @@ Instructions to running MealTimeMS DEMO with the Example Dataset at the bottom o
 ## Compiling MealTimeMS
 *Preprocessor directives: *SIMULATION*
 *Use Preprocessor directive *WIN32* if compiling on a x86 computer
-Instructions for compiling using [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/), free community version:
-Compiling as x64:
+Instructions for compiling using [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/), free community version: 
+
+The Program requires the .NET platform. and .NET Framework 4.7.1.
+When installing visual studio for the first time (Or re-open the Visual Studio Installer), click on "Modify" in the Visual Studio Installer screen, 
+![](images/VSInstaller_Screenshot.PNG)
+In the modification page, make sure ".NET desktop development" is checked, and select ".NET Framework 4.7.1 development tools" on the right hand side. Press Modify on the bottom right to apply.
+![](images/VS_NETScreenshot.PNG)
+
+Compiling MealTimeMS for x64 platform:
 1. Clone or download this GitHub repository
 2. Open MealTimeMS.sln in the downloaded folder with Visual Studio.
 3. In the solution explorer window, right click on Solution 'MealTimeMS', click "Properties"
@@ -122,7 +129,7 @@ AmountPerturbation: A double value could be provided to add a perturbation aroun
 
 ___
 ## Running MealTimeMS with the Example Dataset
-1. Read and follow the "*Compiling MealTimeMS*" and "*Files and software required to run MealTimeMS*" sections of this README.md
+1. Read and follow the "*Compiling MealTimeMS*" section of this README.md and download [Trans-Proteomic Pipeline](http://tools.proteomecenter.org/software.php)(TPP).
 2. Download spectral data *MS_QC_120min_PreviouslyAcquiredDataset.raw* from [PRIDE repository](https://www.ebi.ac.uk/pride/archive/projects/PXD017673/private) with login credentials provided in the paper "MealTime-MS: A Machine Learning-Guided Real-Time Mass Spectrometry Analysis for Protein Identification and Efficient Dynamic Exclusion".
 3. Convert *MS_QC_120min_PreviouslyAcquiredDataset.raw* to .ms2 format using *msconvert* from [ProteoWizard](http://proteowizard.sourceforge.net/) or other file conversion software. (See instructions above for [file conversion](https://github.com/LavalleeAdamLab/MealTimeMS/blob/master/README.md#L35))
 4. Download the ExampleDataset folder from this gitHub repo if not already downloaded.
