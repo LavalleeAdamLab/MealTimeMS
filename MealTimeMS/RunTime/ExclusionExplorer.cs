@@ -41,6 +41,33 @@ namespace MealTimeMS.RunTime
 			PreExperimentSetUp();
 			WriterClass.writeln(new PerformanceEvaluator().getHeader());
 			int experimentNumber = 0;
+#if DDA
+			if (true)
+#else
+			if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+#endif
+
+			{
+				startTime = getCurrentTime();
+				GlobalVar.ppmTolerance = 0;
+				GlobalVar.retentionTimeWindowSize = GlobalVar.RETENTION_TIME_WINDOW_LIST[0];
+
+				ExclusionProfile exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
+				String experimentName = GlobalVar.experimentName + String.Format("_Baseline_NoExclusion:ppmTol_rtWin_{0}", GlobalVar.retentionTimeWindowSize);
+				RunSimulationAndPostProcess(exclusionProfile, experimentName, startTime, 0);
+
+#if !DDA
+				if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+				{
+					List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;
+					WriterClass.writeln("peptideSequence\tObservedRetentionTime", writerClassOutputFile.peptideRTTime);
+					foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
+					{
+						WriterClass.writeln(String.Format("{0}\t{1}", observedPeptracker.peptideSequence, observedPeptracker.arrivalTime), writerClassOutputFile.peptideRTTime);
+					}
+				}
+#endif
+			}
 
 			if (exclusionType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
 			{	
@@ -169,7 +196,7 @@ namespace MealTimeMS.RunTime
 						int numExcluded = expResult.numSpectraExcluded;
 						int numAnalyzed = expResult.numSpectraAnalyzed;
 
-						ExclusionProfile exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, 12);
+						ExclusionProfile exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, GlobalVar.ddaNum);
 						String experimentName = "EXP_" + experimentNumber + String.Format("Random:originalExperiment_{0}", originalExperimentName);
 
 						Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
@@ -585,8 +612,24 @@ namespace MealTimeMS.RunTime
 					String proteinProphetResultFileName = e.experimentNumber+GlobalVar.experimentName;
 					ppr = PostProcessingScripts.postProcessing(e.exclusionProfile, proteinProphetResultFileName, true);	
 
+#if DDA
+				if (exclusionProfile.getAnalysisType() == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+				{
+					ProteinProphetResult baseLinePpr = ppr;
+					int numMS2Analyzed = (int) exclusionProfile.GetPerformanceEvaluator().getValue(Header.NumMS2Analyzed);
+					PerformanceEvaluator.setBaselineComparison(baseLinePpr, numMS2Analyzed, GlobalVar.ddaNum);
+					PerformanceEvaluator.setOriginalExperiment(baseLinePpr.getNum_proteins_identified());
 				}
-				e.totalRunTime = getCurrentTime() - e.experimentStartTime;
+#else
+				if (exclusionProfile.getAnalysisType() == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+				{
+					ProteinProphetResult baseLinePpr = ProteinProphetEvaluator.getProteinProphetResult(InputFileOrganizer.OriginalProtXMLFile);
+					int numMS2Analyzed = (int)GlobalVar.ExperimentTotalMS2;
+					PerformanceEvaluator.setBaselineComparison(baseLinePpr, numMS2Analyzed, GlobalVar.ddaNum);
+					PerformanceEvaluator.setOriginalExperiment(baseLinePpr.getNum_proteins_identified());
+				}
+#endif
+					e.totalRunTime = getCurrentTime() - e.experimentStartTime;
 				String result = e.exclusionProfile.getPerformanceVector(e.experimentName, e.exclusionProfile.getAnalysisType().getDescription()
 					, e.analysisTime, e.totalRunTime, ppr, 12, e.exclusionProfile);
 				Console.WriteLine(result);
