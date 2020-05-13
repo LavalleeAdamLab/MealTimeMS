@@ -22,7 +22,7 @@ Compiling MealTimeMS for x64 platform:
 4. In the solution property pop-up window, click on the configuration properties tab, set "Configuration" to Release, and set "Platform" to "x64", check the "Build" checkbox. Click on Apply, then click OK to close the window.
 5. In the solution explorer window, right click on the "MealTimeMS" project file, select Properties
 6. In the new window, go to the Application tab, change the target framework to ".NET Framework 4.7.1". Set Output Type as "Console Application". 
-7. In the Build tab, type "SIMULATION" to in the "Conditional compilation symboles" (type "SIMULATION,WIN32" if compiling for x86 version). Note the file path listed in the "Output path" text box, the compiled MealTimeMS executable can be found in that folder when built. Hit Ctrl+S to save these settings
+7. In the Build tab, type "SIMULATION" in the text box of "Conditional compilation symboles" (type "SIMULATION,WIN32" if compiling for x86 version). Note the file path listed in the "Output path" text box, the compiled MealTimeMS executable can be found in that folder when built. Hit Ctrl+S to save these settings
 8. Right click on the 'Solution MealTimeMS' icon in the solution explorer and Build Solution
 9. If build successful, the MealTimeMS.exe command line application could be found in the output folder aforementioned. 
 eg. The default output path is under "bin\x64\Release\", so the MealTimeMS.exe can be located at [The folder of the MealTimeMS source code folder downloaded from Github]\MealTimeMS\bin\x64\Release*
