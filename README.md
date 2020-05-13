@@ -137,7 +137,8 @@ ___
 6. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer. And set the "MS2SimulationSpectraFile = " to the file path of the .ms2 file acquired in step 2. 
 7. A trained MealTimeMS logistic regress coefficient file is already provided in the ExampleDataset folder named "MS_QC_240min_Trained_ClassifierCoefficient.txt". It is trained using spectral data from a 240min HEK293 analysis experiment, MS_QC_240min_PreviouslyAcquiredDataset.raw. This file could also be found in the PRIDE repository. (Read *Training the classifier for MealTimeMS* section to reproduce the training process. However it is not required to run this demo)
 8. Specify the desired exclusion method (0,1,2, or 3) under the "ExclusionMethod" parameter in the MealTimeMS.example.params file  
-9. Start simulation of an data acquisition experiment with MealTimeMS using 
+9. Start simulation of an data acquisition experiment with MealTimeMS using
+
 `<MealTimeMS.exe> -run -r 100 <workPlaceDirectory> <MealTimeMS.example.params>`
 ___
 
