@@ -129,7 +129,7 @@ AmountPerturbation: A double value could be provided to add a perturbation aroun
 
 ___
 ## Running MealTimeMS with the Example Dataset
-1. To compile MealTimeMS, read and follow the "*Compiling MealTimeMS*" section of this README.md. Alternatively, a already-compiled version of MealTimeMS.exe is located in MealTimeMS/MealTimeMS/bin/x64/Release/ folder of this repository. 
+1. To compile MealTimeMS, read and follow the "*Compiling MealTimeMS*" section of this README.md. Alternatively, an already-compiled version of MealTimeMS.exe is located in MealTimeMS/MealTimeMS/bin/x64/Release/ folder of this repository. Download the Release folder or the entire repository if you choose the latter option. 
 2. Download and install [Trans-Proteomic Pipeline](http://tools.proteomecenter.org/software.php)(TPP).
 3. Download spectral data *MS_QC_120min_PreviouslyAcquiredDataset.raw* from [PRIDE repository](https://www.ebi.ac.uk/pride/archive/projects/PXD017673/private) with login credentials provided in the paper "MealTime-MS: A Machine Learning-Guided Real-Time Mass Spectrometry Analysis for Protein Identification and Efficient Dynamic Exclusion".
 4. Convert *MS_QC_120min_PreviouslyAcquiredDataset.raw* to .ms2 format using *msconvert* from [ProteoWizard](http://proteowizard.sourceforge.net/) or other file conversion software. (See instructions above for [file conversion](https://github.com/LavalleeAdamLab/MealTimeMS/blob/master/README.md#L35))
