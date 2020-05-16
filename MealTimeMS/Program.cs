@@ -51,6 +51,7 @@ namespace MealTimeMS
     {        
         static void Tester()
         {
+			//ConfidentProteinGroupData.DoJob();
 			String workDir = "C:\\Coding\\2019LavalleeLab\\temp2";
 			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(workDir) + "\\");
 			WriterClass.ExperimentOutputSetUp();

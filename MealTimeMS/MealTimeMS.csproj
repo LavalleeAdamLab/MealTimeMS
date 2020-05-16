@@ -341,6 +341,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\DigestedPeptide.cs" />
+    <Compile Include="Data\Experiment.cs" />
     <Compile Include="Data\Graph\Database.cs" />
     <Compile Include="Data\Graph\IdentificationFeatures.cs" />
     <Compile Include="Data\Graph\Peptide.cs" />
@@ -397,6 +398,7 @@
     <Compile Include="Tester\ExcludedProteinOverlapAnalyzer.cs" />
     <Compile Include="Tester\ExtractNumberOfPeptidePerIdentifiedProtein.cs" />
     <Compile Include="Tester\JunkTester.cs" />
+    <Compile Include="Tester\Junk\ConfidentProteinGroupData.cs" />
     <Compile Include="Tester\Junk\ms1Counter.cs" />
     <Compile Include="Tester\Junk\ProcessedScanMS2Parser.cs" />
     <Compile Include="Tester\Junk\ProteinSpectraVSExcludedSpectraGenerator.cs" />

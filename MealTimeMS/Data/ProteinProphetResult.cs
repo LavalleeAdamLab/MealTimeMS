@@ -13,7 +13,7 @@ namespace MealTimeMS.Data
         private double probability_filter_threshold;
         private int num_proteins_identified;
         private List<String> proteinsIdentified;
-
+		private List<String> filteredProteinGroups;
 
         private readonly double DEFAULT_fdr_filter_threshold = 0.01;
         private readonly double DEFAULT_probability_filter_threshold = 0;
@@ -63,6 +63,18 @@ namespace MealTimeMS.Data
         {
             return proteinsIdentified;
         }
+
+
+		public List<String> getFilteredProteinGroups()
+		{
+			return filteredProteinGroups;
+		}
+		public void SetProteinGroup(List<String> ls)
+		{
+			filteredProteinGroups = ls;
+		}
+
+
 
         override
         public String ToString()

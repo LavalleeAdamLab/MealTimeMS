@@ -10,6 +10,7 @@ namespace MealTimeMS.Tester.Junk
 {
 	class ProteinSpectraVSExcludedSpectraGenerator
 	{
+	//ouputs the original spectral count of a protein vs the number of spectra excluded for that protein
 		const String scanBeginingTag = "<spectrum_query spectrum";
 		const String scanNumTag = "start_scan=\"";
 		const String searchHitTag = "<search_hit hit_rank=\"1";
