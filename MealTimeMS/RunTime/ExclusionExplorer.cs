@@ -155,7 +155,7 @@ namespace MealTimeMS.RunTime
 				{
 
 					//Do 5 random experiments per normal experiment
-					for (int i = 0; i < 10; i++)
+					for (int i = 0; i < GlobalVar.randomRepeatsPerExperiment; i++)
 					{
 						experimentNumber++;
 						startTime = getCurrentTime();
@@ -173,7 +173,7 @@ namespace MealTimeMS.RunTime
 			}
 		}
 
-		public static void RunSimulationAndPostProcess(ExclusionProfile exclusionProfile, String experimentName, double startTime, double experimentNumber)
+		public static void RunSimulationAndPostProcess(ExclusionProfile exclusionProfile, String experimentName, double startTime, int experimentNumber)
 		{
 			Console.WriteLine("\nSimulating \"{0}\"",experimentName);
 			new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
@@ -188,136 +188,136 @@ namespace MealTimeMS.RunTime
 		}
 
 
-		public static ExclusionProfile SingleSimulationRun(ExclusionProfileEnum expType)
-		{
-			PreExperimentSetUp();
-			int experimentNumber = 1;
-			startTime = getCurrentTime();
+//		public static ExclusionProfile SingleSimulationRun(ExclusionProfileEnum expType)
+//		{
+//			PreExperimentSetUp();
+//			int experimentNumber = 1;
+//			startTime = getCurrentTime();
 
-			//parameters:
-			//GlobalVar.ppmTolerance = 5.0 / 1000000.0;
-			//GlobalVar.retentionTimeWindowSize = 1.0;
-			//GlobalVar.AccordThreshold = 0.5;
-			//GlobalVar.XCorr_Threshold = 1.5;
-			//GlobalVar.NumDBThreshold = 2;
-			if (GlobalVar.isSimulationForFeatureExtraction == false)
-			{
-			GlobalVar.ppmTolerance = GlobalVar.PPM_TOLERANCE_LIST[0];
-			GlobalVar.retentionTimeWindowSize = GlobalVar.RETENTION_TIME_WINDOW_LIST[0];
-			GlobalVar.AccordThreshold = GlobalVar.LR_PROBABILITY_THRESHOLD_LIST[0];
-			GlobalVar.XCorr_Threshold = GlobalVar.XCORR_THRESHOLD_LIST[0];
-			GlobalVar.NumDBThreshold = GlobalVar.NUM_DB_THRESHOLD_LIST[0];
+//			//parameters:
+//			//GlobalVar.ppmTolerance = 5.0 / 1000000.0;
+//			//GlobalVar.retentionTimeWindowSize = 1.0;
+//			//GlobalVar.AccordThreshold = 0.5;
+//			//GlobalVar.XCorr_Threshold = 1.5;
+//			//GlobalVar.NumDBThreshold = 2;
+//			if (GlobalVar.isSimulationForFeatureExtraction == false)
+//			{
+//			GlobalVar.ppmTolerance = GlobalVar.PPM_TOLERANCE_LIST[0];
+//			GlobalVar.retentionTimeWindowSize = GlobalVar.RETENTION_TIME_WINDOW_LIST[0];
+//			GlobalVar.AccordThreshold = GlobalVar.LR_PROBABILITY_THRESHOLD_LIST[0];
+//			GlobalVar.XCorr_Threshold = GlobalVar.XCORR_THRESHOLD_LIST[0];
+//			GlobalVar.NumDBThreshold = GlobalVar.NUM_DB_THRESHOLD_LIST[0];
 
-			}
-			//random
-			int numExcluded = 14826;
-			int numAnalyzed = 22681;
+//			}
+//			//random
+//			int numExcluded = 14826;
+//			int numAnalyzed = 22681;
 
-			//end parameters
+//			//end parameters
 
-			ExclusionProfile exclusionProfile = null;
-			switch (expType)
-			{
-				case ExclusionProfileEnum.NORA_EXCLUSION_PROFILE:
-					exclusionProfile = new NoraExclusion(database, GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
-					break;
-				case ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
-					exclusionProfile = new MachineLearningGuidedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
-					break;
+//			ExclusionProfile exclusionProfile = null;
+//			switch (expType)
+//			{
+//				case ExclusionProfileEnum.NORA_EXCLUSION_PROFILE:
+//					exclusionProfile = new NoraExclusion(database, GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
+//					break;
+//				case ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
+//					exclusionProfile = new MachineLearningGuidedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
+//					break;
 
-				case ExclusionProfileEnum.RANDOM_EXCLUSION_PROFILE:
+//				case ExclusionProfileEnum.RANDOM_EXCLUSION_PROFILE:
 
-					exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, 12);
+//					exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, 12);
 
-					break;
-				case ExclusionProfileEnum.NO_EXCLUSION_PROFILE:
-					exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
-					break;
-				case ExclusionProfileEnum.MLGE_SEQUENCE_EXCLUSION_PROFILE:
-					exclusionProfile = new MLGESequenceExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
-					break;
+//					break;
+//				case ExclusionProfileEnum.NO_EXCLUSION_PROFILE:
+//					exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
+//					break;
+//				case ExclusionProfileEnum.MLGE_SEQUENCE_EXCLUSION_PROFILE:
+//					exclusionProfile = new MLGESequenceExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
+//					break;
 
-				case ExclusionProfileEnum.NORA_SEQUENCE_EXCLUSION_PROFILE:
-					exclusionProfile = new NoraSequenceExclusion(database, GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
-					break;
-				case ExclusionProfileEnum.SVMEXCLUSION:
-					exclusionProfile = new SVMExclusion(InputFileOrganizer.SVMSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
-					break;
-			}
+//				case ExclusionProfileEnum.NORA_SEQUENCE_EXCLUSION_PROFILE:
+//					exclusionProfile = new NoraSequenceExclusion(database, GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
+//					break;
+//				case ExclusionProfileEnum.SVMEXCLUSION:
+//					exclusionProfile = new SVMExclusion(InputFileOrganizer.SVMSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
+//					break;
+//			}
 
-			WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().getHeader());
-			String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName;
-			new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
-			analysisTime = getCurrentTime() - startTime;
+//			WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().getHeader());
+//			String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName;
+//			new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+//			analysisTime = getCurrentTime() - startTime;
 
-			WriteScanArrivalProcessedTime(DataProcessor.scanArrivalAndProcessedTimeList);
-			WriteExcludedProteinList(exclusionProfile.getDatabase().getExcludedProteins());
+//			WriteScanArrivalProcessedTime(DataProcessor.scanArrivalAndProcessedTimeList);
+//			WriteExcludedProteinList(exclusionProfile.getDatabase().getExcludedProteins());
 
-#if IGNORE
-			WriteScanArrivalProcessedTime(DataProcessor.spectraNotAdded);
+//#if IGNORE
+//			WriteScanArrivalProcessedTime(DataProcessor.spectraNotAdded);
 			
-			foreach(double[] ignoredSpectra in DataProcessor.spectraNotAdded)
-			{
-				int scanNum = ms2SpectraList[(int)ignoredSpectra[0]-1].getScanNum();
-				exclusionProfile.getSpectraUsed().Add(scanNum);
-			}
-#endif
+//			foreach(double[] ignoredSpectra in DataProcessor.spectraNotAdded)
+//			{
+//				int scanNum = ms2SpectraList[(int)ignoredSpectra[0]-1].getScanNum();
+//				exclusionProfile.getSpectraUsed().Add(scanNum);
+//			}
+//#endif
 
-			if (expType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
-			{
-				List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;
+//			if (expType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+//			{
+//				List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;
 
-				//actual arrival time, xcorr, rtCalc predicted RT, corrected RT, offset
-				WriterClass.writeln("pepSeq\tarrivalTime\txcorr\trtPeak\tcorrectedRT\toffset\trtCalcPredicted\tisPredicted1", writerClassOutputFile.peptideRTTime);
-				foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
-				{
+//				//actual arrival time, xcorr, rtCalc predicted RT, corrected RT, offset
+//				WriterClass.writeln("pepSeq\tarrivalTime\txcorr\trtPeak\tcorrectedRT\toffset\trtCalcPredicted\tisPredicted1", writerClassOutputFile.peptideRTTime);
+//				foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
+//				{
 
-					WriterClass.writeln(observedPeptracker.ToString(), writerClassOutputFile.peptideRTTime);
-				}
-			}
-			//if (expType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
-			//{
-			//	List<double[]> peptideIDRT = ((MachineLearningGuidedExclusion)exclusionProfile).peptideIDRT;
+//					WriterClass.writeln(observedPeptracker.ToString(), writerClassOutputFile.peptideRTTime);
+//				}
+//			}
+//			//if (expType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
+//			//{
+//			//	List<double[]> peptideIDRT = ((MachineLearningGuidedExclusion)exclusionProfile).peptideIDRT;
 
-			//	//actual arrival time, xcorr, rtCalc predicted RT, corrected RT, offset
-			//	WriterClass.writeln("arrivalTime\txcorr\trtPeak\tcorrectedRT\toffset\trtCalcPredicted\tisPredicted1", writerClassOutputFile.peptideRTTime);
-			//	foreach(double[] id in peptideIDRT)
-			//	{
-			//		String str = "";
-			//		foreach(double d in id)
-			//		{
-			//			str = str + "\t" + d;
-			//		}
-			//		str= str.Trim();
-			//		WriterClass.writeln(str, writerClassOutputFile.peptideRTTime);
-			//	}
-			//}
+//			//	//actual arrival time, xcorr, rtCalc predicted RT, corrected RT, offset
+//			//	WriterClass.writeln("arrivalTime\txcorr\trtPeak\tcorrectedRT\toffset\trtCalcPredicted\tisPredicted1", writerClassOutputFile.peptideRTTime);
+//			//	foreach(double[] id in peptideIDRT)
+//			//	{
+//			//		String str = "";
+//			//		foreach(double d in id)
+//			//		{
+//			//			str = str + "\t" + d;
+//			//		}
+//			//		str= str.Trim();
+//			//		WriterClass.writeln(str, writerClassOutputFile.peptideRTTime);
+//			//	}
+//			//}
 
-#if TRACKEXCLUDEDPROTEINFEATURE
-			if(expType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
-			{
-				List<object[]> excludedProteinFeatures= ((MachineLearningGuidedExclusion)exclusionProfile).excludedProteinFeatureList;
-				WriterClass.writeln("Accession\tCardinality\tHighestXCorr\tMeanXCorr\tMedianXCorr\tStDev", writerClassOutputFile.ExcludedSpectraScanNum);
-				foreach (object[] feature in excludedProteinFeatures)
-				{
-					String featureStr = "";
-					foreach(object o in feature)
-					{
-						featureStr = featureStr + o.ToString()+ "\t";
-					}
-					featureStr = featureStr.Trim();
-					WriterClass.writeln(featureStr, writerClassOutputFile.ExcludedSpectraScanNum);
+//#if TRACKEXCLUDEDPROTEINFEATURE
+//			if(expType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
+//			{
+//				List<object[]> excludedProteinFeatures= ((MachineLearningGuidedExclusion)exclusionProfile).excludedProteinFeatureList;
+//				WriterClass.writeln("Accession\tCardinality\tHighestXCorr\tMeanXCorr\tMedianXCorr\tStDev", writerClassOutputFile.ExcludedSpectraScanNum);
+//				foreach (object[] feature in excludedProteinFeatures)
+//				{
+//					String featureStr = "";
+//					foreach(object o in feature)
+//					{
+//						featureStr = featureStr + o.ToString()+ "\t";
+//					}
+//					featureStr = featureStr.Trim();
+//					WriterClass.writeln(featureStr, writerClassOutputFile.ExcludedSpectraScanNum);
 					
-				}
-			}
-#endif
-			WriteUnusedSpectra(exclusionProfile);
-			WriteUsedSpectra(exclusionProfile);
-			PostExperimentProcessing(exclusionProfile, experimentName, experimentNumber);
-			//WriteUnusedSpectra(exclusionProfile);
+//				}
+//			}
+//#endif
+//			//WriteUnusedSpectra(exclusionProfile);
+//			//WriteUsedSpectra(exclusionProfile);
+//			PostExperimentProcessing(exclusionProfile, experimentName, experimentNumber);
+//			//WriteUnusedSpectra(exclusionProfile);
 
-			return exclusionProfile;
-		}
+//			return exclusionProfile;
+//		}
 
 		//actual experiment hooked up to the mass spec
 		public static void RunRealTimeExperiment()
@@ -343,10 +343,10 @@ namespace MealTimeMS.RunTime
 			analysisTime = getCurrentTime() - startTime;
 			try
 			{
-				WriteUnusedSpectra(exclusionProfile);
+				WriteUnusedSpectra(exclusionProfile,1);
 				WriteScanArrivalProcessedTime(DataProcessor.scanArrivalAndProcessedTimeList);
 				WriteScanArrivalProcessedTime(DataProcessor.spectraNotAdded);
-				WriteUsedSpectra(exclusionProfile);
+				WriteUsedSpectra(exclusionProfile,1);
 				WriterClass.writeln("ExclusionList size: " + exclusionProfile.getExclusionList().getExclusionList().Count);
 				WriterClass.writeln("Number of exclusion: " + exclusionProfile.getUnusedSpectra().Count);
 				WriterClass.writeln("Final rtoffset: " + RetentionTime.getRetentionTimeOffset());
@@ -543,7 +543,7 @@ namespace MealTimeMS.RunTime
 			return g;
 		}
 
-		private static void PostExperimentProcessing(ExclusionProfile exclusionProfile, String experimentName, double experimentNumber)
+		private static void PostExperimentProcessing(ExclusionProfile exclusionProfile, String experimentName, int experimentNumber)
 		{
 
 
@@ -566,9 +566,13 @@ namespace MealTimeMS.RunTime
 				String result = exclusionProfile.getPerformanceVector(experimentName, exclusionProfile.getAnalysisType().getDescription()
 					, analysisTime, totalTime, ppr, 12, exclusionProfile);
 				Console.WriteLine(result);
+				Console.WriteLine("Protein groups: " + ppr.getFilteredProteinGroups().Count);
 				WriterClass.writeln(result);
-				//ExtractNumberOfPeptidePerIdentifiedProtein.DoJob(ppr, exclusionProfile, experimentNumber);
+				WriterClass.writeln("Protein groups: "+ ppr.getFilteredProteinGroups().Count) ;
 
+				WriteSpectralAndPeptideCountPerIdentifiedProtein(ppr,exclusionProfile, experimentNumber);
+				WriteUnusedSpectra(exclusionProfile, experimentNumber);
+				WriteUsedSpectra(exclusionProfile, experimentNumber);
 			}
 			else
 			{
@@ -576,18 +580,26 @@ namespace MealTimeMS.RunTime
 			}
 
 		}
-		private static void WriteUsedSpectra(ExclusionProfile exclusionProfile)
+
+		private static void WriteSpectralAndPeptideCountPerIdentifiedProtein(ProteinProphetResult ppr, ExclusionProfile exclusionProfile, int  experimentNum)
 		{
+			ExtractNumberOfPeptidePerIdentifiedProtein.DoJob(ppr, exclusionProfile, experimentNum);
+		}
+
+		private static void WriteUsedSpectra(ExclusionProfile exclusionProfile, int experimentNumber)
+		{
+			StreamWriter sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, String.Format("Experiment{0}_excludedSpectraScanNumber.txt", experimentNumber)));
 			foreach (int scanInd in exclusionProfile.getSpectraUsed())
 			{
-				WriterClass.writeln(scanInd + "", writerClassOutputFile.IncludedSpectraScanNum);
+				sw.WriteLine(scanInd + "");
 			}
 		}
-		private static void WriteUnusedSpectra(ExclusionProfile exclusionProfile)
+		private static void WriteUnusedSpectra(ExclusionProfile exclusionProfile,int experimentNumber)
 		{
+			StreamWriter sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, String.Format("Experiment{0}_excludedSpectraScanNumber.txt", experimentNumber)));
 			foreach (int scanInd in exclusionProfile.getUnusedSpectra())
 			{
-				WriterClass.writeln(scanInd + "", writerClassOutputFile.ExcludedSpectraScanNum);
+				sw.WriteLine(scanInd + "");
 			}
 		}
 		private static void WriteScanArrivalProcessedTime(List<double[]> list)
@@ -607,8 +619,10 @@ namespace MealTimeMS.RunTime
 
 		}
 
-		private static void WriteExcludedProteinList(List<string> excludedProteins)
+		//writes a list of proteins added to the exclusion list
+		private static void WriteExcludedProteinList(ExclusionProfile exclusionProfile)
 		{
+			List<string> excludedProteins = exclusionProfile.getDatabase().getExcludedProteins();
 			String outputFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"ExcludedProteinList.txt");
 			StreamWriter sw = new StreamWriter(outputFile);
 			foreach(String prot in excludedProteins)

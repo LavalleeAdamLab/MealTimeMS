@@ -30,7 +30,7 @@ namespace MealTimeMS.Util.PostProcessing
 	private readonly static String PROTEIN_NAME_TAG = "protein_name=\"";
 
 	/* FILTERING THRESHOLDS */
-	private readonly static double PROTEIN_GROUP_PROBABILITY_THRESHOLD = 0.9;
+	private  static double PROTEIN_GROUP_PROBABILITY_THRESHOLD = 0.9;
 	private readonly static double DEFAULT_PROTEIN_PROBABILITY_THRESHOLD = 0.9;
 	private static double protein_probablity_threshold = 0.0;
 	// private readonly static double PROTEIN_CONFIDENCE_THRESHOLD = 0.9;
@@ -486,12 +486,25 @@ namespace MealTimeMS.Util.PostProcessing
 		return ppf;
 	}
 
-	/*
-	 * Extracts the protein names from proteins not identified with high confidence.
-	 * The fdr_threshold should be a high value (0.2 or higher) for this to be true.
-	 * Extracts the proteins identified above this fdr threshold.
-	 */
-	public static List<String> extractNegativeTrainingSetProteinNames(String proteinProphetFile,
+
+//TODO delete
+	public static List<String> ExtractPositiveProteinGroups(String protXMLFileName)
+		{
+			const double fdr_threshold = 0.01; // 1% false discovery rate
+			double fdr = setFDRThreshold(protXMLFileName, fdr_threshold);
+			PROTEIN_GROUP_PROBABILITY_THRESHOLD = protein_probablity_threshold;
+			List<String> proteinGroupsData = extractProteinGroupsData(protXMLFileName);
+			PROTEIN_GROUP_PROBABILITY_THRESHOLD = 0.9;
+			return proteinGroupsData;
+
+		}
+
+		/*
+		 * Extracts the protein names from proteins not identified with high confidence.
+		 * The fdr_threshold should be a high value (0.2 or higher) for this to be true.
+		 * Extracts the proteins identified above this fdr threshold.
+		 */
+		public static List<String> extractNegativeTrainingSetProteinNames(String proteinProphetFile,
 			 double pr_threshold)
 	{
 		// setting to an fdr of 0.2 didn't work, because the largest fdr is 0.173...

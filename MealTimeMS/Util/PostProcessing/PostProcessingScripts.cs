@@ -74,6 +74,7 @@ namespace MealTimeMS.Util.PostProcessing
 				outputCometFile, InputFileOrganizer.MS2SimulationTestFile, InputFileOrganizer.FASTA_FILE, outputCometFile); //TODO was using MZML instead of MS2
 
 			ProteinProphetResult ppr =RunProteinProphet(outputCometFile, InputFileOrganizer.OutputFolderOfTheRun,keepResults);
+
 			// delete these files if this flag is false
 			//if (!keepResults)
 			//{
@@ -90,7 +91,7 @@ namespace MealTimeMS.Util.PostProcessing
 			Console.WriteLine("Runnign protein prophet, if program doesn't respond for a long time, try pressing a typing a few keys into the command line");
 			String proteinProphetOutput = ProteinProphetSearch(cometFilePath,outputFolder,keepResults);
 			ProteinProphetResult ppr = ProteinProphetEvaluator.getProteinProphetResult(proteinProphetOutput);
-
+			ppr.SetProteinGroup(ProteinProphetEvaluator.ExtractPositiveProteinGroups(proteinProphetOutput));
 			
 			return ppr;
 		}

@@ -13,11 +13,11 @@ namespace MealTimeMS.Tester
 {
 	public static class ExtractNumberOfPeptidePerIdentifiedProtein
 	{
-		public static String DoJob(ProteinProphetResult ppr, ExclusionProfile exclusionProfile, double experimentNum)
+		public static String DoJob(ProteinProphetResult ppr, ExclusionProfile exclusionProfile, int experimentNum)
 		{
 			String outputFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "NumberOfPeptidesPerIdentifiedProtein_"+ experimentNum + ".txt");
 			StreamWriter sw = new StreamWriter(outputFile);
-			sw.WriteLine("Accession\tNumberOfPeptides");
+			sw.WriteLine("Accession\tNumberOfPeptides\tSpectralCount");
 
 			List<String> confidentlyIdentifiedProts =  ppr.getProteinsIdentified();
 			foreach(String accession in confidentlyIdentifiedProts)
@@ -28,7 +28,7 @@ namespace MealTimeMS.Tester
 				{
 					peptidesObserved.Add(pepEvidence.getPeptideSequence());
 				}
-				sw.WriteLine("{0}\t{1}", accession, peptidesObserved.Count);
+				sw.WriteLine("{0}\t{1}\t{2}", accession, peptidesObserved.Count,prot.getPeptideScore().Count);
 			}
 
 			sw.Close();
