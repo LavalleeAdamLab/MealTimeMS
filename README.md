@@ -5,8 +5,8 @@ The current version of this application only supports simulation of data acquisi
 Instructions to running MealTimeMS DEMO with the Example Dataset at the bottom of this README.
 
 ## Compiling MealTimeMS
-*Preprocessor directives: *SIMULATION*
-*Use Preprocessor directive *WIN32* if compiling on a x86 computer
+*Preprocessor directives: *SIMULATION*  
+*Use Preprocessor directive *WIN32* if compiling on a x86 computer  
 Instructions for compiling using [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/), free community version: 
 
 The Program requires the .NET platform. and .NET Framework 4.7.1.
@@ -25,7 +25,7 @@ Compiling MealTimeMS for x64 platform:
 7. In the Build tab, type "SIMULATION" in the text box of "Conditional compilation symboles". Note the file path listed in the "Output path" text box, the compiled MealTimeMS executable can be found in that folder when built. Hit Ctrl+S to save these settings
 8. Right click on the 'Solution MealTimeMS' icon in the solution explorer and Build Solution
 9. If build successful, the MealTimeMS.exe command line application could be found in the output folder aforementioned. 
-eg. The default output path is under "bin\x64\Release\", so the MealTimeMS.exe can be located at [The folder of the MealTimeMS source code folder downloaded from Github]\MealTimeMS\bin\x64\Release*
+eg. The default output path is under "bin\x64\Release\", so the MealTimeMS.exe can be located at [The folder of the MealTimeMS source code folder downloaded from Github] \MealTimeMS\bin\x64\Release*
 
 ___
 
@@ -134,12 +134,20 @@ ___
 3. Download spectral data *MS_QC_120min_PreviouslyAcquiredDataset.raw* from [PRIDE repository](https://www.ebi.ac.uk/pride/archive/projects/PXD017673/private) with login credentials provided in the paper "MealTime-MS: A Machine Learning-Guided Real-Time Mass Spectrometry Analysis for Protein Identification and Efficient Dynamic Exclusion".
 4. Convert *MS_QC_120min_PreviouslyAcquiredDataset.raw* to .ms2 format using *msconvert* from [ProteoWizard](http://proteowizard.sourceforge.net/) or other file conversion software. (See instructions above for [file conversion](https://github.com/LavalleeAdamLab/MealTimeMS/blob/master/README.md#L35))
 5. Open the ExampleDataset folder from this downloaded gitHub repository .
-6. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer. And set the "MS2SimulationSpectraFile = " to the file path of the .ms2 file acquired in step 2. 
+6. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer:
+(In this example below, the ExampleDataSet folder is located directly in the C:\ drive) 
+*FastaFileName = C:\ExampleDataSet\uniprot_SwissProt_Human_1_11_2017.fasta  
+*CometParamsFile = C:\ExampleDataSet\2019.comet.params  
+*TPPBinFolder = C:\TPP\bin\  
+*Set the "MS2SimulationSpectraFile =" to the absolute file path of the .ms2 file acquired in step 2. 
+*RTCalcCoefficient = C:\ExampleDataSet\RTCalc.coeff  
+*LogisRegressionClassiferSavedCoefficient = C:\ExampleDataSet\MS_QC_240min_Trained_ClassifierCoefficient.txt  
+
 7. A trained MealTimeMS logistic regress coefficient file is already provided in the ExampleDataset folder named "MS_QC_240min_Trained_ClassifierCoefficient.txt". It is trained using spectral data from a 240min HEK293 analysis experiment, MS_QC_240min_PreviouslyAcquiredDataset.raw. This file could also be found in the PRIDE repository. (Read *Training the classifier for MealTimeMS* section to reproduce the training process. However it is not required to run this demo)
 8. Specify the desired exclusion method (0,1,2, or 3) under the "ExclusionMethod" parameter in the MealTimeMS.example.params file  
 9. Start simulation of an data acquisition experiment with MealTimeMS using
 
-`<MealTimeMS.exe> -run -r 100 <workPlaceDirectory> <MealTimeMS.example.params>`
+`<MealTimeMS.exe> -run -r 500 <workPlaceDirectory> <MealTimeMS.example.params>`
 ___
 
 For any questions regarding compiling or running MealTimeMS, contact Yun-En Chung at ychun060@uottawa.ca
