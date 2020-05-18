@@ -133,12 +133,12 @@ ___
 3. Download spectral data *MS_QC_120min_PreviouslyAcquiredDataset.raw* from [PRIDE repository](https://www.ebi.ac.uk/pride/archive/projects/PXD017673/private) with login credentials provided in the paper "MealTime-MS: A Machine Learning-Guided Real-Time Mass Spectrometry Analysis for Protein Identification and Efficient Dynamic Exclusion".
 4. Convert *MS_QC_120min_PreviouslyAcquiredDataset.raw* to .ms2 format using *msconvert* from [ProteoWizard](http://proteowizard.sourceforge.net/) or other file conversion software. (See instructions above for [file conversion](https://github.com/LavalleeAdamLab/MealTimeMS/blob/master/README.md#L35))
 5. Open the ExampleDataset folder from this downloaded gitHub repository .
-6. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer:
-(In this example below, the ExampleDataSet folder is located directly in the C:\ drive) 
+6. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer:  
+(In this example below, the ExampleDataSet folder is located directly in the C:\ drive)  
 *FastaFileName = C:\ExampleDataSet\uniprot_SwissProt_Human_1_11_2017.fasta  
 *CometParamsFile = C:\ExampleDataSet\2019.comet.params  
 *TPPBinFolder = C:\TPP\bin\  
-*Set the "MS2SimulationSpectraFile =" to the absolute file path of the .ms2 file acquired in step 2. 
+*Set the "MS2SimulationSpectraFile =" to the absolute file path of the .ms2 file acquired in step 2.  
 *RTCalcCoefficient = C:\ExampleDataSet\RTCalc.coeff  
 *LogisRegressionClassiferSavedCoefficient = C:\ExampleDataSet\MS_QC_240min_Trained_ClassifierCoefficient.txt  
 
