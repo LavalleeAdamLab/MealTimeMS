@@ -5,8 +5,6 @@ The current version of this application only supports simulation of data acquisi
 Instructions to running MealTimeMS DEMO with the Example Dataset at the bottom of this README.
 
 ## Compiling MealTimeMS
-*Preprocessor directives: *SIMULATION*  
-*Use Preprocessor directive *WIN32* if compiling on a x86 computer  
 Instructions for compiling using [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/), free community version: 
 
 The Program requires the .NET platform. and .NET Framework 4.7.1.
@@ -25,8 +23,9 @@ Compiling MealTimeMS for x64 platform:
 7. In the Build tab, type "SIMULATION" in the text box of "Conditional compilation symboles". Note the file path listed in the "Output path" text box, the compiled MealTimeMS executable can be found in that folder when built. Hit Ctrl+S to save these settings
 8. Right click on the 'Solution MealTimeMS' icon in the solution explorer and Build Solution
 9. If build successful, the MealTimeMS.exe command line application could be found in the output folder aforementioned. 
-eg. The default output path is under "bin\x64\Release\", so the MealTimeMS.exe can be located at [The folder of the MealTimeMS source code folder downloaded from Github] \MealTimeMS\bin\x64\Release*
+eg. The default output path is under "bin\x64\Release\", so the MealTimeMS.exe can be located at [The folder of the MealTimeMS source code folder downloaded from Github] \MealTimeMS\bin\x64\Release*  
 
+Note: Use Preprocessor directive "*SIMULATION,WIN32*" in step 7 if compiling on a x86 computer  
 ___
 
 ## Files and software required to run MealTimeMS
