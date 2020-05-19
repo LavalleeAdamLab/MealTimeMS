@@ -129,12 +129,13 @@ AmountPerturbation: A double value could be provided to add a perturbation aroun
 
 ___
 ## Running MealTimeMS with the Example Dataset
-1. To compile MealTimeMS, read and follow the "*Compiling MealTimeMS*" section of this README.md. Alternatively, an already-compiled version of MealTimeMS.exe is located in MealTimeMS/MealTimeMS/bin/x64/Release/ folder of this repository (A download of the whole repository is still required).
-2. Download and install [Trans-Proteomic Pipeline](http://tools.proteomecenter.org/software.php)(TPP) and [.Net Framework Runtime 4.7.1](https://dotnet.microsoft.com/download/dotnet-framework/net471).
-3. Download spectral data *MS_QC_120min_PreviouslyAcquiredDataset.raw* from [PRIDE repository](https://www.ebi.ac.uk/pride/archive/projects/PXD017673/private) with login credentials provided in the paper "MealTime-MS: A Machine Learning-Guided Real-Time Mass Spectrometry Analysis for Protein Identification and Efficient Dynamic Exclusion".
-4. Convert *MS_QC_120min_PreviouslyAcquiredDataset.raw* to .ms2 format using *msconvert* from [ProteoWizard](http://proteowizard.sourceforge.net/) or other file conversion software. (See instructions above for [file conversion](https://github.com/LavalleeAdamLab/MealTimeMS/blob/master/README.md#L35))
-5. Open the ExampleDataset folder from this downloaded gitHub repository .
-6. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer:  
+1. Download or clone this repository.
+2. To compile MealTimeMS, read and follow the "*Compiling MealTimeMS*" section of this README.md. Alternatively, an already-compiled version of MealTimeMS.exe is located in MealTimeMS/MealTimeMS/bin/x64/Release/ folder of this repository (an installation of [.Net Framework Runtime 4.7.1](https://dotnet.microsoft.com/download/dotnet-framework/net471) is required with the latter option).
+3. Download and install [Trans-Proteomic Pipeline](http://tools.proteomecenter.org/software.php)(TPP).
+4. Download spectral data *MS_QC_120min_PreviouslyAcquiredDataset.raw* from [PRIDE repository](https://www.ebi.ac.uk/pride/archive/projects/PXD017673/private) with login credentials provided in the paper "MealTime-MS: A Machine Learning-Guided Real-Time Mass Spectrometry Analysis for Protein Identification and Efficient Dynamic Exclusion".
+5. Convert *MS_QC_120min_PreviouslyAcquiredDataset.raw* to .ms2 format using *msconvert* from [ProteoWizard](http://proteowizard.sourceforge.net/) or other file conversion software. (See instructions above for [file conversion](https://github.com/LavalleeAdamLab/MealTimeMS/blob/master/README.md#L35))
+6. Open the ExampleDataset folder from this downloaded gitHub repository .
+7. In the MealTimeMS.example.params file, replace all the file paths that corresponds to the various files in the ExampleDataset folder with their respective absolute file path on your computer:  
 (In this example below, the ExampleDataSet folder is located directly in the C:\ drive)  
 *FastaFileName = C:\ExampleDataSet\uniprot_SwissProt_Human_1_11_2017.fasta  
 *CometParamsFile = C:\ExampleDataSet\2019.comet.params  
@@ -143,9 +144,9 @@ ___
 *RTCalcCoefficient = C:\ExampleDataSet\RTCalc.coeff  
 *LogisRegressionClassiferSavedCoefficient = C:\ExampleDataSet\MS_QC_240min_Trained_ClassifierCoefficient.txt  
 
-7. A trained MealTimeMS logistic regress coefficient file is already provided in the ExampleDataset folder named "MS_QC_240min_Trained_ClassifierCoefficient.txt". It is trained using spectral data from a 240min HEK293 analysis experiment, MS_QC_240min_PreviouslyAcquiredDataset.raw. This file could also be found in the PRIDE repository. (Read *Training the classifier for MealTimeMS* section to reproduce the training process. However it is not required to run this demo)
-8. Specify the desired exclusion method (0,1,2, or 3) under the "ExclusionMethod" parameter in the MealTimeMS.example.params file  
-9. Start simulation of an data acquisition experiment with MealTimeMS using
+8. A trained MealTimeMS logistic regress coefficient file is already provided in the ExampleDataset folder named "MS_QC_240min_Trained_ClassifierCoefficient.txt". It is trained using spectral data from a 240min HEK293 analysis experiment, MS_QC_240min_PreviouslyAcquiredDataset.raw. This file could also be found in the PRIDE repository. (Read *Training the classifier for MealTimeMS* section to reproduce the training process. However it is not required to run this demo)
+9. Specify the desired exclusion method (0,1,2, or 3) under the "ExclusionMethod" parameter in the MealTimeMS.example.params file  
+10. Start simulation of an data acquisition experiment with MealTimeMS using
 
 `<MealTimeMS.exe> -run -r 500 <workPlaceDirectory> <MealTimeMS.example.params>`
 ___
