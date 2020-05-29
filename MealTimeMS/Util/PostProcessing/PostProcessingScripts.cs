@@ -67,18 +67,23 @@ namespace MealTimeMS.Util.PostProcessing
 		public static ProteinProphetResult postProcessing(ExclusionProfile exclusionProfile, String experimentName,
 			Boolean keepResults)
 		{
-			String outputCometFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,
-				   GlobalVar.experimentName + "_partial" + InputFileOrganizer.PepXMLSuffix);
+			String partialCometFileOutputFolder = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "PartialCometFile");
+			if (!Directory.Exists(partialCometFileOutputFolder))
+			{
+				Directory.CreateDirectory(partialCometFileOutputFolder);
+			}
+			String outputCometFile = Path.Combine(partialCometFileOutputFolder,
+				   experimentName + "_partial" + InputFileOrganizer.PepXMLSuffix);
 		
 			PartialPepXMLWriter.writePartialPepXMLFile(InputFileOrganizer.OriginalCometOutput, exclusionProfile.getSpectraUsed(),
 				outputCometFile, InputFileOrganizer.MS2SimulationTestFile, InputFileOrganizer.FASTA_FILE, outputCometFile); //TODO was using MZML instead of MS2
 
 			ProteinProphetResult ppr =RunProteinProphet(outputCometFile, InputFileOrganizer.OutputFolderOfTheRun,keepResults);
 
+			//PostProcessingScripts.deleteFile(outputCometFile);
 			// delete these files if this flag is false
 			//if (!keepResults)
 			//{
-			//	PostProcessingScripts.deleteFile(outputCometFile);
 				
 			//}
 
@@ -100,10 +105,11 @@ namespace MealTimeMS.Util.PostProcessing
 			String peptideProphetOutput = PostProcessingScripts.executePeptideProphet(outputFolder, cometFilePath);
 			String proteinProphetOutput = PostProcessingScripts.executeProteinProphet(outputFolder,
 					peptideProphetOutput);
+			//PostProcessingScripts.deleteFile(peptideProphetOutput);
 			// delete these files if this flag is false
 			if (!keepResults)
 			{
-				PostProcessingScripts.deleteFile(peptideProphetOutput);
+				
 				PostProcessingScripts.deleteFile(proteinProphetOutput);
 			}
 			return proteinProphetOutput;

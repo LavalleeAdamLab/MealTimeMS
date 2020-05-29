@@ -51,10 +51,16 @@ namespace MealTimeMS
     {        
         static void Tester()
         {
+			//ProteinProphetResultTester.DoJob();
 			//ConfidentProteinGroupData.DoJob();
 			String workDir = "C:\\Coding\\2019LavalleeLab\\temp2";
 			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(workDir) + "\\");
 			WriterClass.ExperimentOutputSetUp();
+			CometSingleSearchTester.CometSingleSearchTest();
+			ProteinProphetResultTester.DoJob();
+
+			//ProteinSpectraVSExcludedSpectraGenerator.DoJob();
+			//ExtractPPRFromProteinProphetResult.DoJob();
 			//JunkTester.DoJob();
 			//Console.WriteLine("Logistic Regression Training");
 			//InputFileOrganizer.SetWorkDir(str);
@@ -67,9 +73,9 @@ namespace MealTimeMS
 			//IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel();
 			//IdentificationLogisticRegressionTrainer.DoJob();
 			//ExcludedProteinOverlapAnalyzer.DoJob();
-			IdentificationLogisticRegressionTrainer.TestLRModel("C:\\Coding\\2019LavalleeLab\\temp2\\Output\\ModdedTraining_PreExFile_output\\MS_QC_240min_extractedFeatures_positiveAndNonPositive_ClassifierCoefficient.txt", 
-				"C:\\Coding\\2019LavalleeLab\\temp2\\Output\\ModdedTraining_PreExFile_output\\MS_QC_240min_extractedFeatures_positiveAndNonPositive.tsv",
-				"C:\\Coding\\2019LavalleeLab\\temp2\\Output\\Modded_120FeatureExtraction_output\\MS_QC_120min_extractedFeatures_positiveAndNonPositive_NoDecoy.tsv");
+			//IdentificationLogisticRegressionTrainer.TestLRModel("C:\\Coding\\2019LavalleeLab\\temp2\\Output\\ModdedTraining_PreExFile_output\\MS_QC_240min_extractedFeatures_positiveAndNonPositive_ClassifierCoefficient.txt", 
+			//"C:\\Coding\\2019LavalleeLab\\temp2\\Output\\ModdedTraining_PreExFile_output\\MS_QC_240min_extractedFeatures_positiveAndNonPositive.tsv",
+			//"C:\\Coding\\2019LavalleeLab\\temp2\\Output\\Modded_120FeatureExtraction_output\\MS_QC_120min_extractedFeatures_positiveAndNonPositive_NoDecoy.tsv");
 			//ProteinSpectraVSExcludedSpectraGenerator.FilterForConfidentlyIdentifiedProteinOnly();
 			Console.WriteLine("program finished, press any key to continute");
             Console.ReadKey();

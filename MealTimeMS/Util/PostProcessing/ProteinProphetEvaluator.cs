@@ -21,16 +21,17 @@ namespace MealTimeMS.Util.PostProcessing
 	private readonly static String PEPTIDE_START_TAG = "<peptide ";
 	private readonly static String PEPTIDE_END_TAG = "</peptide>";
 	private readonly static String PROBABILITY_TAG = "probability=\"";
+	private readonly static String PROBABILITY_ErrorTable_TAG = "min_prob=\"";
 	private readonly static String PEPTIDE_SEQUENCE_TAG = "peptide_sequence=\"";
 	private readonly static String CONFIDENCE_TAG = "confidence=\"";
 	private readonly static String NUM_DISTINCT_PEPTIDES_TAG = "total_number_distinct_peptides=\"";
 	private readonly static String END_TAG = "\"";
 
-	private readonly static String FDR_TAG = "false_positive_error_rate=\"";
+		private readonly static String FDR_TAG = "<error_point error=\"";     //"false_positive_error_rate=\"";
 	private readonly static String PROTEIN_NAME_TAG = "protein_name=\"";
 
 	/* FILTERING THRESHOLDS */
-	private  static double PROTEIN_GROUP_PROBABILITY_THRESHOLD = 0.9;
+	private  static double PROTEIN_GROUP_PROBABILITY_THRESHOLD = 0.9;//0.9
 	private readonly static double DEFAULT_PROTEIN_PROBABILITY_THRESHOLD = 0.9;
 	private static double protein_probablity_threshold = 0.0;
 	// private readonly static double PROTEIN_CONFIDENCE_THRESHOLD = 0.9;
@@ -75,11 +76,22 @@ namespace MealTimeMS.Util.PostProcessing
 		Double.TryParse(stringValue, out value);
 		return value;
 	}
-
-	/*
-	 * Extracts the confidence value of a protein identification
+		/*
+	 * Extracts the probability from error table
 	 */
-	private static double extractConfidence(String line)
+		private static double extractProbability_ERRORTable(String line)
+		{
+			double value = 0.0;
+			int beginIndex = line.IndexOf(PROBABILITY_ErrorTable_TAG) + PROBABILITY_ErrorTable_TAG.Length;
+			int endIndex = line.IndexOf(END_TAG, beginIndex);
+			String stringValue = line.Substring(beginIndex, endIndex - beginIndex);
+			Double.TryParse(stringValue, out value);
+			return value;
+		}
+		/*
+		 * Extracts the confidence value of a protein identification
+		 */
+		private static double extractConfidence(String line)
 	{
 		double value = -1.0;
 		int beginIndex = line.IndexOf(CONFIDENCE_TAG) + CONFIDENCE_TAG.Length;
@@ -165,6 +177,7 @@ namespace MealTimeMS.Util.PostProcessing
 					proteinGroupInformation += (line + "\n");
 
 					// only keep if above probability threshold
+					//TODO >=
 					if (probabilityValue > PROTEIN_GROUP_PROBABILITY_THRESHOLD)
 					{
 						proteinGroups.Add(proteinGroupInformation);
@@ -316,10 +329,12 @@ namespace MealTimeMS.Util.PostProcessing
 
 					int numPeptides = extractNumPeptides(proteinInformation);
 
-					// only include if it passes these thresholds
-					// if ((probability > PROTEIN_PROBABILITY_THRESHOLD) && (confidence >
-					// PROTEIN_CONFIDENCE_THRESHOLD)&& (numPeptides >=
-					// NUM_DISTINCT_PEPTIDES_THRESHOLD)) {
+						// only include if it passes these thresholds
+						// if ((probability > PROTEIN_PROBABILITY_THRESHOLD) && (confidence >
+						// PROTEIN_CONFIDENCE_THRESHOLD)&& (numPeptides >=
+						// NUM_DISTINCT_PEPTIDES_THRESHOLD)) {
+					
+					//TODO probability >= protein_probablity_threshold
 					if ((probability > protein_probablity_threshold)
 							&& (numPeptides >= NUM_DISTINCT_PEPTIDES_THRESHOLD))
 					{
@@ -438,7 +453,7 @@ namespace MealTimeMS.Util.PostProcessing
 					count++;
 					// you want the highest probability that is under the fdr threshold
 					double fdr = extractFDR(line);
-					double prob = extractProbability(line);
+					double prob = extractProbability_ERRORTable(line);
 					if (fdr <= fdr_threshold && fdr > max_fdr)
 					{ //josh changed this from < to <=
 						max_fdr = fdr;
@@ -469,6 +484,8 @@ namespace MealTimeMS.Util.PostProcessing
 		return max_fdr;
 	}
 
+
+
 	/*
 	 * Returns the ProteinProphetFile... this gives us a query-able object which can
 	 * determine if a protein accession was identified by an experiment, as well as
@@ -483,18 +500,23 @@ namespace MealTimeMS.Util.PostProcessing
 		Dictionary<String, List<String>> proteinsToPeptides = extractPeptides(filteredProteinsData);
 		ProteinProphetFile ppf = new ProteinProphetFile(protXMLFileName, proteinsToPeptides, fdr,
 				protein_probablity_threshold);
-		return ppf;
+
+			ppf.getProteinProphetResult().SetProteinGroup(ProteinProphetEvaluator.ExtractPositiveProteinGroups(protXMLFileName));
+			return ppf;
 	}
 
-
+	
 //TODO delete
 	public static List<String> ExtractPositiveProteinGroups(String protXMLFileName)
 		{
 			const double fdr_threshold = 0.01; // 1% false discovery rate
 			double fdr = setFDRThreshold(protXMLFileName, fdr_threshold);
+			double temp = PROTEIN_GROUP_PROBABILITY_THRESHOLD;
 			PROTEIN_GROUP_PROBABILITY_THRESHOLD = protein_probablity_threshold;
-			List<String> proteinGroupsData = extractProteinGroupsData(protXMLFileName);
+			//TODO remove
 			PROTEIN_GROUP_PROBABILITY_THRESHOLD = 0.9;
+			List<String> proteinGroupsData = extractProteinGroupsData(protXMLFileName);
+			PROTEIN_GROUP_PROBABILITY_THRESHOLD = temp;
 			return proteinGroupsData;
 
 		}
@@ -525,6 +547,7 @@ namespace MealTimeMS.Util.PostProcessing
 	public static ProteinProphetResult getProteinProphetResult(String protXMLFileName)
 	{
 		ProteinProphetFile ppf = processProteinProphetFile(protXMLFileName);
+
 		return ppf.getProteinProphetResult();
 	}
 

@@ -30,7 +30,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 		Dictionary<string, double> rtCalcPredictedRT;
 		//ITransformer lrModel; //deprecated for now, this is ML.NET, not currently in use, using Accord.Net
 		protected  LogisticRegression lrAccord; // this is Accord.Net's classifier
-
+		
 		public MachineLearningGuidedExclusion(String AccordSavedWeight, Database _database,
                  double _ppmTolerance, double _retentionTimeWindowSize) : this(Loader.LoadAccordNetLogisticRegressionModel(AccordSavedWeight), _database,
                     _ppmTolerance, _retentionTimeWindowSize)
@@ -83,7 +83,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
                 performanceEvaluator.countMS2UnidentifiedAnalyzed();
                 return;
             }
-
+			
             Peptide pep = getPeptideFromIdentification(id); // id is null, it already returned
 
 			//log.Info("Peptide Observed Time: {0}\tPredicted Time: {1} -----------------", id.getScanTime(),pep.getRetentionTime().getRetentionTimeStart());

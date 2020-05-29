@@ -24,8 +24,8 @@ namespace MealTimeMS
 
             sw = new StreamWriter(filePath+"_Summary.txt");
 			sw2 = new StreamWriter(filePath+"_ProcessTime_output.txt");
-			sw3 = new StreamWriter(filePath + "_ExcludedSpectra.txt");
-			sw4 = new StreamWriter(filePath + "_IncludedSpectra.txt");
+			//sw3 = new StreamWriter(filePath + "_ExcludedSpectra.txt");
+			//sw4 = new StreamWriter(filePath + "_IncludedSpectra.txt");
 			sw5 = new StreamWriter(filePath + "_PeptideRTTime.txt");
         }
 
@@ -127,8 +127,8 @@ namespace MealTimeMS
         {
             sw.Close();
             sw2.Close();
-			sw3.Close();
-			sw4.Close();
+			//sw3.Close();
+			//sw4.Close();
 			sw5.Close();
 
 		}
