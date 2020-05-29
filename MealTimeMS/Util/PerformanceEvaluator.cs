@@ -454,7 +454,7 @@ namespace MealTimeMS.Util
 			List<String> inProgramExcludedProteins = exclusionProfile.getDatabase().getExcludedProteins();
 			int proteinOverlap_inProgramExcluded_vs_NoExclusion = compareProteins(inProgramExcludedProteins, proteinsIdentifiedByNoExclusion);
 			ChangeValue(Header.NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins, proteinOverlap_inProgramExcluded_vs_NoExclusion);
-
+			ChangeValue(Header.ProteinGroupsIdentified, ppr.getFilteredProteinGroups().Count);
 
 		}
 
@@ -718,6 +718,7 @@ namespace MealTimeMS.Util
 			{Header.numDB, typeof( DataTypes.DoubleType) },
 			{Header.prThr, typeof( DataTypes.DoubleType) },
 			{Header.NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins, typeof( DataTypes.IntegerType) },
+			{Header.ProteinGroupsIdentified, typeof( DataTypes.IntegerType) }
 
 		};
 
@@ -839,8 +840,8 @@ namespace MealTimeMS.Util
 		xCorr,
 		numDB,
 		prThr,
-		NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins
-
+		NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins,
+		ProteinGroupsIdentified
     }
 
 }

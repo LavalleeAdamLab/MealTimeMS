@@ -154,7 +154,9 @@ namespace MealTimeMS.ExclusionProfiles
                 log.Debug("MS2 scan was identified.");
                 log.Debug(id);
 				performanceEvaluator.countMS2Identified();
-            }
+				PSMTSVReaderWriter.WritePSM(id);
+
+			}
             else
             {
                 // scan cannot be matched to a peptide

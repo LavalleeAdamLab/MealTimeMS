@@ -399,6 +399,7 @@
     <Compile Include="Tester\ExtractNumberOfPeptidePerIdentifiedProtein.cs" />
     <Compile Include="Tester\JunkTester.cs" />
     <Compile Include="Tester\Junk\ConfidentProteinGroupData.cs" />
+    <Compile Include="Tester\Junk\ExtractPPRFromProteinProphetResult.cs" />
     <Compile Include="Tester\Junk\ms1Counter.cs" />
     <Compile Include="Tester\Junk\ProcessedScanMS2Parser.cs" />
     <Compile Include="Tester\Junk\ProteinSpectraVSExcludedSpectraGenerator.cs" />

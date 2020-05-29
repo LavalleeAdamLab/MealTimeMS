@@ -24,7 +24,6 @@ namespace MealTimeMS.Util
 		static double dPeptideMassLow;
 		static double dPeptideMassHigh;
 		static Regex rgx = new Regex("[^A-Z -]");
-
 		static private Dictionary<String, int> failedStatistic;
 		static String paramsFile;
 		static String dbPath;
@@ -36,6 +35,7 @@ namespace MealTimeMS.Util
 			paramsFile = paramsPath;
 
 			SearchMgr = new CometSearchManagerWrapper(paramsPath);
+			//SearchMgr = new CometSearchManagerWrapper();
 			Console.WriteLine("Comet Search Manager initialized");
 			SearchSettings searchParams = new SearchSettings();
 
@@ -69,6 +69,7 @@ namespace MealTimeMS.Util
 			failedStatistic.Add("NoMatch", 0);
 			failedStatistic.Add("LengthTooShort", 0);
 			failedStatistic.Add("DecoyNoParent", 0);
+			
 		}
 
 		//Reasons unclear, but sometimes comet returns all searches with xCorr of 9.9E-9 and with the wrong sequence

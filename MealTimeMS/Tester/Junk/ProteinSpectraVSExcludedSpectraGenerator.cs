@@ -25,11 +25,15 @@ namespace MealTimeMS.Tester.Junk
 
 		public static void DoJob()
 		{
+			for(int i = 1; i <= 10; i++)
+			{
 
-			pepXMLFile = InputFileOrganizer.OriginalCometOutput;
+			
+			pepXMLFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\PreComputedFiles\\MS_QC_120min.pep.xml";
 
-				excludedScanNumFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\Output\\MLGE_Golden_nonRTCheat_excludedSpectraIncluded.txt_output\\MLGE_Golden_nonRTCheat_excludedSpectraIncluded.txt_ExcludedSpectra.txt";
-				outputFile = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\Output\\MLGE_Golden_nonRTCheat_excludedSpectraIncluded.txt_output\\spectravsProtein.txt";
+			excludedScanNumFile = String.Format("C:\\Coding\\2019LavalleeLab\\temp2\\Output\\Random_MLGEGolden_rtCheat\\ExcludedSpectra\\Experiment{0}_excludedSpectraScanNumber.txt", i);
+			//excludedScanNumFile = ("C:\\Coding\\2019LavalleeLab\\ProteinProphetNewFilter\\ExclusionExplorer\\ConfidentlyIdentifiedProteinAndProteinGroupNotUpToDateSoOverlapWillBeWrongAsWell\\MLGE_rtCheat_ProtKept\\ExcludedSpectra\\Experiment6_excludedSpectraScanNumber.txt");
+			outputFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, i+"ProteinVsSpectraExcluded.txt");
 				StreamReader sr = new StreamReader(pepXMLFile);
 				String line = sr.ReadLine();
 				Dictionary<String, ProteinFromPepXML> ls = new Dictionary<String, ProteinFromPepXML>();
@@ -104,7 +108,7 @@ namespace MealTimeMS.Tester.Junk
 
 					line = sr.ReadLine();
 				}
-
+				sr.Close();
 				StreamWriter sw = new StreamWriter(outputFile);
 				sw.WriteLine("Accession\tTotalSpectra\tExcludedSpectra");
 				int counter = 0;
@@ -121,8 +125,8 @@ namespace MealTimeMS.Tester.Junk
 				}
 				sw.Close();
 				Console.WriteLine("Results written to {0}, a total of {1} proteins", outputFile, counter);
-			
 
+			}
 		}
 
 		public static void FilterForConfidentlyIdentifiedProteinOnly()

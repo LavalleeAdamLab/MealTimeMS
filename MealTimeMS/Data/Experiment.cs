@@ -15,7 +15,8 @@ namespace MealTimeMS.Data
 		public String experimentName;
 		public int experimentNumber;
 		public double experimentStartTime;
-		public double experimentTotalDuration;
+		public double analysisTime;
+		public double totalRunTime;
 		public ProteinProphetResult ppr;
 
 		public Experiment(String _experimentName, int _experimentNum, ExclusionProfileEnum _exType)
@@ -28,6 +29,11 @@ namespace MealTimeMS.Data
 		public Experiment(ExclusionProfile _exclusionProfile, String _experimentName, int _experimentNum, ExclusionProfileEnum _exType):this(_experimentName,_experimentNum,_exType)
 		{
 			exclusionProfile = _exclusionProfile;
+		}
+
+		public Experiment(ExclusionProfile _exclusionProfile, String _experimentName, int _experimentNum, ExclusionProfileEnum _exType, double startTime) : this(_exclusionProfile,_experimentName, _experimentNum, _exType)
+		{
+			experimentStartTime = startTime;
 		}
 
 	}
