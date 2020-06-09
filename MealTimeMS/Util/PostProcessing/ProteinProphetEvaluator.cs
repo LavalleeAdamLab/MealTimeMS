@@ -27,7 +27,8 @@ namespace MealTimeMS.Util.PostProcessing
 	private readonly static String NUM_DISTINCT_PEPTIDES_TAG = "total_number_distinct_peptides=\"";
 	private readonly static String END_TAG = "\"";
 
-		private readonly static String FDR_TAG = "<error_point error=\"";     //"false_positive_error_rate=\"";
+		//private readonly static String FDR_TAG = "<error_point error=\"";     //"false_positive_error_rate=\"";
+		private readonly static String FDR_TAG = "false_positive_error_rate=\"";     //;
 	private readonly static String PROTEIN_NAME_TAG = "protein_name=\"";
 
 	/* FILTERING THRESHOLDS */
@@ -453,7 +454,8 @@ namespace MealTimeMS.Util.PostProcessing
 					count++;
 					// you want the highest probability that is under the fdr threshold
 					double fdr = extractFDR(line);
-					double prob = extractProbability_ERRORTable(line);
+					//double prob = extractProbability_ERRORTable(line);
+					double prob = extractProbability(line);
 					if (fdr <= fdr_threshold && fdr > max_fdr)
 					{ //josh changed this from < to <=
 						max_fdr = fdr;

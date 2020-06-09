@@ -457,6 +457,7 @@
     <Content Include="Tools\comet.2019011.win64.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Tools\comet.2019015.win32.exe" />
     <Content Include="Tools\RTCalc.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

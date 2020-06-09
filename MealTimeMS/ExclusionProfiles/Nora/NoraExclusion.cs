@@ -72,11 +72,11 @@ namespace MealTimeMS.ExclusionProfiles.Nora
 
 		Double xCorr = id.getXCorr();
 			Double dCN = id.getDeltaCN();
-		pep.addScore(xCorr, xCorrThreshold, dCN);
+		pep.addScore(xCorr, xCorrThreshold, dCN); // updates the peptide score and numDB for each parent protein of the peptide
 		performanceEvaluator.evaluateAnalysis(exclusionList, pep);
 
 		// add the peptide to the exclusion list if it is over the xCorr threshold
-		if ((xCorr > xCorrThreshold))
+		if ((xCorr > 2.5))
 		{
 			performanceEvaluator.countPeptidesExcluded();
 			log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
@@ -86,6 +86,8 @@ namespace MealTimeMS.ExclusionProfiles.Nora
 			// from the predicted only if it passes this threshold
 			calibrateRetentionTime(pep);
 		}
+
+
 		// add all of the other peptides belonging to the parent protein(s) if numDB
 		// threshold is passed
 		foreach (Protein parentProtein in pep.getProteins())

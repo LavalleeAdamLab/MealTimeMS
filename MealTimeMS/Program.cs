@@ -51,6 +51,7 @@ namespace MealTimeMS
     {        
         static void Tester()
         {
+			ProteinProphetResultTester.DoJob();
 			//ProteinProphetResultTester.DoJob();
 			//ConfidentProteinGroupData.DoJob();
 			String workDir = "C:\\Coding\\2019LavalleeLab\\temp2";

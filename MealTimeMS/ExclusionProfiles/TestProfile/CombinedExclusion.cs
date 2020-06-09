@@ -52,7 +52,7 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 			// exclude this peptide for analysis if the xCorr score is above a threshold
 	
 			// add the peptide to the exclusion list if it is over the xCorr threshold
-			if ((xCorr > XCORR_THRESHOLD))
+			if ((xCorr > 2.5))
 			{
 				performanceEvaluator.countPeptidesExcluded();
 				log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");

@@ -33,13 +33,13 @@ namespace MealTimeMS.Util
 		public static String CometQualityCheckFile = "";
 
 		//Tools
-		public static String RTCalc = "Tools\\RTCalc.exe";
+		public static String RTCalc = "Tools\\RTCalc_2019.exe";
 		public static String RTCalcCoeff = "";
 		//public const String RTCalc = "Tools\\RTCalc_2019.exe";
 		//public const String RTCalcCoeff = "Tools\\rtcalc_120minTraining.coeff";
 		public static String ChainSaw = "";
 		//public static String ChainSaw = "Tools\\chainsaw.exe";
-		public static String CometExe = "Tools\\comet.2019011.win32.exe";
+		public static String CometExe = "Tools\\comet.2019015.win32.exe";
 		public static String TPPBinFolder = "C:\\TPP\\bin\\";
 		public static String XInteract = TPPBinFolder + "xinteract.exe";
 		public static String ProteinProphet = TPPBinFolder + "ProteinProphet.exe";
