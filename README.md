@@ -5,7 +5,8 @@ The current version of this application only supports simulation of data acquisi
 Instructions to running MealTimeMS DEMO with the Example Dataset at the bottom of this README.
 
 ## Compiling MealTimeMS
-Instructions for compiling using [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/), free community version: 
+Note: A compiled version of MealTimeMS is under MealTimeMS/bin/x64/Release. 
+Below contains the instructions for building and compiling from source corde using [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/), free community version: 
 
 The Program requires the .NET platform. and .NET Framework 4.7.1.
 When installing visual studio for the first time (Or re-open the Visual Studio Installer), click on "Modify" in the Visual Studio Installer screen, 
