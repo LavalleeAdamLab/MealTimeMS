@@ -15,7 +15,12 @@ namespace MealTimeMS.Tester
 	{
 		public static String DoJob(ProteinProphetResult ppr, ExclusionProfile exclusionProfile, int experimentNum)
 		{
-			String outputFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "NumberOfPeptidesPerIdentifiedProtein_"+ experimentNum + ".txt");
+			String outputFolder = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "PedtideCountAndSpectralCountPerProtein");
+			if (!Directory.Exists(outputFolder))
+			{
+				Directory.CreateDirectory(outputFolder);
+			}
+			String outputFile = Path.Combine(outputFolder,  "NumberOfPeptidesPerIdentifiedProtein_"+ experimentNum + ".txt");
 			StreamWriter sw = new StreamWriter(outputFile);
 			sw.WriteLine("Accession\tNumberOfPeptides\tSpectralCount");
 

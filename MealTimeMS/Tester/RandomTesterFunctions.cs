@@ -11,7 +11,8 @@ namespace MealTimeMS.Tester
 {
 	public static class RandomTesterFunctions
 	{
-
+			//file should have a line of header 
+			//rt in minutes
 		public static void LoadAndReplaceRT(ref Dictionary<string, double> pepRTList)
 		{
 			//String file = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\NoExclusionWithRT.txt_PeptideRTTime.txt";

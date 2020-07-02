@@ -13,7 +13,15 @@ namespace MealTimeMS.Tester
 			String param = "C:\\Coding\\2019LavalleeLab\\temp2\\ExampleDataSet\\2019.comet.params";
 
 			CometSingleSearch.InitializeComet(idx, param);
-			CometSingleSearch.QualityCheck();
+			//	CometSingleSearch.QualityCheck();
+
+			String ms2File = "C:\\temp\\comet_2019015\\temp\\MS_QC_120min_partial_modified.ms2";
+			MZMLFile ms2 = Loader.parseMS2File(ms2File);
+			var x = ms2.getSpectraArray()[0];
+			IDs idd = null; 
+			CometSingleSearch.Search(x,out idd);
+			Console.WriteLine(idd.ToString());
+
 			Program.ExitProgram(1);
             String dataRoot = "C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\MealTimeMS_APITestRun\\Data\\";
             String outputRoot = "C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\MealTimeMS_APITestRun\\Output\\";

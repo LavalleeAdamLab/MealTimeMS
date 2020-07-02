@@ -85,7 +85,7 @@ namespace MealTimeMS
 
         static void Main(string[] args)
 		{
-
+			//CometSingleSearchTester.CometSingleSearchTest();
 			//Tester();
 
 			CommandLine.Parser.Default.ParseArguments<Options, PrintParams, TrainClassifier>(args)

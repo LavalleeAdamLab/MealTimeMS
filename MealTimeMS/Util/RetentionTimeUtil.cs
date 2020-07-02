@@ -49,6 +49,8 @@ public class RetentionTimeUtil
             }
 
             // compute new offset
+			//TODO change back
+            //double offset = MeanOffset(values);
             double offset = weightedMeanOffset(values);
             offsets.Add(offset);
 
@@ -103,8 +105,17 @@ public class RetentionTimeUtil
             }
             return sum_weighted_value / sum_weights;
         }
+		private static double MeanOffset(double[] d)
+		{
+			double sum = 0;
+			foreach(double val in d)
+			{
+				sum += val;
+			}
+			return sum / (double)d.Length;
+		}
 
-        public static Dictionary<String, Double> calculateRetentionTime(List<Peptide> peptideList)
+		public static Dictionary<String, Double> calculateRetentionTime(List<Peptide> peptideList)
         {
             if (GlobalVar.useRTCalcComputedFile)
             {

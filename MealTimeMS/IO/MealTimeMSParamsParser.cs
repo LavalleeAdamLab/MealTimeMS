@@ -254,6 +254,11 @@ namespace MealTimeMS.IO
 						int randomRepeatsPerExperiment = int.Parse(Console.ReadLine());
 						GlobalVar.randomRepeatsPerExperiment = randomRepeatsPerExperiment ;
 					}
+					if (name.Equals("ProteinProphet"))
+					{
+						InputFileOrganizer.OriginalProtXMLFile = value;
+						GlobalVar.useComputedProteinProphet = true;
+					}
 				}
 
 				line = sr.ReadLine();

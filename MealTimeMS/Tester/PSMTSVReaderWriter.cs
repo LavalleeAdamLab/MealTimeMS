@@ -42,17 +42,17 @@ namespace MealTimeMS.Tester
 			}
 			return idList;
 		}
-		static String[] headerArr = new String[] { "scan","start time","sequence","peptide mass","xcorr score","dCN", "protein id" };
+		static String[] headerArr = new String[] { "scan","start time","sequence","peptide mass","xcorr score","dCN", "protein id", "precursorMZ","precursorCharge", "CalculatedPreCursorMass","ChainSawPepMass" };
 		public static void InitiatePSMWriter(String outputFile)
 		{
 			IDWriter = new StreamWriter(outputFile);
 			IDWriter.WriteLine(String.Join("\t", headerArr));
 		}
 
-		public static void WritePSM(IDs id)
+		public static void WritePSM(IDs id, Spectra spec, double dbPepMass)
 		{
-			IDWriter.WriteLine(String.Join("\t",id.getScanNum().ToString(),id.getScanTime().ToString(),id.getPeptideSequence().ToString(),
-				id.getPeptideMass().ToString(), id.getXCorr().ToString(), id.getDeltaCN().ToString(), String.Join(",",id.getParentProteinAccessions())));
+			IDWriter.WriteLine(String.Join("\t",id.getScanNum().ToString(),id.getScanTime().ToString(),id.getPeptideSequence_withModification().ToString(),
+				id.getPeptideMass().ToString(), id.getXCorr().ToString(), id.getDeltaCN().ToString(), String.Join(",",id.getParentProteinAccessions()), spec.getPrecursorMz(),spec.getPrecursorCharge(),spec.getCalculatedPrecursorMass(), dbPepMass));
 		}
 
 		public static void ClosePSMWriter() {

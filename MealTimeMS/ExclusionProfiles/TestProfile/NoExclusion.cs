@@ -55,7 +55,7 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 				rtCalcPredictedRT.Add(pep.getSequence(), rt.getRetentionTimePeak());
 			}
 		
-			ObservedPeptideRtTrackerObject observedPep = new ObservedPeptideRtTrackerObject(pep.getSequence(), id.getScanTime(), id.getXCorr(), id.getDeltaCN(),
+			ObservedPeptideRtTrackerObject observedPep = new ObservedPeptideRtTrackerObject(pep.getSequence(),id.getPeptideSequence_withModification(), id.getScanTime(), id.getXCorr(), id.getDeltaCN(),
 				rt.getRetentionTimePeak(), rt.getRetentionTimeStart() + GlobalVar.retentionTimeWindowSize, 
 				RetentionTime.getRetentionTimeOffset(), rtCalcPredictedRT[pep.getSequence()], (rt.IsPredicted() ? 1 : 0));
 
@@ -90,6 +90,7 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 	}
 	public class ObservedPeptideRtTrackerObject{
 		public String peptideSequence;
+		public String peptideSequence_withModification;
 		public double arrivalTime;
 		public double xcorr;
 		public double dCN;
@@ -99,9 +100,10 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 		public double originalRTCalcPredictedValue;
 		public int isPredicted;
 
-		public ObservedPeptideRtTrackerObject(String _peptideSequence, double _arrivalTime, double _xcorr, double _dCN,double _rtPeak, double _correctedRT, double _offset, double _originalRTCalcPredictedValue, int _isPredicted)
+		public ObservedPeptideRtTrackerObject(String _peptideSequence,String _peptideSequence_withModification, double _arrivalTime, double _xcorr, double _dCN,double _rtPeak, double _correctedRT, double _offset, double _originalRTCalcPredictedValue, int _isPredicted)
 		{
 			peptideSequence = _peptideSequence;
+			peptideSequence_withModification = _peptideSequence_withModification;
 			arrivalTime = _arrivalTime;
 			xcorr = _xcorr;
 			dCN = _dCN;
@@ -115,13 +117,13 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 		}
 		public static String getHeader()
 		{
-			return String.Join("\t", "pepSeq", "arrivalTime", "xCorr", "dCN", "rtPeak", "correctedRT", "offset", "originalRTCalcPredictedValue", "isPredicted");
+			return String.Join("\t", "pepSeq","pepSeqWithMod", "arrivalTime", "xCorr", "dCN", "rtPeak", "correctedRT", "offset", "originalRTCalcPredictedValue", "isPredicted");
 		}
 
 		override
 		public String ToString()
 		{
-			String str = String.Join("\t", peptideSequence, arrivalTime, xcorr,dCN, rtPeak, correctedRT, offset, originalRTCalcPredictedValue, isPredicted);
+			String str = String.Join("\t", peptideSequence, peptideSequence_withModification, arrivalTime, xcorr,dCN, rtPeak, correctedRT, offset, originalRTCalcPredictedValue, isPredicted);
 			return str;
 		}
 	}

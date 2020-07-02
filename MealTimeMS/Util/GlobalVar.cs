@@ -22,6 +22,7 @@ namespace MealTimeMS.Util
 		public static bool usePepXMLComputedFile = false;
 		public static bool useLogisticRegressionTrainedFile = false;
 		public static bool useMeasuredRT = false;
+		public static bool useComputedProteinProphet = false;
 
 		public static bool isSimulationForFeatureExtraction = false;
 

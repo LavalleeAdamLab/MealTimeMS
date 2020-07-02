@@ -156,11 +156,10 @@ namespace MealTimeMS.Util
 			string protein; //output example: 
 							//"sp|P12235|ADT1_HUMAN ADP/ATP translocase 1 OS=Homo sapiens GN=SLC25A4 PE=1 SV=4 : sp|P05141|ADT2_HUMAN ADP/ATP translocase 2 OS=Homo sapiens GN=SLC25A5 PE=1 SV=7 : sp|P12236|ADT3_HUMAN ADP/ATP translocase 3 OS=Homo sapiens GN=SLC25A6 PE=1 SV=4"
 
-
+			
 			//int iNumPeaks -> total number of peaks
 			//double[] pdInten -> double[] of peak intensity
 			//double[] pdMass -> double[] of peak mass
-
 			SearchMgr.DoSingleSpectrumSearch(iPrecursorCharge, dPrecursorMZ, pdMass, pdInten, iNumPeaks,
 			   out peptide, out protein, out matchingFragments, out score);
 			if (peptide.Length == 0)
@@ -212,6 +211,7 @@ namespace MealTimeMS.Util
 
 			//sw.WriteLine("{0}\t{1}\t{2}", spec.getScanNum(),cleanedPeptide,xcorr);
 			id = new IDs(spec.getStartTime(), spec.getScanNum(), cleanedPeptide, mass, xcorr, dCn, accessions);
+			id.setPeptideSequence_withModification(peptide);
 			return true;
 
 		}
@@ -307,7 +307,7 @@ namespace MealTimeMS.Util
 
 
 				SearchMgr.SetParam("database_name", sDB, sDB);
-
+				//SearchMgr.SetParam("peptide_mass_tolerance", "0.0", 0.0);
 				//dTmp = 20.0; //ppm window
 				//sTmp = dTmp.ToString();
 				//SearchMgr.SetParam("peptide_mass_tolerance", sTmp, dTmp);

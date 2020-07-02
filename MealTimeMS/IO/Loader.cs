@@ -416,7 +416,7 @@ namespace MealTimeMS.IO
                     if (str[0].Equals("S"))
                     {
                         scanNum = int.Parse(str[1]);
-                        precursorMz = double.Parse(str[3]);
+                        precursorMz = double.Parse(str[3]); //isolation window
                     }else if (str[0].Equals("I"))
                     {
                         if (str[1].Equals("RTime"))
@@ -425,8 +425,11 @@ namespace MealTimeMS.IO
                         }
                     }else if (str[0].Equals("Z"))
                     {
-                        precursorCharge = int.Parse(str[1]);   
-                        break;
+                        precursorCharge = int.Parse(str[1]);
+						//TODO Remove, only to test if using Accurate Monoisotopic M/z instead of isolation window
+						double precursorMH = double.Parse(str[2]);
+						precursorMz = MassConverter.MHPlusToMZ(precursorMH,precursorCharge);
+						break;
                     }
                     line = reader.ReadLine();
                 }

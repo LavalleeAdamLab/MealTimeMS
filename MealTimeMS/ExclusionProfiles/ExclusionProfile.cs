@@ -154,7 +154,9 @@ namespace MealTimeMS.ExclusionProfiles
                 log.Debug("MS2 scan was identified.");
                 log.Debug(id);
 				performanceEvaluator.countMS2Identified();
-				PSMTSVReaderWriter.WritePSM(id);
+				double dbPepMass = database.getPeptide(id.getPeptideSequence()).getMass();
+				
+				PSMTSVReaderWriter.WritePSM(id,spec, dbPepMass);
 
 			}
             else
@@ -195,6 +197,7 @@ namespace MealTimeMS.ExclusionProfiles
          */
         protected  void calibrateRetentionTime(Peptide pep)    //called when we observe a peptide that passes the xcorr threshold
         {
+			
             bool isPredictedRT = pep.getRetentionTime().IsPredicted(); //       if isPredictedRT is true, then that means this is the first time you observed it
                                                                         //      if false, then you already have observed it and would have already 
                                                                         // readjusted the offset, so no need to to it again.

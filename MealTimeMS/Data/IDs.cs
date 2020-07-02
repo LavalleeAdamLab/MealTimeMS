@@ -11,6 +11,7 @@ namespace MealTimeMS.Data
 		private String peptide_reference; // map to the peptide_ref and dBsequence_ref
 		private HashSet<String> database_sequence_id; // map to the accession
 		private String peptide_sequence; // found through peptide evidence
+		private String peptide_sequence_withModification;
 		private HashSet<String> parent_proteins; // found through dBSequence
 		private double peptide_mass; // found through the peptide reference
 		private double xCorr;
@@ -95,6 +96,14 @@ namespace MealTimeMS.Data
 		public String getPeptideSequence()
 		{
 			return peptide_sequence;
+		}
+		public String getPeptideSequence_withModification()
+		{
+			return peptide_sequence_withModification;
+		}
+		public void setPeptideSequence_withModification(String _seq)
+		{
+			peptide_sequence_withModification = _seq;
 		}
 
 		public HashSet<String> getParentProteinAccessions()
