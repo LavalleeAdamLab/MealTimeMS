@@ -41,33 +41,35 @@ namespace MealTimeMS.RunTime
 			PreExperimentSetUp();
 			WriterClass.writeln(new PerformanceEvaluator().getHeader());
 			int experimentNumber = 0;
-#if DDA
-			if (true)
-#else
-			if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
-#endif
 
+
+			//setup baseline
+			if (true)
 			{
-				startTime = getCurrentTime();
+				double startTime = getCurrentTime();
 				GlobalVar.ppmTolerance = 0;
 				GlobalVar.retentionTimeWindowSize = GlobalVar.RETENTION_TIME_WINDOW_LIST[0];
 
 				ExclusionProfile exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
 				String experimentName = GlobalVar.experimentName + String.Format("_Baseline_NoExclusion:ppmTol_rtWin_{0}", GlobalVar.retentionTimeWindowSize);
-				RunSimulationAndPostProcess(exclusionProfile, experimentName, startTime, 0);
+				Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
+				RunSimulationAndPostProcess(experiment);
 
 #if !DDA
 				if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
 				{
-					List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;
-					WriterClass.writeln("peptideSequence\tObservedRetentionTime", writerClassOutputFile.peptideRTTime);
-					foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
-					{
-						WriterClass.writeln(String.Format("{0}\t{1}", observedPeptracker.peptideSequence, observedPeptracker.arrivalTime), writerClassOutputFile.peptideRTTime);
-					}
+						StreamWriter sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"peptideIDRTTracker.tsv"));
+						sw.WriteLine(ObservedPeptideRtTrackerObject.getHeader());
+						foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
+						{
+							sw.WriteLine(observedPeptracker.ToString());
+						}
+						sw.Close();
 				}
 #endif
+
 			}
+
 
 			if (exclusionType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
 			{	
@@ -145,41 +147,41 @@ namespace MealTimeMS.RunTime
 						Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
 						RunSimulationAndPostProcess(experiment);
 					}
-			}else if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
-			{
+			//}else if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+			//{
 
-				foreach (double rtWin in GlobalVar.RETENTION_TIME_WINDOW_LIST)
-				{
-					experimentNumber++;
-					double startTime = getCurrentTime();
-					GlobalVar.ppmTolerance = 0;
-					GlobalVar.retentionTimeWindowSize = rtWin;
+			//	foreach (double rtWin in GlobalVar.RETENTION_TIME_WINDOW_LIST)
+			//	{
+			//		experimentNumber++;
+			//		double startTime = getCurrentTime();
+			//		GlobalVar.ppmTolerance = 0;
+			//		GlobalVar.retentionTimeWindowSize = rtWin;
 
-					ExclusionProfile exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
-					String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_NoExclusion:ppmTol_rtWin_{0}", rtWin);
-					Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
-					RunSimulationAndPostProcess(experiment);
+			//		ExclusionProfile exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
+			//		String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_NoExclusion:ppmTol_rtWin_{0}", rtWin);
+			//		Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
+			//		RunSimulationAndPostProcess(experiment);
 
-					if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
-					{
-						List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT; 
-						WriterClass.writeln("peptideSequence\tObservedRetentionTime", writerClassOutputFile.peptideRTTime);
-						foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
-						{
-							WriterClass.writeln(String.Format("{0}\t{1}", observedPeptracker.peptideSequence, observedPeptracker.arrivalTime), writerClassOutputFile.peptideRTTime);
-						}
+			//		if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+			//		{
+			//			List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT; 
+			//			WriterClass.writeln("peptideSequence\tObservedRetentionTime", writerClassOutputFile.peptideRTTime);
+			//			foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
+			//			{
+			//				WriterClass.writeln(String.Format("{0}\t{1}", observedPeptracker.peptideSequence, observedPeptracker.arrivalTime), writerClassOutputFile.peptideRTTime);
+			//			}
 
 
-						StreamWriter sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"peptideIDRTTracker.tsv"));
-						sw.WriteLine(ObservedPeptideRtTrackerObject.getHeader());
-						foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
-						{
-							sw.WriteLine(observedPeptracker.ToString());
-						}
-						sw.Close();
-					}
-					break;
-				}
+			//			StreamWriter sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"peptideIDRTTracker.tsv"));
+			//			sw.WriteLine(ObservedPeptideRtTrackerObject.getHeader());
+			//			foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
+			//			{
+			//				sw.WriteLine(observedPeptracker.ToString());
+			//			}
+			//			sw.Close();
+			//		}
+			//		break;
+			//	}
 
 			}else if (exclusionType == ExclusionProfileEnum.RANDOM_EXCLUSION_PROFILE)
 			{
@@ -609,14 +611,15 @@ namespace MealTimeMS.RunTime
 				}
 				else
 				{
-					String proteinProphetResultFileName = e.experimentNumber+GlobalVar.experimentName;
-					ppr = PostProcessingScripts.postProcessing(e.exclusionProfile, proteinProphetResultFileName, true);	
+					String proteinProphetResultFileName = e.experimentNumber + GlobalVar.experimentName;
+					ppr = PostProcessingScripts.postProcessing(e.exclusionProfile, proteinProphetResultFileName, true);
+				}
 
 #if DDA
-				if (exclusionProfile.getAnalysisType() == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+				if (e.exclusionProfile.getAnalysisType() == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
 				{
 					ProteinProphetResult baseLinePpr = ppr;
-					int numMS2Analyzed = (int) exclusionProfile.GetPerformanceEvaluator().getValue(Header.NumMS2Analyzed);
+					int numMS2Analyzed = (int) e.exclusionProfile.GetPerformanceEvaluator().getValue(Header.NumMS2Analyzed);
 					PerformanceEvaluator.setBaselineComparison(baseLinePpr, numMS2Analyzed, GlobalVar.ddaNum);
 					PerformanceEvaluator.setOriginalExperiment(baseLinePpr.getNum_proteins_identified());
 				}

@@ -60,6 +60,7 @@ namespace MealTimeMS.Util
         public static double listeningDuration = 60000000; //in seconds
         public static String experimentName = "experiment_name";
 		public static ExclusionProfileEnum ExclusionMethod; //Synonomous with "ExclusionType"
+		public static int ExperimentTotalScans;
 
 		public static int ddaNum = 6;
 
