@@ -14,14 +14,14 @@ namespace MealTimeMS.Simulation
 	{
 		static int maxMS2ToSimulate = 1000000000;
 
-		public QuickDDAInstrumentSimulation(ExclusionProfile exclusionProfile, List<Spectra> _specList, int _maxMS2NumPerMS1)
+		public QuickDDAInstrumentSimulation(Experiment e, List<Spectra> _specList, int _maxMS2NumPerMS1)
 		{
 			int TopN = _maxMS2NumPerMS1;
 			//specList is passed in with MS2 only, adding MS1
 			List<Spectra> MS1IncludedSpecList = AddingMS1SpectraToMS2OnlyList(_specList);
 			List<List<Spectra>> groupedMS2 = GroupMS2(MS1IncludedSpecList);
 
-			StartSimulation(exclusionProfile, groupedMS2, TopN);
+			StartSimulation(e.exclusionProfile, groupedMS2, TopN);
 			//TestFunction_WriteNumMS2PerMS1(_specList);
 
 		}
