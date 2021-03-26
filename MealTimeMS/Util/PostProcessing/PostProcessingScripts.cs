@@ -93,8 +93,8 @@ namespace MealTimeMS.Util.PostProcessing
 		public static ProteinProphetResult RunProteinProphet(String cometFilePath, String outputFolder, Boolean keepResults)
 		{
 			Logger.debug("Post processing comet file: ");
-			Console.WriteLine("Runnign protein prophet, if program doesn't respond for a long time, try pressing a typing a few keys into the command line");
-			String proteinProphetOutput = ProteinProphetSearch(cometFilePath,outputFolder,keepResults);
+            Console.WriteLine("\nRunnign protein prophet\n!!!if program doesn't respond for a long time, try pressing a typing a few keys into the command line!!!\n");
+            String proteinProphetOutput = ProteinProphetSearch(cometFilePath,outputFolder,keepResults);
 			ProteinProphetResult ppr = ProteinProphetEvaluator.getProteinProphetResult(proteinProphetOutput);
 			ppr.SetProteinGroup(ProteinProphetEvaluator.ExtractPositiveProteinGroups(proteinProphetOutput));
 			
@@ -102,7 +102,8 @@ namespace MealTimeMS.Util.PostProcessing
 		}
 		public static String ProteinProphetSearch(String cometFilePath, String outputFolder, Boolean keepResults)
 		{
-			String peptideProphetOutput = PostProcessingScripts.executePeptideProphet(outputFolder, cometFilePath);
+            Console.WriteLine("\nRunnign protein prophet\n!!!if program doesn't respond for a long time, try pressing a typing a few keys into the command line!!!\n");
+            String peptideProphetOutput = PostProcessingScripts.executePeptideProphet(outputFolder, cometFilePath);
 			String proteinProphetOutput = PostProcessingScripts.executeProteinProphet(outputFolder,
 					peptideProphetOutput);
 			//PostProcessingScripts.deleteFile(peptideProphetOutput);

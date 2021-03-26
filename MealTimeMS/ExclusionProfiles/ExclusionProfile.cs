@@ -126,7 +126,7 @@ namespace MealTimeMS.ExclusionProfiles
 				if (spec.getIndex() % GlobalVar.ScansPerOutput == 0)
 				{
 #if SIMULATION
-					double progressPercent = spec.getIndex() / GlobalVar.ExperimentTotalMS2 * 100;
+					double progressPercent = spec.getIndex() / GlobalVar.ExperimentTotalScans * 100;
 					log.Info("Progress: {0:F2}% Processing ID: {1}\t ScanNum: {2} \t Excluded: {3}", progressPercent, spec.getIndex(), spec.getScanNum(),
 						excludedSpectra.Count);
 #else
@@ -156,7 +156,7 @@ namespace MealTimeMS.ExclusionProfiles
 				performanceEvaluator.countMS2Identified();
 				double dbPepMass = database.getPeptide(id.getPeptideSequence()).getMass();
 				
-				PSMTSVReaderWriter.WritePSM(id,spec, dbPepMass);
+				//PSMTSVReaderWriter.WritePSM(id,spec, dbPepMass); //TODO turn this on in the future
 
 			}
             else

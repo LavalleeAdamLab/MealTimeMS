@@ -427,8 +427,9 @@ namespace MealTimeMS.IO
                     {
                         precursorCharge = int.Parse(str[1]);
 						//TODO Remove, only to test if using Accurate Monoisotopic M/z instead of isolation window
-						double precursorMH = double.Parse(str[2]);
-						precursorMz = MassConverter.MHPlusToMZ(precursorMH,precursorCharge);
+						//double precursorMH = double.Parse(str[2]);
+						//precursorMz = MassConverter.MHPlusToMZ(precursorMH,precursorCharge);
+                        //Remove end
 						break;
                     }
                     line = reader.ReadLine();

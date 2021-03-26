@@ -62,7 +62,7 @@ namespace MealTimeMS.Util
 		public static ExclusionProfileEnum ExclusionMethod; //Synonomous with "ExclusionType"
 		public static int ExperimentTotalScans;
 
-		public static int ddaNum = 6;
+		public static int ddaNum = 100;
 
 		//Simulation var
 		public static double ExperimentTotalMS2 = -1;
@@ -71,6 +71,7 @@ namespace MealTimeMS.Util
 
 		//temp variables
 		public static int randomRepeatsPerExperiment =10;
+        public static bool useRT = true;
 		//ExclusionExplorerParamsList
 		public static List<double> PPM_TOLERANCE_LIST;
 		public static List<double> RETENTION_TIME_WINDOW_LIST;

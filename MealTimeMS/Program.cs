@@ -21,7 +21,7 @@
 #endregion legal notice
 
 //possible pre-processor directives
-//SIMULATION,DONTEVALUATE,STDEVINCLUDED,WRITE_RT_TIME,IGNORE,CHEATINGRTTIME,TRACKEXCLUDEDPROTEINFEATURE
+//SIMULATION,DONTEVALUATE,STDEVINCLUDED,WRITE_RT_TIME,IGNORE,CHEATINGRTTIME,TRACKEXCLUDEDPROTEINFEATURE, DDA, EXTRACT_SPECTRAL_COUNT
 //for a real time test, use either 
 //IGNORE,DONTEVALUATE   or
 //IGNORE
@@ -85,10 +85,16 @@ namespace MealTimeMS
 
         static void Main(string[] args)
 		{
-			//CometSingleSearchTester.CometSingleSearchTest();
-			//Tester();
+            //!!!!To Alona: use pre-compile directives "SIMULATION,DDA,EXTRACT_SPECTRAL_COUNT" to build
 
-			CommandLine.Parser.Default.ParseArguments<Options, PrintParams, TrainClassifier>(args)
+
+            //CometSingleSearchTester.CometSingleSearchTest();
+            //Tester();
+            //CometSingleSearchTester_v2.DoJob();
+            //Program.ExitProgram(0);
+
+
+            CommandLine.Parser.Default.ParseArguments<Options, PrintParams, TrainClassifier>(args)
 			.WithParsed<Options>(RunSimulation)
 			.WithParsed<PrintParams>(RunPrintParameters)
 			.WithParsed<TrainClassifier>(RunTrainClassifier)

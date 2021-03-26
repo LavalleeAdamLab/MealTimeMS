@@ -33,10 +33,11 @@ namespace MealTimeMS.Tester
             MZMLFile mzml = Loader.parseMS2File(mzmlPath);
             //MZMLFile mzml = null;
             CometSingleSearch.InitializeComet(dbPath,paramsPath);
+            WriterClass.initiateWriter(outputPath);
             var watch = System.Diagnostics.Stopwatch.StartNew();
             int counter = 0;
             Console.WriteLine("Starting comet search");
-            WriterClass.initiateWriter(outputPath);
+           
 
             for (int i = 0; i < 1; i++)
             {
@@ -67,6 +68,7 @@ namespace MealTimeMS.Tester
             }
             watch.Stop();
             Console.WriteLine("Comet search of "+ counter +" spectra took "+watch.ElapsedMilliseconds +" milliseconds");
+            WriterClass.writeln("Comet search of " + counter + " spectra took " + watch.ElapsedMilliseconds + " milliseconds");
             WriterClass.CloseWriter();
 
         }

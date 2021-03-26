@@ -27,12 +27,12 @@ namespace MealTimeMS.Util.PostProcessing
 	private readonly static String NUM_DISTINCT_PEPTIDES_TAG = "total_number_distinct_peptides=\"";
 	private readonly static String END_TAG = "\"";
 
-		//private readonly static String FDR_TAG = "<error_point error=\"";     //"false_positive_error_rate=\"";
+		private readonly static String FDR_ErrorTable_TAG = "<error_point error=\"";     //"false_positive_error_rate=\"";
 		private readonly static String FDR_TAG = "false_positive_error_rate=\"";     //;
 	private readonly static String PROTEIN_NAME_TAG = "protein_name=\"";
 
 	/* FILTERING THRESHOLDS */
-	private  static double PROTEIN_GROUP_PROBABILITY_THRESHOLD = 0.9;//0.9
+	private  static double PROTEIN_GROUP_PROBABILITY_THRESHOLD = 0;//0.9
 	private readonly static double DEFAULT_PROTEIN_PROBABILITY_THRESHOLD = 0.9;
 	private static double protein_probablity_threshold = 0.0;
 	// private readonly static double PROTEIN_CONFIDENCE_THRESHOLD = 0.9;
@@ -45,6 +45,18 @@ namespace MealTimeMS.Util.PostProcessing
 	{
 		double value = 0.0;
 		int beginIndex = line.IndexOf(FDR_TAG) + FDR_TAG.Length;
+		int endIndex = line.IndexOf(END_TAG, beginIndex);
+		String stringValue = line.Substring(beginIndex, endIndex-beginIndex);
+		if(!Double.TryParse(stringValue, out value))
+		{
+				log.Error("Failed to parse FDR");
+		}
+		return value;
+	}
+		private static double extractFDR_ErrorTable(String line)
+	{
+		double value = 0.0;
+		int beginIndex = line.IndexOf(FDR_ErrorTable_TAG) + FDR_ErrorTable_TAG.Length;
 		int endIndex = line.IndexOf(END_TAG, beginIndex);
 		String stringValue = line.Substring(beginIndex, endIndex-beginIndex);
 		if(!Double.TryParse(stringValue, out value))
@@ -145,7 +157,7 @@ namespace MealTimeMS.Util.PostProcessing
 		return proteins;
 	}
 
-	private static List<String> extractProteinGroupsData(String prot_xml_file)
+	private static List<String> extractProteinGroupsData(String prot_xml_file, double proteinGroupPrThrehold)
 	{
 		List<String> proteinGroups = new List<String>();
 
@@ -179,7 +191,7 @@ namespace MealTimeMS.Util.PostProcessing
 
 					// only keep if above probability threshold
 					//TODO >=
-					if (probabilityValue > PROTEIN_GROUP_PROBABILITY_THRESHOLD)
+					if (probabilityValue >= proteinGroupPrThrehold)
 					{
 						proteinGroups.Add(proteinGroupInformation);
 					}
@@ -297,7 +309,7 @@ namespace MealTimeMS.Util.PostProcessing
 		return proteinsToPeptides;
 	}
 
-	private static List<String> filterProteinsData(List<String> proteinGroups)
+	private static List<String> filterProteinsData(List<String> proteinGroups, double prThreshold)
 	{
 		List<String> proteins = new List<String>();
 
@@ -336,7 +348,7 @@ namespace MealTimeMS.Util.PostProcessing
 						// NUM_DISTINCT_PEPTIDES_THRESHOLD)) {
 					
 					//TODO probability >= protein_probablity_threshold
-					if ((probability > protein_probablity_threshold)
+					if ((probability >= prThreshold)
 							&& (numPeptides >= NUM_DISTINCT_PEPTIDES_THRESHOLD))
 					{
 						proteins.Add(proteinInformation);
@@ -369,7 +381,7 @@ namespace MealTimeMS.Util.PostProcessing
 	// Gives you the xml data from proteins which are above the protein probability
 	// threshold (set in the previous step). These are proteins which are not
 	// identified with high confidence
-	private static List<String> filterNegativeTrainingSetProteinData(List<String> proteinGroups)
+	private static List<String> filterNegativeTrainingSetProteinData(List<String> proteinGroups, double proteinProbabilityThreshold)
 	{
 		List<String> proteins = new List<String>();
 
@@ -406,7 +418,7 @@ namespace MealTimeMS.Util.PostProcessing
 					// if ((probability > PROTEIN_PROBABILITY_THRESHOLD) && (confidence >
 					// PROTEIN_CONFIDENCE_THRESHOLD)&& (numPeptides >=
 					// NUM_DISTINCT_PEPTIDES_THRESHOLD)) {
-					if (probability < protein_probablity_threshold)
+					if (probability < proteinProbabilityThreshold)
 					{
 						proteins.Add(proteinInformation);
 						log.Debug(String.Format(
@@ -432,7 +444,7 @@ namespace MealTimeMS.Util.PostProcessing
 		return proteins;
 	}
 
-	private static double setFDRThreshold(String prot_xml_file,  double fdr_threshold)
+	private static double setFDRThreshold(String prot_xml_file,  double fdr_threshold, out double prThreshold)
 	{
 		double probability_threshold = Double.MaxValue;
 		double max_fdr = 0.0;
@@ -449,14 +461,14 @@ namespace MealTimeMS.Util.PostProcessing
 			while (line != null)
 			{
 
-				if (line.Contains(FDR_TAG))
+				if (line.Contains(FDR_ErrorTable_TAG))
 				{
 					count++;
 					// you want the highest probability that is under the fdr threshold
-					double fdr = extractFDR(line);
-					//double prob = extractProbability_ERRORTable(line);
-					double prob = extractProbability(line);
-					if (fdr <= fdr_threshold && fdr > max_fdr)
+					double fdr = extractFDR_ErrorTable(line);
+					double prob = extractProbability_ERRORTable(line);
+					//double prob = extractProbability(line);
+					if (fdr < fdr_threshold && fdr > max_fdr)
 					{ //josh changed this from < to <=
 						max_fdr = fdr;
 						probability_threshold = Math.Min(probability_threshold, prob);
@@ -469,6 +481,7 @@ namespace MealTimeMS.Util.PostProcessing
 			if (count == 0)
 			{
 				reader.Close();
+				Console.WriteLine("ProteinProphet result .prot.xml parsing error, no error table found in file:\n {0}",prot_xml_file);
 				throw new Exception();
 			}
 			reader.Close();
@@ -482,43 +495,41 @@ namespace MealTimeMS.Util.PostProcessing
 		//	Environment.Exit(0);
 		//}
 		log.Debug("Setting protein probability to " + probability_threshold + " with an fdr of " + max_fdr);
-		protein_probablity_threshold = probability_threshold;
+			prThreshold = probability_threshold;
 		return max_fdr;
 	}
 
 
 
-	/*
-	 * Returns the ProteinProphetFile... this gives us a query-able object which can
-	 * determine if a protein accession was identified by an experiment, as well as
-	 * specific peptides.
-	 */
-	private static ProteinProphetFile processProteinProphetFile(String protXMLFileName)
-	{
-		const double fdr_threshold = 0.01; // 1% false discovery rate
-		double fdr = setFDRThreshold(protXMLFileName, fdr_threshold);
-		List<String> proteinGroupsData = extractProteinGroupsData(protXMLFileName);
-		List<String> filteredProteinsData = filterProteinsData(proteinGroupsData);
-		Dictionary<String, List<String>> proteinsToPeptides = extractPeptides(filteredProteinsData);
-		ProteinProphetFile ppf = new ProteinProphetFile(protXMLFileName, proteinsToPeptides, fdr,
-				protein_probablity_threshold);
+		/*
+		 * Returns the ProteinProphetFile... this gives us a query-able object which can
+		 * determine if a protein accession was identified by an experiment, as well as
+		 * specific peptides.
+		 */
+		private static ProteinProphetFile processProteinProphetFile(String protXMLFileName)
+		{
+			const double fdr_threshold = 0.01; // 1% false discovery rate
+			double prThreshold = 0;
+			double fdr = setFDRThreshold(protXMLFileName, fdr_threshold,out prThreshold);
+			List<String> proteinGroupsData = extractProteinGroupsData(protXMLFileName,0);
+			List<String> filteredProteinsData = filterProteinsData(proteinGroupsData, prThreshold);
+			Dictionary<String, List<String>> proteinsToPeptides = extractPeptides(filteredProteinsData);
+			ProteinProphetFile ppf = new ProteinProphetFile(protXMLFileName, proteinsToPeptides, fdr,
+					prThreshold);
 
 			ppf.getProteinProphetResult().SetProteinGroup(ProteinProphetEvaluator.ExtractPositiveProteinGroups(protXMLFileName));
 			return ppf;
-	}
+		}
 
-	
-//TODO delete
-	public static List<String> ExtractPositiveProteinGroups(String protXMLFileName)
+
+		//TODO delete
+		public static List<String> ExtractPositiveProteinGroups(String protXMLFileName)
 		{
 			const double fdr_threshold = 0.01; // 1% false discovery rate
-			double fdr = setFDRThreshold(protXMLFileName, fdr_threshold);
-			double temp = PROTEIN_GROUP_PROBABILITY_THRESHOLD;
-			PROTEIN_GROUP_PROBABILITY_THRESHOLD = protein_probablity_threshold;
-			//TODO remove
-			PROTEIN_GROUP_PROBABILITY_THRESHOLD = 0.9;
-			List<String> proteinGroupsData = extractProteinGroupsData(protXMLFileName);
-			PROTEIN_GROUP_PROBABILITY_THRESHOLD = temp;
+			double proteinGroupPRThreshold = 0;
+			double fdr = setFDRThreshold(protXMLFileName, fdr_threshold, out proteinGroupPRThreshold);
+
+			List<String> proteinGroupsData = extractProteinGroupsData(protXMLFileName,proteinGroupPRThreshold);
 			return proteinGroupsData;
 
 		}
@@ -533,12 +544,11 @@ namespace MealTimeMS.Util.PostProcessing
 	{
 		// setting to an fdr of 0.2 didn't work, because the largest fdr is 0.173...
 		// double fdr = setFDRThreshold(proteinProphetFile, fdr_threshold);
-		protein_probablity_threshold = pr_threshold;
 		List<String> proteinGroupsData = extractNegativeProteinGroupsData(proteinProphetFile);
-		List<String> filteredProteinsData = filterNegativeTrainingSetProteinData(proteinGroupsData);
+		List<String> filteredProteinsData = filterNegativeTrainingSetProteinData(proteinGroupsData,pr_threshold);
 		Dictionary<String, List<String>> proteinsToPeptides = extractPeptides(filteredProteinsData);
 		ProteinProphetFile ppf = new ProteinProphetFile(proteinProphetFile, proteinsToPeptides, 1,
-				protein_probablity_threshold);
+				pr_threshold);
 		return ppf.getProteinNames();
 	}
 
@@ -591,68 +601,68 @@ namespace MealTimeMS.Util.PostProcessing
 	//	return count;
 	//}
 
-	private static Dictionary<String, Double[]> extractProteinWithScore(List<String> proteinGroups)
-	{
-		Dictionary<String, Double[]> proteins = new Dictionary<String, Double[]>();
+	//private static Dictionary<String, Double[]> extractProteinWithScore(List<String> proteinGroups)
+	//{
+	//	Dictionary<String, Double[]> proteins = new Dictionary<String, Double[]>();
 
-		// counter
-		int numProteinsTotal = 0;
+	//	// counter
+	//	int numProteinsTotal = 0;
 
-		log.Debug("Filtering the proteins from the protein groups...");
-		foreach (String proteinGroupInformation in proteinGroups)
-		{
-			// split by line
-			String[] split = proteinGroupInformation.Split("\n".ToCharArray());
-			// working variable to store the protein information
-			String proteinInformation = "";
+	//	log.Debug("Filtering the proteins from the protein groups...");
+	//	foreach (String proteinGroupInformation in proteinGroups)
+	//	{
+	//		// split by line
+	//		String[] split = proteinGroupInformation.Split("\n".ToCharArray());
+	//		// working variable to store the protein information
+	//		String proteinInformation = "";
 
-			foreach (String s in split)
-			{
-				if (s.Contains(PROTEIN_START_TAG))
-				{
-					// overwrite old proteinInformation variable
-					proteinInformation = s + "\n";
-				}
-				else if (s.Contains(PROTEIN_END_TAG))
-				{
-					// add last line
-					proteinInformation += s + "\n";
+	//		foreach (String s in split)
+	//		{
+	//			if (s.Contains(PROTEIN_START_TAG))
+	//			{
+	//				// overwrite old proteinInformation variable
+	//				proteinInformation = s + "\n";
+	//			}
+	//			else if (s.Contains(PROTEIN_END_TAG))
+	//			{
+	//				// add last line
+	//				proteinInformation += s + "\n";
 
-					// extract values
-					double probability = extractProbability(proteinInformation);
-					double confidence = extractConfidence(proteinInformation);
-					int numPeptides = extractNumPeptides(proteinInformation);
+	//				// extract values
+	//				double probability = extractProbability(proteinInformation);
+	//				double confidence = extractConfidence(proteinInformation);
+	//				int numPeptides = extractNumPeptides(proteinInformation);
 
-					// only include if it passes these thresholds
-					// if ((probability > PROTEIN_PROBABILITY_THRESHOLD) && (confidence >
-					// PROTEIN_CONFIDENCE_THRESHOLD)&& (numPeptides >=
-					// NUM_DISTINCT_PEPTIDES_THRESHOLD)) {
-					if ((probability > protein_probablity_threshold)
-							&& (numPeptides >= NUM_DISTINCT_PEPTIDES_THRESHOLD))
-					{
-						//proteins.Add(proteinInformation);
-						log.Debug(String.Format(
-								"Protein with probability of {0}, confidence of {1}, and numPeptides of {2} was added",
-								probability, confidence, numPeptides));
-					}
-					else
-					{
-						log.Debug(String.Format(
-								"Protein with probability of {0}, confidence of {1}, and numPeptides of {2} was filtered",
-								probability, confidence, numPeptides));
-					}
-					numProteinsTotal++;
+	//				// only include if it passes these thresholds
+	//				// if ((probability > PROTEIN_PROBABILITY_THRESHOLD) && (confidence >
+	//				// PROTEIN_CONFIDENCE_THRESHOLD)&& (numPeptides >=
+	//				// NUM_DISTINCT_PEPTIDES_THRESHOLD)) {
+	//				if ((probability > protein_probablity_threshold)
+	//						&& (numPeptides >= NUM_DISTINCT_PEPTIDES_THRESHOLD))
+	//				{
+	//					//proteins.Add(proteinInformation);
+	//					log.Debug(String.Format(
+	//							"Protein with probability of {0}, confidence of {1}, and numPeptides of {2} was added",
+	//							probability, confidence, numPeptides));
+	//				}
+	//				else
+	//				{
+	//					log.Debug(String.Format(
+	//							"Protein with probability of {0}, confidence of {1}, and numPeptides of {2} was filtered",
+	//							probability, confidence, numPeptides));
+	//				}
+	//				numProteinsTotal++;
 
-				}
-				else
-				{
-					proteinInformation += s + "\n";
-				}
-			}
+	//			}
+	//			else
+	//			{
+	//				proteinInformation += s + "\n";
+	//			}
+	//		}
 
-		}
-		return proteins;
-	}
+	//	}
+	//	return proteins;
+	//}
 
 	public static void main(String[] args)
 	{

@@ -65,7 +65,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			double settedThreshold = ThresholdFromROC(AccordROC, minimumSpecificity: 0.95);
 			trainingLog.WriteLine("Area-under-the-curve: {0}", lrAUC);
 			trainingLog.WriteLine("Classifier threshold at 0.95 specificity: {0}", settedThreshold);
-			trainingLog.WriteLine("Classifier Coefficient file saved at:\n{0}\nInclude this coefficient file in the parameters to run MealTimeMS");
+			trainingLog.WriteLine("Classifier Coefficient file saved at:\n{0}\nInclude this coefficient file in the parameters to run MealTimeMS", savedFile);
 			trainingLog.Close();
 			return savedCoefficient;
 		}

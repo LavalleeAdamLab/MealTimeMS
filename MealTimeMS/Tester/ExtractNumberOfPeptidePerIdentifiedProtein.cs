@@ -24,8 +24,10 @@ namespace MealTimeMS.Tester
 			StreamWriter sw = new StreamWriter(outputFile);
 			sw.WriteLine("Accession\tNumberOfPeptides\tSpectralCount");
 
-			List<String> confidentlyIdentifiedProts =  ppr.getProteinsIdentified();
-			foreach(String accession in confidentlyIdentifiedProts)
+			//List<String> confidentlyIdentifiedProts =  ppr.getProteinsIdentified();
+            List<String> AllProteins = exclusionProfile.getDatabase().getProteinSet();
+
+			foreach(String accession in AllProteins)
 			{
 				Protein prot = exclusionProfile.getDatabase().getProtein(accession);
 				HashSet<String> peptidesObserved = new HashSet<String>();

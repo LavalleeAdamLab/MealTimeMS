@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SIMULATION,DDA</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SIMULATION,DDA,EXTRACT_SPECTRAL_COUNT</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -398,6 +398,7 @@
     <Compile Include="Tester\ExcludedProteinOverlapAnalyzer.cs" />
     <Compile Include="Tester\ExtractNumberOfPeptidePerIdentifiedProtein.cs" />
     <Compile Include="Tester\JunkTester.cs" />
+    <Compile Include="Tester\Junk\CometSingleSearchTester_v2.cs" />
     <Compile Include="Tester\Junk\ConfidentProteinGroupData.cs" />
     <Compile Include="Tester\Junk\ExtractPPRFromProteinProphetResult.cs" />
     <Compile Include="Tester\Junk\ms1Counter.cs" />

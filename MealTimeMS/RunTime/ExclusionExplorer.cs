@@ -55,19 +55,18 @@ namespace MealTimeMS.RunTime
 				Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
 				RunSimulationAndPostProcess(experiment);
 
-#if !DDA
+
 				if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
 				{
-						StreamWriter sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"peptideIDRTTracker.tsv"));
-						sw.WriteLine(ObservedPeptideRtTrackerObject.getHeader());
-						foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
-						{
-							sw.WriteLine(observedPeptracker.ToString());
-						}
-						sw.Close();
+					List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT;
+					StreamWriter sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,  "peptideIDRTTracker_"+ experimentNumber+".tsv"));
+					sw.WriteLine(ObservedPeptideRtTrackerObject.getHeader());
+					foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
+					{
+						sw.WriteLine(observedPeptracker.ToString());
+					}
+					sw.Close();
 				}
-#endif
-
 			}
 
 
@@ -216,20 +215,22 @@ namespace MealTimeMS.RunTime
 #if DDA
 			new QuickDDAInstrumentSimulation(e, ms2SpectraList, GlobalVar.ddaNum);
 #else
-			new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+			new DataReceiverSimulation().DoJob(e.exclusionProfile, ms2SpectraList);
 #endif
 
-			
 			PSMTSVReaderWriter.ClosePSMWriter();
 
 			e.analysisTime = getCurrentTime() - e.experimentStartTime;
-			PostExperimentProcessing(e);
-
-			//WriteSpectralAndPeptideCountPerIdentifiedProtein(e);
-			WriteUnusedSpectra(e);
+            WriteSpectralAndPeptideCountPerIdentifiedProtein(e);
+#if EXTRACT_SPECTRAL_COUNT
+            Program.ExitProgram(0);
+#endif
+            PostExperimentProcessing(e);
+            //WriteSpectralAndPeptideCountPerIdentifiedProtein(e);
+            WriteUnusedSpectra(e);
 			WriteUsedSpectra(e);
 			//WriteUsedSpectra(e);
-			WriteSpectralAndPeptideCountPerIdentifiedProtein(e);
+			
 
 			e.exclusionProfile.reset();
 			reset();
@@ -274,7 +275,7 @@ namespace MealTimeMS.RunTime
 
 				case ExclusionProfileEnum.RANDOM_EXCLUSION_PROFILE:
 
-					exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, 12);
+					exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, GlobalVar.ddaNum);
 
 					break;
 				case ExclusionProfileEnum.NO_EXCLUSION_PROFILE:
@@ -496,16 +497,9 @@ namespace MealTimeMS.RunTime
 			{
 				ms2SpectraList = Loader.parseMS2File(InputFileOrganizer.MS2SimulationTestFile).getSpectraArray();
 				GlobalVar.ExperimentTotalScans = ms2SpectraList.Count;
-				FullPepXMLAndProteinProphetSetup();
-				baseLinePpr = ProteinProphetEvaluator.getProteinProphetResult(InputFileOrganizer.OriginalProtXMLFile);
-
-				//so in alex's original code, "original experiment" refers to original experiment without any exclusion or manipulation with this program
-				//"baseline comparison" refers to the results after "NoExclusion" run, which is a top 6 or top 12 DDA run, which is not implemented in this program
-				//So the two are the same in thie program
-
-				int numMS2Analyzed = (int)GlobalVar.ExperimentTotalScans;
-				PerformanceEvaluator.setBaselineComparison(baseLinePpr, numMS2Analyzed, 12);
-				PerformanceEvaluator.setOriginalExperiment(baseLinePpr.getNum_proteins_identified());
+#if !EXTRACT_SPECTRAL_COUNT
+                FullPepXMLAndProteinProphetSetup();
+#endif
 			}
 			log.Debug("Setting up Database");
 			database = databaseSetUp(InputFileOrganizer.ExclusionDBFasta);
@@ -529,8 +523,6 @@ namespace MealTimeMS.RunTime
 					log.Info("Performing Comet search on full ms2 data");
 					String fullCometFile = PostProcessingScripts.CometStandardSearch(InputFileOrganizer.MS2SimulationTestFile, InputFileOrganizer.preExperimentFilesFolder, true);
 					InputFileOrganizer.OriginalCometOutput = fullCometFile;
-
-
 				}
 				if (!GlobalVar.useComputedProteinProphet)
 				{
@@ -582,7 +574,10 @@ namespace MealTimeMS.RunTime
 
 			log.Debug("Constructing graph...");
 			Database g;
-			if (GlobalVar.isSimulationForFeatureExtraction == true)
+#if EXTRACT_SPECTRAL_COUNT
+            GlobalVar.useRT=false;
+#endif
+            if (GlobalVar.isSimulationForFeatureExtraction == true|| !GlobalVar.useRT)//TODO Change
 			{
 				g = new Database(f, df, true,false);
 			}
@@ -622,19 +617,21 @@ namespace MealTimeMS.RunTime
 					int numMS2Analyzed = (int) e.exclusionProfile.GetPerformanceEvaluator().getValue(Header.NumMS2Analyzed);
 					PerformanceEvaluator.setBaselineComparison(baseLinePpr, numMS2Analyzed, GlobalVar.ddaNum);
 					PerformanceEvaluator.setOriginalExperiment(baseLinePpr.getNum_proteins_identified());
+					GlobalVar.ExperimentTotalMS2 = numMS2Analyzed;
 				}
 #else
-				if (exclusionProfile.getAnalysisType() == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
+				if (e.exclusionProfile.getAnalysisType() == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
 				{
 					ProteinProphetResult baseLinePpr = ProteinProphetEvaluator.getProteinProphetResult(InputFileOrganizer.OriginalProtXMLFile);
 					int numMS2Analyzed = (int)GlobalVar.ExperimentTotalMS2;
 					PerformanceEvaluator.setBaselineComparison(baseLinePpr, numMS2Analyzed, GlobalVar.ddaNum);
 					PerformanceEvaluator.setOriginalExperiment(baseLinePpr.getNum_proteins_identified());
+					GlobalVar.ExperimentTotalMS2 = numMS2Analyzed;
 				}
 #endif
-					e.totalRunTime = getCurrentTime() - e.experimentStartTime;
+                e.totalRunTime = getCurrentTime() - e.experimentStartTime;
 				String result = e.exclusionProfile.getPerformanceVector(e.experimentName, e.exclusionProfile.getAnalysisType().getDescription()
-					, e.analysisTime, e.totalRunTime, ppr, 12, e.exclusionProfile);
+					, e.analysisTime, e.totalRunTime, ppr, GlobalVar.ddaNum, e.exclusionProfile);
 				Console.WriteLine(result);
 				Console.WriteLine("Protein groups: " + ppr.getFilteredProteinGroups().Count);
 				WriterClass.writeln(result);

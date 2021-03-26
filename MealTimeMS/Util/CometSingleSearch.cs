@@ -113,24 +113,7 @@ namespace MealTimeMS.Util
 			return false;
 		}
 
-		//public CometSingleSearch(String dbPath)
-		//{
-		//    Console.WriteLine("Initializing Comet Search Manager Wrapper");
-		//    SearchMgr = new CometSearchManagerWrapper();
-		//    Console.WriteLine("Comet Search Manager initialized");
-		//    SearchSettings searchParams = new SearchSettings();
 
-
-		//    string sDB = dbPath;
-		//    dPeptideMassLow = 0;
-		//    dPeptideMassHigh = 0;
-
-		//    // Configure search parameters here
-		//    // Will also read the index database and return dPeptideMassLow/dPeptideMassHigh mass range
-		//    searchParams.ConfigureInputSettings(SearchMgr, ref dPeptideMassLow, ref dPeptideMassHigh, ref sDB);
-		//    Console.WriteLine("Comet parameters configured");
-		//    SearchMgr.InitializeSingleSpectrumSearch();
-		//}
 		public static bool Search(Spectra spec, out IDs id)
 		{
 
@@ -140,14 +123,6 @@ namespace MealTimeMS.Util
 			double dPrecursorMZ = spec.getPrecursorMz();
 			double[] pdMass = spec.getPeakMz();
 			double[] pdInten = spec.getPeakIntensity();
-
-			//double dExpPepMass = (iPrecursorCharge * dPrecursorMZ) - (iPrecursorCharge - 1) * 1.00727646688;
-			//if (dExpPepMass < dPeptideMassLow || dExpPepMass > dPeptideMassHigh)
-			//{
-			//    log.Debug("cannot match the spectra to a peptide: precursor mass out of db range");
-			//    id = null;
-			//    return false;
-			//}
 
 
 			ScoreWrapper score;
@@ -160,6 +135,8 @@ namespace MealTimeMS.Util
 			//int iNumPeaks -> total number of peaks
 			//double[] pdInten -> double[] of peak intensity
 			//double[] pdMass -> double[] of peak mass
+
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! The Realtime Comet search function is called in this line !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			SearchMgr.DoSingleSpectrumSearch(iPrecursorCharge, dPrecursorMZ, pdMass, pdInten, iNumPeaks,
 			   out peptide, out protein, out matchingFragments, out score);
 			if (peptide.Length == 0)
@@ -181,11 +158,7 @@ namespace MealTimeMS.Util
 				return false;
 			}
 
-			//remove modification brackets from sequence
-			//if (peptide.Contains("["))
-			//{
-			//	Console.WriteLine();
-			//}
+
 			String cleanedPeptide = peptide.Substring(2, peptide.Length - 4);
 			cleanedPeptide = rgx.Replace(cleanedPeptide, String.Empty);
 			if (cleanedPeptide.Length < GlobalVar.MinimumPeptideLength)
@@ -195,13 +168,6 @@ namespace MealTimeMS.Util
 				id = null;
 				return false;
 			}
-
-			//if (cleanedPeptide.Equals("ECEDVDMCMTQDQSAR"))
-			//{
-			//	String skdsd = protein;
-			//	skdsd = skdsd + "";
-			//}
-			
 
 			double xcorr = score.xCorr;
 			int iIonsMatch = score.MatchedIons;
