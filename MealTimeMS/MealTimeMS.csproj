@@ -477,8 +477,12 @@
     <Content Include="Tools\RTCalc.coeff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Tools\chainsaw" />
-    <None Include="Tools\RTCalc" />
+    <Content Include="Tools\chainsaw">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tools\RTCalc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Tools\rtcalc_120minTraining.coeff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
