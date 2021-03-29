@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using MealTimeMS.Properties;
+using MealTimeMS.IO;
 
 namespace MealTimeMS.Util
 {
@@ -33,13 +34,13 @@ namespace MealTimeMS.Util
 		public static String CometQualityCheckFile = "";
 
 		//Tools
-		public static String RTCalc = "Tools\\RTCalc_2019.exe";
+		public static String RTCalc = "";
 		public static String RTCalcCoeff = "";
 		//public const String RTCalc = "Tools\\RTCalc_2019.exe";
 		//public const String RTCalcCoeff = "Tools\\rtcalc_120minTraining.coeff";
 		public static String ChainSaw = "";
-		//public static String ChainSaw = "Tools\\chainsaw.exe";
-		public static String CometExe = "Tools\\comet.2019015.win32.exe";
+        //public static String ChainSaw = "Tools\\chainsaw.exe";
+        public static String CometExe = "";
 		public static String TPPBinFolder = "C:\\TPP\\bin\\";
 		public static String XInteract = TPPBinFolder + "xinteract.exe";
 		public static String ProteinProphet = TPPBinFolder + "ProteinProphet.exe";
@@ -64,21 +65,27 @@ namespace MealTimeMS.Util
 
 		public static void SetWorkDir(String workDir)
 		{
-			WorkingDirectory = workDir;
+			WorkingDirectory = IOUtils.FilePathOSConverter(workDir);
 			
-			OutputRoot = WorkingDirectory + "Output\\";
+			OutputRoot = IOUtils.FilePathOSConverter( WorkingDirectory + "Output\\");
 			if (!Directory.Exists(OutputRoot))
 			{
 				Directory.CreateDirectory(OutputRoot);
 			}
 			CometQualityCheckFile = Path.Combine(AssemblyDirectory, "EmbeddedDataFiles", "CometQualityCheck.txt");
-			RTCalc = Path.Combine(AssemblyDirectory,"Tools","RTCalc.exe");
+
+            RTCalc = Path.Combine(AssemblyDirectory,"Tools","RTCalc.exe");
 
 #if WIN32
 			CometExe = Path.Combine(AssemblyDirectory, "Tools", "comet.2019011.win32.exe");
 			ChainSaw = Path.Combine(AssemblyDirectory, "Tools", "chainsaw.exe");
+#elif LINUX
+            CometExe = Path.Combine(AssemblyDirectory, "Tools", "comet.2019011.linux.exe");
+			ChainSaw = Path.Combine(AssemblyDirectory, "Tools", "chainsaw");
+            RTCalc = Path.Combine(AssemblyDirectory,"Tools","RTCalc");
+
 #else
-			ChainSaw = Path.Combine(AssemblyDirectory, "Tools", "chainsaw_x64.exe");
+            ChainSaw = Path.Combine(AssemblyDirectory, "Tools", "chainsaw_x64.exe");
 			CometExe = Path.Combine(AssemblyDirectory, "Tools", "comet.2019011.win64.exe");
 #endif
 

@@ -104,6 +104,15 @@ namespace MealTimeMS.IO
 		return numString.PadLeft(numExperimentsString.Length, '0');
 	}
 
+    public static String FilePathOSConverter(String path)
+        {
+#if LINUX
+            return path.Replace("\\", "/");
+#else
+            return path;
+#endif
+        }
+
 }
 
 }

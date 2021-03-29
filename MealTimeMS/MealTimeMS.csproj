@@ -452,6 +452,7 @@
     <Content Include="Tools\chainsaw_x64.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Tools\comet.2019011.linux.exe" />
     <Content Include="Tools\comet.2019011.win32.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -476,6 +477,8 @@
     <Content Include="Tools\RTCalc.coeff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Tools\chainsaw" />
+    <None Include="Tools\RTCalc" />
     <None Include="Tools\rtcalc_120minTraining.coeff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

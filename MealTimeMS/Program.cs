@@ -21,7 +21,7 @@
 #endregion legal notice
 
 //possible pre-processor directives
-//SIMULATION,DONTEVALUATE,STDEVINCLUDED,WRITE_RT_TIME,IGNORE,CHEATINGRTTIME,TRACKEXCLUDEDPROTEINFEATURE, DDA, EXTRACT_SPECTRAL_COUNT
+//SIMULATION,DONTEVALUATE,STDEVINCLUDED,WRITE_RT_TIME,IGNORE,CHEATINGRTTIME,TRACKEXCLUDEDPROTEINFEATURE, DDA, EXTRACT_SPECTRAL_COUNT, LINUX
 //for a real time test, use either 
 //IGNORE,DONTEVALUATE   or
 //IGNORE
@@ -99,7 +99,6 @@ namespace MealTimeMS
 			.WithParsed<PrintParams>(RunPrintParameters)
 			.WithParsed<TrainClassifier>(RunTrainClassifier)
 			.WithNotParsed(HandleParseError);
-
 			//SetUpOptions(args);
 
 			//Sets up the output directory and creates the output files

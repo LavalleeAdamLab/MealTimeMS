@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using MealTimeMS.ExclusionProfiles;
 using MealTimeMS.Util;
+using MealTimeMS.IO;
 
 namespace MealTimeMS.IO
 {
@@ -81,7 +82,10 @@ namespace MealTimeMS.IO
 						Program.ExitProgram(6);
 					}
 					value = value.Trim("\"".ToCharArray());
-
+                    if (GetParamContractFromName(name).thisIsAFile)
+                    {
+                        value = IOUtils.FilePathOSConverter(value);
+                    }
 					if (param.crucial)
 					{
 						if(!CheckParamValid(name, value))
@@ -91,6 +95,7 @@ namespace MealTimeMS.IO
 						}
 						switch (name)
 						{
+
 							case "FastaFileName":
 								InputFileOrganizer.FASTA_FILE = value;
 								InputFileOrganizer.ExclusionDBFasta = value;
