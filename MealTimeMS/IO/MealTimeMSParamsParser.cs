@@ -44,7 +44,7 @@ namespace MealTimeMS.IO
 				"contain a header \"peptide\tRT\", the rest of the file should contain" +
 				"one peptide in each line with their respective retention time in minutes separated by tab: \"VSEFYEETK\t3.983788\". These will be used to replace the some RT values in the RTCalcPredictedPeptideRT file, with the amount of perturbation specified below",true),
 			new Parameter("SpecialSimulation","AmountPerturbation",false,"0.0","A number (double >= 0.0) in seconds specifing the amount of perturnation around the measured retention time. (Default 0.0)"),
-			new Parameter("SpecialSimulation","CometOfflineSearchResultTable",false,"","The full comet search result of the MS2SimulationSpectraFile in a tsv format (should be in a .txt file)")
+			new Parameter("SpecialSimulation","CometOfflineSearchResultTable",false,"","The full comet search result of the MS2SimulationSpectraFile in a tsv format (comet should output it in a .txt file if specified in your comet.params)")
 			//amountPerturbationAroundMeasuredRetentionTimeInSeconds
 		};
 		//Parses the params file for MealTimeMS

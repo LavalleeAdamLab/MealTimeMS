@@ -236,7 +236,8 @@ namespace MealTimeMS.Util
 			return str;
 		}
 
-		static Dictionary<int, IDs> searchResultTable;
+		static Dictionary<int, IDs> searchResultTable;//Only in use if comet offline search is enabled
+
 		public static void InitializeComet_NonRealTime(String resultTable)
 		{
 			List<IDs> IDList = ParseCometTSVOutput(resultTable);
@@ -252,7 +253,10 @@ namespace MealTimeMS.Util
 		{
 			if (searchResultTable.ContainsKey(spec.getScanNum()))
 			{
+                //Matches the scan num of the spectra to the scan num in the comet full search result
 				id = searchResultTable[spec.getScanNum()];
+
+                //Check if it is a decoy peptide (i.e. all parent proteins are decoys)
                 if(id.getPeptideSequence().Length==0|| id.getPeptideSequence().Length<GlobalVar.MinimumPeptideLength||
                     !IsNonDecoyPSM(id.getParentProteinAccessions()))
                 {
@@ -277,7 +281,7 @@ namespace MealTimeMS.Util
 		}
 
 
-        //For offline comet search
+        //For offline comet search, parses full comet search result from a tsv format
         private static List<IDs> ParseCometTSVOutput(String fileDir)
         {
             List<IDs> idList = new List<IDs>();
@@ -299,7 +303,7 @@ namespace MealTimeMS.Util
                 double startTime = -1;
                 String pepSeq = info[header.IndexOf("plain_peptide")];
                 String pepSeq_withModification = info[header.IndexOf("modified_peptide")];
-                double pep_mass = double.Parse(info[header.IndexOf("calc_neutral_mass")]); //TODO not sure if we should use exp_neutral_mass	or calc_neutral_mass
+                double pep_mass = double.Parse(info[header.IndexOf("calc_neutral_mass")]); //TODO not sure if we should use exp_neutral_mass or calc_neutral_mass
                 double x_Corr = double.Parse(info[header.IndexOf("xcorr")]);
                 double dCN = double.Parse(info[header.IndexOf("delta_cn")]);
                 String parentProtein = info[header.IndexOf("protein")];

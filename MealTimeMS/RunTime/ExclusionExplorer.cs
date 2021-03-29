@@ -212,14 +212,12 @@ namespace MealTimeMS.RunTime
         public static void RunSimulationAndPostProcess(Experiment e)
         {
             Console.WriteLine("\nSimulating \"{0}\"", e.experimentName);
-            PSMTSVReaderWriter.InitiatePSMWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "NoExclusion_RealTimeCometSearchResult.tsv"));
+
 #if DDA
             new QuickDDAInstrumentSimulation(e, ms2SpectraList, GlobalVar.ddaNum);
 #else
 			new DataReceiverSimulation().DoJob(e.exclusionProfile, ms2SpectraList);
 #endif
-
-            PSMTSVReaderWriter.ClosePSMWriter();
 
             e.analysisTime = getCurrentTime() - e.experimentStartTime;
             WriteSpectralAndPeptideCountPerIdentifiedProtein(e);
@@ -227,17 +225,15 @@ namespace MealTimeMS.RunTime
             Program.ExitProgram(0);
 #endif
             PostExperimentProcessing(e);
-            //WriteSpectralAndPeptideCountPerIdentifiedProtein(e);
             WriteUnusedSpectra(e);
             WriteUsedSpectra(e);
-            //WriteUsedSpectra(e);
-
 
             e.exclusionProfile.reset();
             reset();
         }
 
 
+        //Currently only used for running the simulation used to create the feature files for classifier training
         public static ExclusionProfile SingleSimulationRun(ExclusionProfileEnum expType)
         {
             PreExperimentSetUp();
@@ -412,50 +408,6 @@ namespace MealTimeMS.RunTime
             exclusionProfile.reset();
             reset();
         }
-
-        //public static void RunRandomExclusion(String usedResourcesFile)
-        //{
-        //	PreExperimentSetUp();
-        //	int experimentNumber = 0;
-        //	List<ExperimentResult> resultList = ParseExperimentResult(usedResourcesFile);
-        //	foreach (ExperimentResult expResult in resultList)
-        //	{
-
-        //		//Do 5 random experiments per normal experiment
-        //		for (int i = 0; i < 10; i++)
-        //		{
-        //			experimentNumber++;
-        //			startTime = getCurrentTime();
-
-
-        //			String originalExperimentName = expResult.experimentName;
-        //			int numExcluded = expResult.numSpectraExcluded;
-        //			int numAnalyzed = expResult.numSpectraAnalyzed;
-
-        //			ExclusionProfile exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, 12);
-        //			if (experimentNumber == 1)
-        //			{
-        //				WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().getHeader());
-        //			}
-        //			String experimentName = "EXP_" + experimentNumber + String.Format("Random:originalExperiment_{0}", originalExperimentName);
-
-        //			if (GlobalVar.IsSimulation)
-        //			{
-        //				new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
-        //			}
-        //			else
-        //			{
-        //				new DataReceiver().DoJob(exclusionProfile);
-        //			}
-        //			analysisTime = getCurrentTime() - startTime;
-        //			PostExperimentProcessing(exclusionProfile, experimentName, experimentNumber);
-        //			exclusionProfile.reset();
-        //			reset();
-        //		}
-
-        //	}
-
-        //}
 
         //Parse Spectra usage information in past experiments for random exclusion
         public static List<ExperimentResult> ParseExperimentResult(params String[] resultFiles)
@@ -739,5 +691,48 @@ namespace MealTimeMS.RunTime
             CometSingleSearch.reset();
         }
 
+        //public static void RunRandomExclusion(String usedResourcesFile)
+        //{
+        //	PreExperimentSetUp();
+        //	int experimentNumber = 0;
+        //	List<ExperimentResult> resultList = ParseExperimentResult(usedResourcesFile);
+        //	foreach (ExperimentResult expResult in resultList)
+        //	{
+
+        //		//Do 5 random experiments per normal experiment
+        //		for (int i = 0; i < 10; i++)
+        //		{
+        //			experimentNumber++;
+        //			startTime = getCurrentTime();
+
+
+        //			String originalExperimentName = expResult.experimentName;
+        //			int numExcluded = expResult.numSpectraExcluded;
+        //			int numAnalyzed = expResult.numSpectraAnalyzed;
+
+        //			ExclusionProfile exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, 12);
+        //			if (experimentNumber == 1)
+        //			{
+        //				WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().getHeader());
+        //			}
+        //			String experimentName = "EXP_" + experimentNumber + String.Format("Random:originalExperiment_{0}", originalExperimentName);
+
+        //			if (GlobalVar.IsSimulation)
+        //			{
+        //				new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+        //			}
+        //			else
+        //			{
+        //				new DataReceiver().DoJob(exclusionProfile);
+        //			}
+        //			analysisTime = getCurrentTime() - startTime;
+        //			PostExperimentProcessing(exclusionProfile, experimentName, experimentNumber);
+        //			exclusionProfile.reset();
+        //			reset();
+        //		}
+
+        //	}
+
+        //}
     }
 }

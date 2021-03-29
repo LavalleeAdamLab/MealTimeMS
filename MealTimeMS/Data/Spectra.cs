@@ -5,7 +5,7 @@ namespace MealTimeMS.Data
     
 
     /*
-     * Used when reading the mzML file 
+     * Used when reading the .ms2 file 
      * This class contains all the attributes of each individual spectrum
      * An array of objects, spectrum, of class Spectra will be created to store each spectrum and its attributes
      */
@@ -14,14 +14,11 @@ namespace MealTimeMS.Data
 		//Each attribute is private so that other programs cannot change their values
 
 		//params used only by this program locally
-		private double index; // spectrum.getIndex()
+		private double index; // The index of the spectra locally in MTMS, only used to track progress. This is not the scanNum, see the variable scanNum.
 		private double arrivalTime; //As opposed to "startTime", arrivalTime is the time recorded using the clock on the computer
 
-		/*From first line of <spectrum> in the mzML file*/
-
-		private int scanNum; //spectrum.getScan()
-
         /*--> spectrum*/
+		private int scanNum; //The scanNum provided by the instrument. Retrieve by spectrum.getScan()
         private int msLevel; // cvParams.get(1).value()
                              // private ? positiveScan; //cvParams.get(2).value()
                              // private ? profileSpec; //cvParams.get(3).value()

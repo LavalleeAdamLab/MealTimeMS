@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using MealTimeMS.Util;
 namespace MealTimeMS.Data
 {
+
+    //This class stores the peptide-spectrum match information from comet database searches.
 	public class IDs
 	{
 		private double scan_t; // stores the scan time from the mzML file to help find the scan number
@@ -21,7 +23,6 @@ namespace MealTimeMS.Data
 		private double spRank;
 		private double evalue;
 
-		// Constructor to associate objects with the class mzID
 		public IDs(double startTime, int scanNum, String pepEv, String pepRef, HashSet<String> dBSeq, String pepSeq,
 				HashSet<String> accs, double pep_mass, double x_Corr, double _deltaCN, double _deltaCNStar, double _spScore,
 				double _spRank, double _evalue)
