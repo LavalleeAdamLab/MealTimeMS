@@ -57,13 +57,15 @@ namespace MealTimeMS.Util
 		//suffixes
 		public static String PepXMLSuffix = ".pep.xml";
 
-		//test files
+		//test files/ supplementary files
 		public static String SVMSavedFile = "";
 
 		public static String SummaryFileForRandomExclusion = "";
+        public static String CometOfflineSearchResultTable = ""; // a .tsv of the comet search on the full .ms2 or mzml
 
 
-		public static void SetWorkDir(String workDir)
+
+        public static void SetWorkDir(String workDir)
 		{
 			WorkingDirectory = IOUtils.FilePathOSConverter(workDir);
 			

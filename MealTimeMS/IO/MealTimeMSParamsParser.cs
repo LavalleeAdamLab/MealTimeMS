@@ -43,7 +43,8 @@ namespace MealTimeMS.IO
 			new Parameter("SpecialSimulation","MeasuredPeptideRetentionTime",false,"","A file with empirically measured peptide retention time in minutes. The first line should " +
 				"contain a header \"peptide\tRT\", the rest of the file should contain" +
 				"one peptide in each line with their respective retention time in minutes separated by tab: \"VSEFYEETK\t3.983788\". These will be used to replace the some RT values in the RTCalcPredictedPeptideRT file, with the amount of perturbation specified below",true),
-			new Parameter("SpecialSimulation","AmountPerturbation",false,"0.0","A number (double >= 0.0) in seconds specifing the amount of perturnation around the measured retention time. (Default 0.0)")
+			new Parameter("SpecialSimulation","AmountPerturbation",false,"0.0","A number (double >= 0.0) in seconds specifing the amount of perturnation around the measured retention time. (Default 0.0)"),
+			new Parameter("SpecialSimulation","CometOfflineSearchResultTable",false,"","The full comet search result of the MS2SimulationSpectraFile in a tsv format (should be in a .txt file)")
 			//amountPerturbationAroundMeasuredRetentionTimeInSeconds
 		};
 		//Parses the params file for MealTimeMS
@@ -215,7 +216,6 @@ namespace MealTimeMS.IO
 									InputFileOrganizer.MeasuredPeptideRetentionTime = value;
 									GlobalVar.useMeasuredRT = true;
 									break;
-
 								case "AmountPerturbation":
 									if (value.Equals(""))
 									{
@@ -225,6 +225,10 @@ namespace MealTimeMS.IO
 									{
 										GlobalVar.amountPerturbationAroundMeasuredRetentionTimeInSeconds = Double.Parse(value);
 									}
+									break;
+
+                                case "CometOfflineSearchResultTable":
+									InputFileOrganizer.CometOfflineSearchResultTable = value;
 									break;
 
 								default:

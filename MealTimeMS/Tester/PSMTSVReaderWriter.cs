@@ -13,7 +13,11 @@ namespace MealTimeMS.Tester
 	static class PSMTSVReaderWriter
 	{
 		static StreamWriter IDWriter;
-		public static List<IDs> ParseTSV(String fileDir) {
+
+        
+
+        //Deprecated function
+        public static List<IDs> ParseTSV(String fileDir) {
 			List<IDs> idList = new List<IDs>();
 			StreamReader sr = new StreamReader(fileDir);
 			List<String> header = sr.ReadLine().Split("\t".ToCharArray()).ToList();

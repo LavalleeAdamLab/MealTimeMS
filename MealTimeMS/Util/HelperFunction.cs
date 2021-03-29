@@ -24,7 +24,7 @@ namespace MealTimeMS.Util
 			String str = "";
 			foreach (String ss in ls)
 			{
-				str = str + ss + "\n";
+                str = str + ss + "\n";
 			}
 			return str;
 		}

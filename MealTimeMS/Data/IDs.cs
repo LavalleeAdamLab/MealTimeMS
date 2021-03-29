@@ -72,8 +72,11 @@ namespace MealTimeMS.Data
 		{
 			return scan_t;
 		}
-
-		public int getScanNum()
+        public void setScanTime(double _scanTime)
+        {
+            scan_t= _scanTime;
+        }
+        public int getScanNum()
 		{
 			return scan;
 		}

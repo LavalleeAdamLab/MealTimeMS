@@ -29,8 +29,12 @@ namespace MealTimeMS.Util
 		static String dbPath;
 		public static void InitializeComet(String _dbPath, String paramsPath)
 		{
+#if COMETOFFLINESEARCH
+            InitializeComet_NonRealTime(InputFileOrganizer.CometOfflineSearchResultTable);
+            return;
+#endif
 
-			Console.WriteLine("Initializing Comet Search Manager Wrapper");
+            Console.WriteLine("Initializing Comet Search Manager Wrapper");
 			dbPath = _dbPath;
 			paramsFile = paramsPath;
 
@@ -116,9 +120,11 @@ namespace MealTimeMS.Util
 
 		public static bool Search(Spectra spec, out IDs id)
 		{
+#if COMETOFFLINESEARCH
+            return Search_NonRealTime(spec, out id);
+#endif
 
-
-			int iNumPeaks = spec.getPeakCount();
+            int iNumPeaks = spec.getPeakCount();
 			int iPrecursorCharge = spec.getPrecursorCharge();
 			double dPrecursorMZ = spec.getPrecursorMz();
 			double[] pdMass = spec.getPeakMz();
@@ -230,7 +236,7 @@ namespace MealTimeMS.Util
 		static Dictionary<int, IDs> searchResultTable;
 		public static void InitializeComet_NonRealTime(String resultTable)
 		{
-			List<IDs> IDList = PSMTSVReaderWriter.ParseTSV(resultTable);
+			List<IDs> IDList = ParseCometTSVOutput(resultTable);
 			searchResultTable = new Dictionary<int, IDs>();
 			foreach (IDs id in IDList)
 			{
@@ -244,7 +250,16 @@ namespace MealTimeMS.Util
 			if (searchResultTable.ContainsKey(spec.getScanNum()))
 			{
 				id = searchResultTable[spec.getScanNum()];
-				return true;
+                if(id.getPeptideSequence().Length==0|| id.getPeptideSequence().Length<GlobalVar.MinimumPeptideLength||
+                    !IsNonDecoyPSM(id.getParentProteinAccessions()))
+                {
+                    //if this is a decoy peptide or not matched to a peptide
+                    id = null;
+                    return false;
+                }
+
+                id.setScanTime(spec.getStartTime());
+                return true;
 			}
 			else
 			{
@@ -258,7 +273,44 @@ namespace MealTimeMS.Util
 			return true;
 		}
 
-		class SearchSettings
+
+        //For offline comet search
+        private static List<IDs> ParseCometTSVOutput(String fileDir)
+        {
+            List<IDs> idList = new List<IDs>();
+            StreamReader sr = new StreamReader(fileDir);
+            sr.ReadLine();//ignore first line
+            List<String> header = sr.ReadLine().Split("\t".ToCharArray()).ToList();
+            String line = sr.ReadLine();
+            int lastScanNum = -1;
+            while (line != null)
+            {
+                String[] info = line.Split("\t".ToCharArray());
+                int scanNum = int.Parse(info[header.IndexOf("scan")]);
+                if (scanNum == lastScanNum)
+                {
+                    line = sr.ReadLine();
+                    continue;
+                }
+                lastScanNum = scanNum;
+                double startTime = -1;
+                String pepSeq = info[header.IndexOf("plain_peptide")];
+                String pepSeq_withModification = info[header.IndexOf("modified_peptide")];
+                double pep_mass = double.Parse(info[header.IndexOf("calc_neutral_mass")]); //TODO not sure if we should use exp_neutral_mass	or calc_neutral_mass
+                double x_Corr = double.Parse(info[header.IndexOf("xcorr")]);
+                double dCN = double.Parse(info[header.IndexOf("delta_cn")]);
+                String parentProtein = info[header.IndexOf("protein")];
+                HashSet<String> accessions = new HashSet<string>(parentProtein.Split(",".ToCharArray()));
+                IDs id = new IDs(startTime, scanNum, pepSeq, pep_mass, x_Corr, dCN, accessions);
+                id.setPeptideSequence_withModification(pepSeq_withModification);
+
+                idList.Add(id);
+                line = sr.ReadLine();
+            }
+            return idList;
+        }
+
+        class SearchSettings
 		{
 			public bool ConfigureInputSettings(CometSearchManagerWrapper SearchMgr,
 			   ref double dPeptideMassLow,

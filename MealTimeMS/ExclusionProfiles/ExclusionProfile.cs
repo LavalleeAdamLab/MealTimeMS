@@ -154,8 +154,6 @@ namespace MealTimeMS.ExclusionProfiles
                 log.Debug("MS2 scan was identified.");
                 log.Debug(id);
 				performanceEvaluator.countMS2Identified();
-				double dbPepMass = database.getPeptide(id.getPeptideSequence()).getMass();
-				
 				//PSMTSVReaderWriter.WritePSM(id,spec, dbPepMass); //TODO turn this on in the future
 
 			}

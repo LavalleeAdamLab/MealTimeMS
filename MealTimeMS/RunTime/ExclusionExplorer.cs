@@ -492,7 +492,9 @@ namespace MealTimeMS.RunTime
         static void PreExperimentSetUp()
         {
             ConstructDecoyFasta();
+#if !COMETOFFLINESEARCH
             ConstructIDX();
+#endif
             if (GlobalVar.IsSimulation)
             //if(false)
             {

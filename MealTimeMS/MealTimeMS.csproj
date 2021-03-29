@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SIMULATION,DDA,EXTRACT_SPECTRAL_COUNT</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SIMULATION,DDA,EXTRACT_SPECTRAL_COUNT,COMETOFFLINESEARCH</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
