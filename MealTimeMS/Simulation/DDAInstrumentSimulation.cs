@@ -12,7 +12,8 @@ using MealTimeMS.Data;
 using MealTimeMS.Util;
 namespace MealTimeMS.Simulation
 {
-	//depricated
+	//deprecated - designed to be used to simulate instrument broadcasting in real time but with TopN functionality. 
+    // Replaced with QuickDDAInstrumentSimulation 
 	public class DDAInstrumentSimulation : InstrumentSimulation
 	{
 

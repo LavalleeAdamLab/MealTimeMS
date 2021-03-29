@@ -371,7 +371,6 @@
     <Compile Include="ExclusionProfiles\TestProfile\RandomExclusion.cs" />
     <Compile Include="ExclusionProfiles\TestProfile\RandomExclusion_Fast.cs" />
     <Compile Include="ExclusionProfiles\TestProfile\SequenceExclusion.cs" />
-    <Compile Include="IO\ConfigParser.cs" />
     <Compile Include="IO\IOUtils.cs" />
     <Compile Include="IO\MealTimeMSParamsParser.cs" />
     <Compile Include="IO\PartialPepXMLWriter.cs" />
@@ -388,7 +387,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="RunTime\ExclusionExplorer.cs" />
-    <Compile Include="RunTime\IDataReceiver.cs" />
     <Compile Include="Simulation\DDAInstrumentSimulation.cs" />
     <Compile Include="Simulation\InstrumentSimulation.cs" />
     <Compile Include="Simulation\DataReceiverSimulation.cs" />

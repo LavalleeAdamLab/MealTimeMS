@@ -19,6 +19,7 @@ using MealTimeMS.RunTime;
 namespace MealTimeMS
 {
     
+    //Simulates Thermo instrument broadcasting spectra info, to be received by DataReceiverSimulation listener functions.
     public  class InstrumentSimulation
     {
 

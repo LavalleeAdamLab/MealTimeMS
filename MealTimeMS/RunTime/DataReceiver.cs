@@ -43,6 +43,7 @@ namespace MealTimeMS
 	/// 
 	//  This class contains eventListeners to listen to MS scans broadcasted by Tune, 
 	//  used when running on the laptop hooked onto the mass spectrometer during a real experiment
+    //  For simulation see class DataReceiverSimulation.cs
 	class DataReceiver
 	{
 		internal DataReceiver() { }

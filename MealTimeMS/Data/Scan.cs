@@ -10,7 +10,7 @@ using InfoContainer = Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer.IInf
 using MealTimeMS.Util;
 namespace MealTimeMS.Data
 {
-    // Depricated, this class is not used anymore
+    // Deprecated, this class is not used anymore
     public class Scan
     {
         Spectra spec;

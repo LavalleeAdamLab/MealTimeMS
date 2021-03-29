@@ -34,8 +34,8 @@ namespace MealTimeMS.IO
 			new Parameter("ExperimentParameters","LogisticRegressionDecisionThreshold",true,"0.5","(default 0.5)Logistic regression classifier decision threshold used MealTimeMS. Separate by comma if multiple values are provided"),
 			new Parameter("LogisticRegressionClassifier","LogisRegressionClassiferSavedCoefficient",false,"","File path to the saved coefficient file of a trained LR classifier model. " +
 				"To generate a traiend logistic regression classifier model saved coefficient file, use command: \"MealTimeMS.exe -train\" option",true),
-			//new Parameter("PrecomputedFiles","ChainSawResult",false,"","",true),
-			new Parameter("PrecomputedFiles","RTCalcPredictedPeptideRT",false,"","RTCalc predicted peptide retention time result file, in seconds",true),
+            new Parameter("PrecomputedFiles","ChainSawDigestedDatabase",false,"","Fasta file digested with Chainsaw, this is used to construct the in-program database",true),
+            new Parameter("PrecomputedFiles","RTCalcPredictedPeptideRT",false,"","RTCalc predicted peptide retention time result file, in seconds",true),
 			//new Parameter("PrecomputedFiles","DecoyFasta",false,"","",true),
 			new Parameter("PrecomputedFiles","IDXDataBase",false,"","",true),
 			new Parameter("PrecomputedFiles","OriginalCometOutput",false,"","",true),
@@ -180,12 +180,12 @@ namespace MealTimeMS.IO
 							{
 
 
-								//case "ChainSawResult":
-								//	InputFileOrganizer.ChainSawResult = value;
-								//	GlobalVar.useChainsawComputedFile = true;
-								//	break;
+                                case "ChainSawDigestedDatabase":
+                                    InputFileOrganizer.ChainSawResult = value;
+                                    GlobalVar.useChainsawComputedFile = true;
+                                    break;
 
-								case "RTCalcPredictedPeptideRT":
+                                case "RTCalcPredictedPeptideRT":
 									InputFileOrganizer.RTCalcResult = value;
 									GlobalVar.useRTCalcComputedFile = true;
 

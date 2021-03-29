@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 namespace MealTimeMS.Data
 {
+    //This class is really should be called ms2File - stores the ms2 file info
     public class MZMLFile
     {
         private String fileName;

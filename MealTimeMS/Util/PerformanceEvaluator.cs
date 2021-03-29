@@ -11,6 +11,8 @@ using MealTimeMS.ExclusionProfiles;
 namespace MealTimeMS.Util
 {
 
+    //Class tracks and stores the performance metrics, constantly updated during and at the end of the experiment/simulation.
+    //Results will be outputed to summary.txt file in the output folder
     public class PerformanceEvaluator
     {
 

@@ -61,8 +61,10 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 
 		private static void SimulationWithDecoyParamsSetUp()
 		{
+            //The run to extract protein features to train classifier has slightly different simulation paramaters than a normal run. 
+            //Namely, the in-program database contains decoy proteins here but not in a normal run
 
-			GlobalVar.isSimulationForFeatureExtraction = true;
+            GlobalVar.isSimulationForFeatureExtraction = true;
 			String decoyConcatDB = DecoyConcacenatedDatabaseGenerator.GenerateConcacenatedDecoyFasta(InputFileOrganizer.FASTA_FILE, InputFileOrganizer.OutputFolderOfTheRun);
 			InputFileOrganizer.ExclusionDBFasta = decoyConcatDB; //sets the in-program databse to one that contains decoy protein - for feature generation only
 			InputFileOrganizer.DecoyFasta = decoyConcatDB;

@@ -17,7 +17,10 @@ using MealTimeMS.Tester;
 
 namespace MealTimeMS.Util
 {
-	public static class CometSingleSearch
+    //Class responsible for comet search (i.e. ms2-to-peptide match) in real-time. 
+    // Use pre-processor directive "COMETOFFLINESEARCH" to do an offline search. 
+    //In this case you would need to include the comet search result table (in a tsv output format) in the MealTimeMS.params file under the parameter "CometOfflineSearchResultTable"
+    public static class CometSingleSearch
 	{
 		static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 		static CometSearchManagerWrapper SearchMgr;

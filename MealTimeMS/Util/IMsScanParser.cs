@@ -10,7 +10,7 @@ using InfoContainer = Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer.IInf
 using MealTimeMS.Util;
 namespace MealTimeMS.Data
 {
-	// Parses IMsScan into Spectra object
+	// Parses IMsScan from the Thermo API into Spectra object
 	public class IMsScanParser
 	{
 

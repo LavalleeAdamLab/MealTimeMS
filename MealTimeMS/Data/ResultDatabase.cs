@@ -8,7 +8,7 @@
 
 //namespace MealTimeMS.Data
 //{
-
+////Deprecated class
 
 //public class ResultDatabase
 //    {

@@ -11,6 +11,7 @@ namespace MealTimeMS.Util
 {
 
 
+    //Class used to track the retention time error between predicted and observed RT, then calculate RT calibration required.
 public class RetentionTimeUtil
     {
         static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();

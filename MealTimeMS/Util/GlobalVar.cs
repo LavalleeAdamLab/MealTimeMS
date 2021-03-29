@@ -29,7 +29,7 @@ namespace MealTimeMS.Util
 		public static double amountPerturbationAroundMeasuredRetentionTimeInSeconds = 0.0;
 
 
-		//scan info table header -- do NOT change these values
+		//scan info table header for the Thermo API -- do NOT change these values
 		public const String MSLevelHeader = "MSOrder";
         public const String PrecursorChargeHeader = "Charge State:";
         public const String PrecursorMZHeader = "Monoisotopic M/Z:";
@@ -40,7 +40,6 @@ namespace MealTimeMS.Util
 		//public static double AminoAcid_M_modifiedMass = 15.9949;
 
 		//Experiment Params
-		//public static int SimulationSampleNumber = 5000;
 		public static int ScansPerOutput = 100;
         public static bool SeeExclusionFormat = false;
         public static bool SetExclusionTable = false;
@@ -50,8 +49,7 @@ namespace MealTimeMS.Util
         public static int MinimumPeptideLength = 6;
 		public static String DecoyPrefix = "DECOY_";
 		public static String DBTargetProteinStartString = "sp|";
-		//public static double LRModelDecisionThreshold = 0.70;
-		public static double AccordThreshold = 0.70;
+		public static double AccordThreshold = 0.70; // Probability threshold for the logistic regression classifier
 		//Nora Parameters
 		public static double XCorr_Threshold = 2.5;
 		public static int NumDBThreshold = 2;
@@ -70,7 +68,7 @@ namespace MealTimeMS.Util
 
 
 		//temp variables
-		public static int randomRepeatsPerExperiment =10;
+		public static int randomRepeatsPerExperiment = 10;
         public static bool useRT = true;
 		//ExclusionExplorerParamsList
 		public static List<double> PPM_TOLERANCE_LIST;

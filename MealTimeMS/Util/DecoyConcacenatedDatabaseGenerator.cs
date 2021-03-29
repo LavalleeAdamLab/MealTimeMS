@@ -79,37 +79,7 @@ namespace MealTimeMS.Util
 			sw.Close();
 			return outputFilePath;
 		}
-		//depricated
-		public static String GenerateConcacenatedDecoyFasta_MimicCometInternal(String fastaFile, String outputFilePath)
-		{
-			StreamWriter sw = new StreamWriter(outputFilePath);
-			
-			
-			
-			DigestedFastaFile df = PerformDigestion.performDigest(fastaFile, GlobalVar.NUM_MISSED_CLEAVAGES, false);
-			List<DigestedPeptide> targetSequences = df.getDigestedPeptideArray();
-
-
-			String line;
-			foreach(DigestedPeptide targetSeq in targetSequences)
-			{
-				//write the target sequence
-				line = ">" + targetSeq.getAccession();
-				sw.WriteLine(line);
-
-				line = targetSeq.getSequence();
-				sw.WriteLine(line);
-
-				//write the decoy sequence
-				line = ">" + GlobalVar.DecoyPrefix + targetSeq.getAccession();
-				sw.WriteLine(line);
-
-				line = ReverseSequence_keepCTerm(targetSeq.getSequence());
-				sw.WriteLine(line);
-			}
-			sw.Close();
-			return outputFilePath;
-		}
+		
 		private static String ReverseSequence_keepCTerm(String sequence)
 		{
 			//keeps the C-terminus peptide at the last position, and reverses everything
@@ -131,7 +101,37 @@ namespace MealTimeMS.Util
 			return reversedSequence;
 		}
 
+        ////depricated
+        //public static String GenerateConcacenatedDecoyFasta_MimicCometInternal(String fastaFile, String outputFilePath)
+        //{
+        //	StreamWriter sw = new StreamWriter(outputFilePath);
 
 
-	}
+
+        //	DigestedFastaFile df = PerformDigestion.performDigest(fastaFile, GlobalVar.NUM_MISSED_CLEAVAGES, false);
+        //	List<DigestedPeptide> targetSequences = df.getDigestedPeptideArray();
+
+
+        //	String line;
+        //	foreach(DigestedPeptide targetSeq in targetSequences)
+        //	{
+        //		//write the target sequence
+        //		line = ">" + targetSeq.getAccession();
+        //		sw.WriteLine(line);
+
+        //		line = targetSeq.getSequence();
+        //		sw.WriteLine(line);
+
+        //		//write the decoy sequence
+        //		line = ">" + GlobalVar.DecoyPrefix + targetSeq.getAccession();
+        //		sw.WriteLine(line);
+
+        //		line = ReverseSequence_keepCTerm(targetSeq.getSequence());
+        //		sw.WriteLine(line);
+        //	}
+        //	sw.Close();
+        //	return outputFilePath;
+        //}
+
+    }
 }
