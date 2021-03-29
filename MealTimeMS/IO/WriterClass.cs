@@ -63,8 +63,8 @@ namespace MealTimeMS
             GlobalVar.experimentName = name;
             Directory.CreateDirectory(outputFolder);
             InputFileOrganizer.OutputFolderOfTheRun = outputFolder;
-			Directory.CreateDirectory(outputFolder + "\\preExperimentFiles");
-			InputFileOrganizer.preExperimentFilesFolder = outputFolder + "\\preExperimentFiles";
+			Directory.CreateDirectory(Path.Combine(outputFolder , "preExperimentFiles"));
+			InputFileOrganizer.preExperimentFilesFolder = Path.Combine(outputFolder, "preExperimentFiles");
 
 			String summaryOutputFile = Path.Combine(outputFolder, name); 
             initiateWriter(summaryOutputFile);

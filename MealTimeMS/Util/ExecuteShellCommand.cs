@@ -20,8 +20,15 @@ namespace MealTimeMS.Util
 			System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
 			startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 			//startInfo.CreateNoWindow = true;
+#if LINUX
+			startInfo.FileName = "/bin/bash";
+			startInfo.Arguments = "-c " + "\""+command+"\"";
+
+#else
 			startInfo.FileName = "cmd.exe";
 			startInfo.Arguments = "/C " + command;
+
+#endif
 			startInfo.RedirectStandardOutput = true;
 			startInfo.UseShellExecute = false;
 			process.StartInfo = startInfo;
@@ -46,7 +53,7 @@ namespace MealTimeMS.Util
 				Console.WriteLine("Command Exception: " + command);
 				//Console.WriteLine(e.Message);
 			}
-
+			Console.WriteLine(output.ToString());
 			return output.ToString();
 
 		}
@@ -119,7 +126,11 @@ namespace MealTimeMS.Util
 		/// <param name="newDirectory">new directory.</param>
 		public static void MoveFile(  String filePath, String newDirectory  )
 		{
+#if LINUX
+			String command = "mv " + Path.GetFullPath(filePath) + " " + newDirectory;
+#else
 			String command = "move " + Path.GetFullPath(filePath) + " " + newDirectory;
+#endif
 			executeCommand(command);
 			return;
 		}
@@ -132,7 +143,13 @@ namespace MealTimeMS.Util
 
 		public static void CopyFile(String filePath, String newDirectory)
 		{
+#if LINUX
+			String command = "cp " + Path.GetFullPath(filePath) + " " + newDirectory;
+
+#else
 			String command = "copy " + Path.GetFullPath(filePath) + " " + newDirectory;
+
+#endif
 			executeCommand(command);
 			return;
 		}
