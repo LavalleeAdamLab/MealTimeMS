@@ -11,8 +11,6 @@ namespace MealTimeMS.ExclusionProfiles
 
     public static class ExclusionProfileEnumExtension
     {
-
-
         public static String getDescription(this ExclusionProfileEnum e)
         {
             return Enum.GetName(typeof(ExclusionProfileEnum),e);

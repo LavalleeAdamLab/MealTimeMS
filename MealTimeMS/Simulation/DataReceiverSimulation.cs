@@ -116,6 +116,7 @@ namespace MealTimeMS
                     return;
                 }
                 logger.Debug("\n{0:HH:mm:ss,fff} scan with {1} centroids arrived", DateTime.Now, scan.CentroidCount);
+                
                 DataProcessor.ParseIMsScan(scan);
             }
         }

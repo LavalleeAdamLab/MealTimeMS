@@ -45,11 +45,9 @@ public class Protein
 
         public void addPeptide(String reference, Peptide pep)
         {
-         
-            
             if (peptides.Keys.Contains(reference))
             {
-                log.Debug("Peptide already exists");
+               // log.Debug("Peptide already exists");
             }
             else
             {

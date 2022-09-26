@@ -51,27 +51,6 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 
 		}
 
-		//public ITransformer getLogisticRegressionModel()
-  //      {
-  //          return lrModel;
-  //      }
-
-        //public double getProbabilityThreshold()
-        //{
-        //    return lrModel.getThreshold();
-        //}
-
-        //public void setLogisticRegressionModel(ITransformer lrm)
-        //{
-        //    lrModel = lrm;
-        //}
-
-        //public void setProbabilityThreshold(double d)
-        //{
-        //    lrModel.setThreshold(d);
-        //}
-
-
 
         override
         protected void evaluateIdentification(IDs id)

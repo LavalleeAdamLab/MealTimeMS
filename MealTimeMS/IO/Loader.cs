@@ -79,8 +79,7 @@ namespace MealTimeMS.IO
         public static FastaFile parseFasta(String fileName)
         {
             // Stores the mapping of accession to its respective protein sequence
-            Dictionary<String, Protein> proteins = new Dictionary<String, Protein>();
-
+            Dictionary<String, Protein> proteins = new Dictionary<String, Protein>(); 
             log.Debug("Parsing fasta file...");
             try
             {
@@ -105,8 +104,8 @@ namespace MealTimeMS.IO
                             break;
                         }
                     }
-
-                    proteins.Add(accession, new Protein(accession, sequence));
+                    Protein prot = new Protein(accession, sequence);
+                    proteins.Add(accession, prot);
                 }
                 reader.Close();
             }
@@ -327,7 +326,12 @@ namespace MealTimeMS.IO
                         // CONVERT SECONDS INTO MINUTES
                         retentionTime = retentionTime / 60.0;
                     }
-                    retentionTimeDatabase.Add(peptideSequence, retentionTime);
+
+                    if (!retentionTimeDatabase.ContainsKey(peptideSequence))
+                    {
+                        retentionTimeDatabase.Add(peptideSequence, retentionTime);
+                    }
+                   
 
                     line = reader.ReadLine();
                 }

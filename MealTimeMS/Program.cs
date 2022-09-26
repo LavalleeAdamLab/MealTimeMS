@@ -39,6 +39,7 @@ using CommandLine;
 using NLog;
 using System.IO;
 
+
 using DataType = Microsoft.Spark.Sql.Types.DataType;
 using DataTypes = Microsoft.Spark.Sql.Types;
 using MealTimeMS.ExclusionProfiles.MachineLearningGuided;
@@ -93,6 +94,7 @@ namespace MealTimeMS
             //CometSingleSearchTester_v2.DoJob();
             //Program.ExitProgram(0);
 
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
             CommandLine.Parser.Default.ParseArguments<Options, PrintParams, TrainClassifier>(args)
 			.WithParsed<Options>(RunSimulation)
@@ -109,7 +111,8 @@ namespace MealTimeMS
 			//Console.WriteLine("Bring the system to On mode and/or start an acquisition to see results.");
 
 			ExecuteShellCommand.CopyFile(InputFileOrganizer.MealTimeMSParamsFile, InputFileOrganizer.OutputFolderOfTheRun);
-			ExclusionExplorer.RunExclusionExplorer(GlobalVar.ExclusionMethod);
+			ExclusionExplorer.RunRealTimeExperiment();
+			//ExclusionExplorer.RunExclusionExplorer(GlobalVar.ExclusionMethod);
 
 			Thread.CurrentThread.Join(2000); // waits x seconds for DataProcessor to finish
             WriterClass.CloseWriter();

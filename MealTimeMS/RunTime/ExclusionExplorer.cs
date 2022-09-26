@@ -15,7 +15,10 @@ using MealTimeMS.ExclusionProfiles.TestProfile;
 using MealTimeMS.Tester;
 using MealTimeMS.ExclusionProfiles.Nora;
 using MealTimeMS.ExclusionProfiles;
+//using MealTimeMS.ExclusionProfiles.TaxonGuided;
+//using MealTimeMS.ExclusionProfiles.TaxonGuided.TaxonClass;
 using MealTimeMS.Simulation;
+using System.Diagnostics;
 
 namespace MealTimeMS.RunTime
 {
@@ -64,6 +67,7 @@ namespace MealTimeMS.RunTime
                     foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
                     {
                         sw.WriteLine(observedPeptracker.ToString());
+                        //sw.WriteLine(observedPeptracker.peptideSequence+"\t"+ observedPeptracker.arrivalTime);
                     }
                     sw.Close();
                 }
@@ -83,6 +87,7 @@ namespace MealTimeMS.RunTime
                             GlobalVar.AccordThreshold = prThr;
 
                             ExclusionProfile exclusionProfile = new MachineLearningGuidedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
+                            //ExclusionProfile asdsad = new TaxonGuidedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
                             String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_MachineLearningGuidedExclusion:ppmTol_{0}_rtWin_{1}_prThr_{2}", ppmTol, rtWin, prThr);
                             Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
                             RunSimulationAndPostProcess(experiment);
@@ -224,6 +229,7 @@ namespace MealTimeMS.RunTime
 #if EXTRACT_SPECTRAL_COUNT
             Program.ExitProgram(0);
 #endif
+            
             PostExperimentProcessing(e);
             WriteUnusedSpectra(e);
             WriteUsedSpectra(e);
@@ -383,7 +389,8 @@ namespace MealTimeMS.RunTime
             Experiment experiment = new Experiment(exclusionProfile, experimentName, 1, ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE, startTime);
 
 
-            new DataReceiver().DoJob(exclusionProfile);
+            //new DataReceiver().DoJob(exclusionProfile);
+            BrukerInstrumentConnection.Connect(exclusionProfile);
 
             double analysisTime = getCurrentTime() - startTime;
             try
@@ -447,13 +454,15 @@ namespace MealTimeMS.RunTime
 #if !COMETOFFLINESEARCH
             ConstructIDX();
 #endif
+
+            //CometSingleSearchTester.TestSearch();
             if (GlobalVar.IsSimulation)
             //if(false)
             {
                 ms2SpectraList = Loader.parseMS2File(InputFileOrganizer.MS2SimulationTestFile).getSpectraArray();
                 GlobalVar.ExperimentTotalScans = ms2SpectraList.Count;
 #if !EXTRACT_SPECTRAL_COUNT
-                FullPepXMLAndProteinProphetSetup();
+               // FullPepXMLAndProteinProphetSetup();
 #endif
             }
             log.Debug("Setting up Database");
@@ -461,7 +470,7 @@ namespace MealTimeMS.RunTime
             log.Debug("Done setting up database.");
 
 
-            CometSingleSearch.InitializeComet(InputFileOrganizer.IDXDataBase, InputFileOrganizer.CometParamsFile);
+            //CometSingleSearch.InitializeComet(InputFileOrganizer.IDXDataBase, InputFileOrganizer.CometParamsFile);
             //CometSingleSearch.InitializeComet_NonRealTime("C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\NoExclusion_RealTimeCometSearchResult.tsv");
             //CometSingleSearch.QualityCheck();
             Console.WriteLine("pre-experimental setup finished");
@@ -541,7 +550,14 @@ namespace MealTimeMS.RunTime
                 g = new Database(f, df, true, true);
             }
             log.Debug(g);
+            // 1. Obtain the current application process
+            Process currentProcess = Process.GetCurrentProcess();
 
+            // 2. Obtain the used memory by the process
+            long usedMemory = currentProcess.PrivateMemorySize64;
+
+            // 3. Display value in the terminal output
+            Console.WriteLine("Used memory in bytes: "+usedMemory);
             return g;
         }
 

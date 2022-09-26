@@ -8,7 +8,12 @@ namespace MealTimeMS.Tester
     {
         public static void CometSingleSearchTest()
         {
-			String idx = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\PreComputedFiles\\uniprot_SwissProt_Human_1_11_2017_decoyConcacenated.fasta.idx";
+
+
+
+
+
+            String idx = "C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\PreComputedFiles\\uniprot_SwissProt_Human_1_11_2017_decoyConcacenated.fasta.idx";
 			//String idx = "C:\\temp\\comet_2019015\\comet_source_2019015\\IDXMake\\uniprot_SwissProt_Human_1_11_2017_decoyConcacenated.fasta.idx";
 			String param = "C:\\Coding\\2019LavalleeLab\\temp2\\ExampleDataSet\\2019.comet.params";
 
@@ -70,6 +75,30 @@ namespace MealTimeMS.Tester
             Console.WriteLine("Comet search of "+ counter +" spectra took "+watch.ElapsedMilliseconds +" milliseconds");
             WriterClass.writeln("Comet search of " + counter + " spectra took " + watch.ElapsedMilliseconds + " milliseconds");
             WriterClass.CloseWriter();
+
+        }
+        public static void TestSearch()
+        {
+            CometSingleSearch.InitializeComet(InputFileOrganizer.IDXDataBase, InputFileOrganizer.CometParamsFile);
+            String ms2File = InputFileOrganizer.MS2SimulationTestFile;
+            MZMLFile ms2 = Loader.parseMS2File(ms2File);
+            foreach(Spectra spec in ms2.getSpectraArray())
+            {
+                IDs idd = null;
+                if(CometSingleSearch.Search(spec, out idd))
+                {
+                    Console.WriteLine(idd.ToString());
+                }
+                else
+                {
+                    Console.WriteLine("Spectra {0} not found", spec.getScanNum());
+                }
+
+            }
+            
+           
+
+            Program.ExitProgram(1);
 
         }
     }

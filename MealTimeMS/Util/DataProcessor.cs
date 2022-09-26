@@ -128,7 +128,6 @@ namespace MealTimeMS
 			Interlocked.Increment(ref taskCounter);
 			//Spectra spectra = IMsScanParser.Parse(arrivedScan, scanIDCounter, getCurrentMiliTime());//Parses the IMsScan into a Spectra object 
 			Spectra spectra = IMsScanParser.Parse(arrivedScan, scanIDCounter, getCurrentMiliTime());
-           
             parsedSpectra.Enqueue(spectra);
         }
 

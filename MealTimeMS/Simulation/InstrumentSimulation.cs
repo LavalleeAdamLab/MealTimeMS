@@ -29,7 +29,7 @@ namespace MealTimeMS
         public event EventHandler<EventArgs> AcquisitionStreamClosing;
 
         public List<Spectra> specList;
-        public int maxMS2ToSimulate = 3000;
+        public int maxMS2ToSimulate = 100000000;
 		public InstrumentSimulation(List<Spectra> _specList)
 		{
 			specList = _specList;

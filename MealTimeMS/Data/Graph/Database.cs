@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MealTimeMS.Data.InputFiles;
 using MealTimeMS.Util;
+using System.Diagnostics;
 
 namespace MealTimeMS.Data.Graph
 {
@@ -59,8 +60,18 @@ public class Database
         private void addPeptides(List<DigestedPeptide> digestedPeptideArray)
         {
             log.Debug("Adding peptides...");
+            int counter = 0;
             foreach (DigestedPeptide dp in digestedPeptideArray)
             {
+                //if(counter % 100000 == 0)
+                //{
+                //    Process currentProcess = Process.GetCurrentProcess();
+                //    long usedMemory = currentProcess.PrivateMemorySize64;
+                //    Console.WriteLine("At peptide {0}, using {1} MB memory", counter, (double)usedMemory/1000000);
+                //}
+                //counter++;
+
+
                 String parentProteinAccession = dp.getAccession();
                 String peptideSequence = dp.getSequence();
                 double peptideMass = dp.getMass();
@@ -198,18 +209,24 @@ public class Database
             // update its parent proteins
             foreach (String acc in parentProteinAccessions)
             {
-                Protein parentProtein = AccesstionToProtein[acc];
-                if (parentProtein != null)
+                if (acc.Contains(GlobalVar.DecoyPrefix))
                 {
-                    pep.addProtein(parentProtein);
-                }
-                else if (acc.Contains(GlobalVar.DecoyPrefix))
-                {
-                    log.Info("WARNINGin Decoy parent protein for this peptide was not found!!");
+                 
+                    //If the this parent protein of the peptide is a decoy, don't do anything about it
+                    log.Info("Decoy parent protein for this peptide was not found!!");
                     log.Info(acc);
+                    continue;
+                }
+                if (AccesstionToProtein.ContainsKey(acc))
+                {
+                    //If the parent protein exists in the internal Database, update the peptide object such that it is linked to its parent protein
+                    Protein parentProtein = AccesstionToProtein[acc];
+                    pep.addProtein(parentProtein);
                 }
                 else
                 {
+                    //If the parent protein is not a decoy, but somehow is not present in the Database, this would mean the comet results was 
+                    //searched using a different fasta file from the one given to MTMS, a little big issue here
                     log.Warn("WARNINGin Non-decoy parent protein for this peptide was not found!!");
                     log.Warn(acc);
                 }

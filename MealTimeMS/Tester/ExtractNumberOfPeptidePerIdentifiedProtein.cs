@@ -35,6 +35,12 @@ namespace MealTimeMS.Tester
 				{
 					peptidesObserved.Add(pepEvidence.getPeptideSequence());
 				}
+
+                if (peptidesObserved.Count == 0)
+                {
+                    continue;
+                }
+
 				sw.WriteLine("{0}\t{1}\t{2}", accession, peptidesObserved.Count,prot.getPeptideScore().Count);
 			}
 

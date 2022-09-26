@@ -127,13 +127,15 @@ namespace MealTimeMS.ExclusionProfiles
 				{
 #if SIMULATION
 					double progressPercent = spec.getIndex() / GlobalVar.ExperimentTotalScans * 100;
-					log.Info("Progress: {0:F2}% Processing ID: {1}\t ScanNum: {2} \t Excluded: {3}", progressPercent, spec.getIndex(), spec.getScanNum(),
-						excludedSpectra.Count);
+					log.Info("Progress: {0:F2}% Processing ID: {1}\t ScanNum: {2} \t Excluded spectra: {3} \t Excluded peptides: {4}", 
+                        progressPercent, spec.getIndex(), spec.getScanNum(),
+						excludedSpectra.Count, exclusionList.getAllExcludedPeptides().Count);
 #else
 					log.Info("Progress: {0}\t{1} excluded------------------------",spec.getIndex(),excludedSpectra.Count);
 					log.Info("ExclusionListSize: {0}\tRTOffset: {1}",exclusionList.getExclusionList().Count, RetentionTime.getRetentionTimeOffset());
 #endif
 				}
+
 
 				return processMS2(spec);
 			}
@@ -290,7 +292,10 @@ namespace MealTimeMS.ExclusionProfiles
             
 
         }
-
+        public void evaluateIdentification_public_access_wrapper(IDs id)
+        {
+            evaluateIdentification(id);
+        }
         protected abstract void evaluateIdentification(IDs id);
 
         public abstract ExclusionProfileEnum getAnalysisType();

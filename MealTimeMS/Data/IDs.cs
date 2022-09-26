@@ -65,7 +65,29 @@ namespace MealTimeMS.Data
 
 
 		}
+        
+        public static IDs getIDsFromPSMProlucid(com.bruker.paser.avro.PsmProlucid psm)
+        {
+            double dCN = 1;
+            switch (psm.candidates.Count)
+            {
+                case 0:
+                    return null;
+                case 1:
+                    dCN = 1;
+                    break;
+                default:
+                    //note that prolucid stores the dCN of the top hit at the second candidate's dCN field
+                    dCN = psm.candidates[1].deltaCN;
+                    break;
+            }
+            var candidate = psm.candidates[0];
 
+            IDs id = new IDs(psm.rt, psm.ms2_id, candidate.stripped_peptide, 
+                candidate.calc_mass,candidate.Xcorr, dCN);
+                    //(double startTime, int scanNum, String pepSeq, double pep_mass, double x_Corr, double _deltaCN)
+            return id;
+        }
 
 
 		// Functions to access the private values from class 

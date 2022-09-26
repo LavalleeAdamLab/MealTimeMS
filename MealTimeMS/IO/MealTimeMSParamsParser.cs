@@ -409,7 +409,7 @@ namespace MealTimeMS.IO
 		{
 			String[] values = str.Split(",".ToCharArray());
 			List<double> doubleVal = new List<double>();
-			foreach (String val in values)
+            foreach (String val in values)
 			{
 				doubleVal.Add(double.Parse(val));
 			}
