@@ -133,9 +133,9 @@ public class BinarySearchUtil
             }
         }
 
-        public static bool withinPPMTolerance(double theoretical, double actual, double ppmTolerance)
+        public static bool withinPPMTolerance(double observed, double theoretical, double ppmTolerance)
         {
-            return (Math.Abs(theoretical - actual) / actual) < ppmTolerance;
+            return (Math.Abs(observed - theoretical) / theoretical) < ppmTolerance;
         }
 
         private static double getValue(Peptide p, SortingScheme s)

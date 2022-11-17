@@ -25,7 +25,7 @@ namespace MealTimeMS.Data
 	public RetentionTime()
         {
             retentionTimeStart = MINIMUM_RETENTION_TIME;
-            retentionTimeEnd = MAXIMUM_RETENTION_TIME;
+            retentionTimeEnd = MINIMUM_RETENTION_TIME;
             retentionTimePeak = MINIMUM_RETENTION_TIME;
             isPredicted = true;
         }

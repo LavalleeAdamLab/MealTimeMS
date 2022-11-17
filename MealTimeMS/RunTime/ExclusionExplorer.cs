@@ -41,13 +41,14 @@ namespace MealTimeMS.RunTime
 
         public static void RunExclusionExplorer(ExclusionProfileEnum exclusionType)
         {
+            //QuickRandomExclusion.DoJob(new double[] {0.55,0.5,0.45 }, 1);
             PreExperimentSetUp();
             WriterClass.writeln(new PerformanceEvaluator().getHeader());
             int experimentNumber = 0;
 
 
             //setup baseline
-            if (true)
+            if (exclusionType==ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
             {
                 double startTime = getCurrentTime();
                 GlobalVar.ppmTolerance = 0;
@@ -72,6 +73,13 @@ namespace MealTimeMS.RunTime
                     sw.Close();
                 }
             }
+            else
+            {
+                PerformanceEvaluator.setBaseline_NotDoingNoExclusion(
+                    ProteinProphetEvaluator.getProteinProphetResult(
+                        InputFileOrganizer.OriginalProtXMLFile),
+                    GlobalVar.ExperimentTotalScans, GlobalVar.ddaNum);
+            }
 
 
             if (exclusionType == ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE)
@@ -87,6 +95,7 @@ namespace MealTimeMS.RunTime
                             GlobalVar.AccordThreshold = prThr;
 
                             ExclusionProfile exclusionProfile = new MachineLearningGuidedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
+                            //ExclusionProfile exclusionProfile = new MLGESequenceExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
                             //ExclusionProfile asdsad = new TaxonGuidedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
                             String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_MachineLearningGuidedExclusion:ppmTol_{0}_rtWin_{1}_prThr_{2}", ppmTol, rtWin, prThr);
                             Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
@@ -151,41 +160,6 @@ namespace MealTimeMS.RunTime
                         Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
                         RunSimulationAndPostProcess(experiment);
                     }
-                //}else if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
-                //{
-
-                //	foreach (double rtWin in GlobalVar.RETENTION_TIME_WINDOW_LIST)
-                //	{
-                //		experimentNumber++;
-                //		double startTime = getCurrentTime();
-                //		GlobalVar.ppmTolerance = 0;
-                //		GlobalVar.retentionTimeWindowSize = rtWin;
-
-                //		ExclusionProfile exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
-                //		String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName + String.Format("_NoExclusion:ppmTol_rtWin_{0}", rtWin);
-                //		Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
-                //		RunSimulationAndPostProcess(experiment);
-
-                //		if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
-                //		{
-                //			List<ObservedPeptideRtTrackerObject> peptideIDRT = ((NoExclusion)exclusionProfile).peptideIDRT; 
-                //			WriterClass.writeln("peptideSequence\tObservedRetentionTime", writerClassOutputFile.peptideRTTime);
-                //			foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
-                //			{
-                //				WriterClass.writeln(String.Format("{0}\t{1}", observedPeptracker.peptideSequence, observedPeptracker.arrivalTime), writerClassOutputFile.peptideRTTime);
-                //			}
-
-
-                //			StreamWriter sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"peptideIDRTTracker.tsv"));
-                //			sw.WriteLine(ObservedPeptideRtTrackerObject.getHeader());
-                //			foreach (ObservedPeptideRtTrackerObject observedPeptracker in peptideIDRT)
-                //			{
-                //				sw.WriteLine(observedPeptracker.ToString());
-                //			}
-                //			sw.Close();
-                //		}
-                //		break;
-                //	}
 
             }
             else if (exclusionType == ExclusionProfileEnum.RANDOM_EXCLUSION_PROFILE)
@@ -203,7 +177,9 @@ namespace MealTimeMS.RunTime
                         int numExcluded = expResult.numSpectraExcluded;
                         int numAnalyzed = expResult.numSpectraAnalyzed;
 
-                        ExclusionProfile exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, GlobalVar.ddaNum);
+                        //ExclusionProfile exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, GlobalVar.ddaNum);
+                        ExclusionProfile exclusionProfile = new RandomExclusion_Percentage(database, ms2SpectraList, numExcluded, numAnalyzed);
+
                         String experimentName = "EXP_" + experimentNumber + String.Format("Random:originalExperiment_{0}", originalExperimentName);
 
                         Experiment experiment = new Experiment(exclusionProfile, experimentName, experimentNumber, exclusionType, startTime);
@@ -217,15 +193,22 @@ namespace MealTimeMS.RunTime
         public static void RunSimulationAndPostProcess(Experiment e)
         {
             Console.WriteLine("\nSimulating \"{0}\"", e.experimentName);
+#if TRACKEXCLUSIONLISTOPERATION
+            e.exclusionProfile.getExclusionList().StartExclusionListOperationSW();
+#endif
 
 #if DDA
             new QuickDDAInstrumentSimulation(e, ms2SpectraList, GlobalVar.ddaNum);
 #else
-			new DataReceiverSimulation().DoJob(e.exclusionProfile, ms2SpectraList);
+            //new DataReceiverSimulation().DoJob(e.exclusionProfile, ms2SpectraList);
+            BrukerInstrumentConnection.Connect(e.exclusionProfile, BrukerInstrumentConnection.BrukerConnectionEnum.MS2ConnectionOnly);
+#endif
+#if TRACKEXCLUSIONLISTOPERATION
+            e.exclusionProfile.getExclusionList().EndExclusionListOperationSW();
 #endif
 
             e.analysisTime = getCurrentTime() - e.experimentStartTime;
-            WriteSpectralAndPeptideCountPerIdentifiedProtein(e);
+            //WriteSpectralAndPeptideCountPerIdentifiedProtein(e);
 #if EXTRACT_SPECTRAL_COUNT
             Program.ExitProgram(0);
 #endif
@@ -390,7 +373,7 @@ namespace MealTimeMS.RunTime
 
 
             //new DataReceiver().DoJob(exclusionProfile);
-            BrukerInstrumentConnection.Connect(exclusionProfile);
+            BrukerInstrumentConnection.Connect(exclusionProfile, BrukerInstrumentConnection.BrukerConnectionEnum.MS2ConnectionOnly);
 
             double analysisTime = getCurrentTime() - startTime;
             try
@@ -459,18 +442,23 @@ namespace MealTimeMS.RunTime
             if (GlobalVar.IsSimulation)
             //if(false)
             {
-                ms2SpectraList = Loader.parseMS2File(InputFileOrganizer.MS2SimulationTestFile).getSpectraArray();
-                GlobalVar.ExperimentTotalScans = ms2SpectraList.Count;
+                //ms2SpectraList = Loader.parseMS2File(InputFileOrganizer.MS2SimulationTestFile).getSpectraArray();
+                //GlobalVar.ExperimentTotalScans = ms2SpectraList.Count;
+                GlobalVar.TIMSTOF_Precursor_ID_to_ms2_id = ParseTIMSTOFPrecursorID.getTIMSTOFFPrecursorID_to_ms2ID(InputFileOrganizer.MS2SimulationTestFile);
+                GlobalVar.CheatingMonoPrecursorMassTable = ParseTIMSTOFPrecursorID.getCheatingMonoPrecursorMassTable(InputFileOrganizer.CheatingMonoPrecursorMass);
+                GlobalVar.ExperimentTotalScans = 303210;
+                ms2SpectraList = null;
+                GC.Collect();
 #if !EXTRACT_SPECTRAL_COUNT
-               // FullPepXMLAndProteinProphetSetup();
+                FullPepXMLAndProteinProphetSetup();
 #endif
             }
             log.Debug("Setting up Database");
             database = databaseSetUp(InputFileOrganizer.ExclusionDBFasta);
             log.Debug("Done setting up database.");
 
-
-            //CometSingleSearch.InitializeComet(InputFileOrganizer.IDXDataBase, InputFileOrganizer.CometParamsFile);
+            
+            CometSingleSearch.InitializeComet(InputFileOrganizer.IDXDataBase, InputFileOrganizer.CometParamsFile);
             //CometSingleSearch.InitializeComet_NonRealTime("C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\NoExclusion_RealTimeCometSearchResult.tsv");
             //CometSingleSearch.QualityCheck();
             Console.WriteLine("pre-experimental setup finished");
@@ -594,7 +582,8 @@ namespace MealTimeMS.RunTime
 				if (e.exclusionProfile.getAnalysisType() == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
 				{
 					ProteinProphetResult baseLinePpr = ProteinProphetEvaluator.getProteinProphetResult(InputFileOrganizer.OriginalProtXMLFile);
-					int numMS2Analyzed = (int)GlobalVar.ExperimentTotalMS2;
+                   
+                    int numMS2Analyzed = (int)e.exclusionProfile.GetPerformanceEvaluator().getValue("NumMS2Analyzed"); ;
 					PerformanceEvaluator.setBaselineComparison(baseLinePpr, numMS2Analyzed, GlobalVar.ddaNum);
 					PerformanceEvaluator.setOriginalExperiment(baseLinePpr.getNum_proteins_identified());
 					GlobalVar.ExperimentTotalMS2 = numMS2Analyzed;

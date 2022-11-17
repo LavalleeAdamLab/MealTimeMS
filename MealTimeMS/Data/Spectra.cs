@@ -93,6 +93,24 @@ namespace MealTimeMS.Data
 
 		}
 
+        public static Spectra GetSpectraFromPasefMs2Spectrum(com.bruker.paser.avro.PasefMs2Spectrum pSpec)
+        {
+            pSpec.ms2_id = GlobalVar.TIMSTOF_Precursor_ID_to_ms2_id[pSpec.ms2_id];
+            double rt_min = pSpec.rt / 60.0;
+            var spec =  new Spectra(-1, pSpec.ms2_id, 2, pSpec.intensity_data.Length, null, null,
+               rt_min, pSpec.mono_mz, pSpec.charge);
+            if (GlobalVar.CheatingMonoPrecursorMassTable != null)
+            {
+                double correctedPrecursorMass = 0;
+                if (GlobalVar.CheatingMonoPrecursorMassTable.TryGetValue(spec.getScanNum(), out correctedPrecursorMass))
+                {
+                    spec.calculatedPrecursorMass = correctedPrecursorMass;
+                }
+            }
+            return spec;
+        }
+
+
 		public static Spectra CreateEmptyMS1(int _scanNum)
 		{
 			return new Spectra(-1, _scanNum, 1,-1,new double[] { 0,0}, new double[] { 0,0},-1,-1,-1);

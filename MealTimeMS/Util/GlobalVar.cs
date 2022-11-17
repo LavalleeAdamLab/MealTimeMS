@@ -68,10 +68,12 @@ namespace MealTimeMS.Util
 
 
 		//temp variables
-		public static int randomRepeatsPerExperiment = 10;
+		public static int randomRepeatsPerExperiment = 3;
         public static bool useRT = true;
-		//ExclusionExplorerParamsList
-		public static List<double> PPM_TOLERANCE_LIST;
+        public static Dictionary<int, int> TIMSTOF_Precursor_ID_to_ms2_id = null;
+        public static Dictionary<int, double> CheatingMonoPrecursorMassTable = null;
+        //ExclusionExplorerParamsList
+        public static List<double> PPM_TOLERANCE_LIST;
 		public static List<double> RETENTION_TIME_WINDOW_LIST;
 
 		public static List<double> LR_PROBABILITY_THRESHOLD_LIST;

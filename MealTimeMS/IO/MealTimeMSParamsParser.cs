@@ -268,7 +268,12 @@ namespace MealTimeMS.IO
 						InputFileOrganizer.OriginalProtXMLFile = value;
 						GlobalVar.useComputedProteinProphet = true;
 					}
-				}
+                    if (name.Equals("CheatingMonoPrecursorMass"))
+                    {
+                        InputFileOrganizer.CheatingMonoPrecursorMass = value;
+                        
+                    }
+                }
 
 				line = sr.ReadLine();
 			}

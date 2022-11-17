@@ -558,6 +558,7 @@ namespace MealTimeMS.Util.PostProcessing
 	 */
 	public static ProteinProphetResult getProteinProphetResult(String protXMLFileName)
 	{
+        log.Info("Parsing protein prophet results: {0}", protXMLFileName);
 		ProteinProphetFile ppf = processProteinProphetFile(protXMLFileName);
 
 		return ppf.getProteinProphetResult();

@@ -240,7 +240,8 @@ namespace MealTimeMS.Util
 
 		public static void InitializeComet_NonRealTime(String resultTable)
 		{
-			List<IDs> IDList = ParseCometTSVOutput(resultTable);
+			//List<IDs> IDList = ParseCometTSVOutput(resultTable);
+			List<IDs> IDList = ParseProlucidTSVOutput(resultTable);
 			searchResultTable = new Dictionary<int, IDs>();
 			foreach (IDs id in IDList)
 			{
@@ -266,6 +267,11 @@ namespace MealTimeMS.Util
                 }
 
                 id.setScanTime(spec.getStartTime());
+                if (id.getXCorr() < 0.0001)
+                {
+                    id = null;
+                    return false;
+                }
                 return true;
 			}
 			else
@@ -307,6 +313,40 @@ namespace MealTimeMS.Util
                 double x_Corr = double.Parse(info[header.IndexOf("xcorr")]);
                 double dCN = double.Parse(info[header.IndexOf("delta_cn")]);
                 String parentProtein = info[header.IndexOf("protein")];
+                HashSet<String> accessions = new HashSet<string>(parentProtein.Split(",".ToCharArray()));
+                IDs id = new IDs(startTime, scanNum, pepSeq, pep_mass, x_Corr, dCN, accessions);
+                id.setPeptideSequence_withModification(pepSeq_withModification);
+
+                idList.Add(id);
+                line = sr.ReadLine();
+            }
+            return idList;
+        }
+
+        private static List<IDs> ParseProlucidTSVOutput(String fileDir)
+        {
+            List<IDs> idList = new List<IDs>();
+            StreamReader sr = new StreamReader(fileDir);
+            List<String> header = sr.ReadLine().Split("\t".ToCharArray()).ToList();
+            String line = sr.ReadLine();
+            int lastScanNum = -1;
+            while (line != null)
+            {
+                String[] info = line.Split("\t".ToCharArray());
+                int scanNum = int.Parse(info[header.IndexOf("ms2_id")]);
+                if (scanNum == lastScanNum)
+                {
+                    line = sr.ReadLine();
+                    continue;
+                }
+                lastScanNum = scanNum;
+                double startTime = -1;
+                String pepSeq = info[header.IndexOf("peptide_stripped")];
+                String pepSeq_withModification = info[header.IndexOf("peptide_modified")];
+                double pep_mass = double.Parse(info[header.IndexOf("calc_mass")]); //TODO not sure if we should use exp_neutral_mass or calc_neutral_mass
+                double x_Corr = double.Parse(info[header.IndexOf("xcorr")]);
+                double dCN = double.Parse(info[header.IndexOf("dCN")]);
+                String parentProtein = info[header.IndexOf("accessions")];
                 HashSet<String> accessions = new HashSet<string>(parentProtein.Split(",".ToCharArray()));
                 IDs id = new IDs(startTime, scanNum, pepSeq, pep_mass, x_Corr, dCN, accessions);
                 id.setPeptideSequence_withModification(pepSeq_withModification);

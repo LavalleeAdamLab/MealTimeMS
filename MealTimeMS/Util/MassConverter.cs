@@ -7,10 +7,10 @@ namespace MealTimeMS.Util
 
         public static double convertMZ(double precursor_mz, int charge)
         {
-            // Calculates the actual mass
+            // Calculates the actual mass, uncharged mass
             // must subtract the mass of a proton for each charged
             return (precursor_mz * charge) - (charge * MASS_OF_PROTON);
-			// comet uses this: dMZ * iPrecursorCharge - (iPrecursorCharge - 1)*PROTON_MASS
+			// comet uses this: dMZ * iPrecursorCharge - (iPrecursorCharge - 1)*PROTON_MASS, which is the single charged [M+1H]1+ mass?
 		}
 
 		//converts MH+ mass to m/z

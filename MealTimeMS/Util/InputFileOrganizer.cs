@@ -63,6 +63,7 @@ namespace MealTimeMS.Util
 		public static String SummaryFileForRandomExclusion = "";
         public static String CometOfflineSearchResultTable = ""; // a .tsv of the comet search on the full .ms2 or mzml
 
+        public static String CheatingMonoPrecursorMass = "";
 
 
         public static void SetWorkDir(String workDir)

@@ -54,13 +54,14 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 			// add the peptide to the exclusion list if it is over the xCorr threshold
 			if ((xCorr > 2.5))
 			{
-				performanceEvaluator.countPeptidesExcluded();
-				log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
-				exclusionList.addPeptide(pep);
+				
 				// calibrates our retention time alignment if the observed time is different
 				// from the predicted only if it passes this threshold
 				calibrateRetentionTime(pep);
-			}
+                exclusionList.addPeptide(pep);
+                log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
+                performanceEvaluator.countPeptidesExcluded();
+            }
 
 			// Add all the peptides corresponding to the parent protein, if the parent
 			// protein is deemed confidently identified by the logisitc regression

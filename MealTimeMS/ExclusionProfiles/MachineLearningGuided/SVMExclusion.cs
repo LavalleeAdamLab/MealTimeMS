@@ -61,8 +61,9 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			Double xCorr = id.getXCorr();
 			double dCN = id.getDeltaCN();
 			pep.addScore(xCorr, dCN);
-#if (!DONTEVALUATE)
-			performanceEvaluator.evaluateAnalysis(exclusionList, pep);
+#if !DONTEVALUATE
+
+            performanceEvaluator.evaluateAnalysis(exclusionList, pep);
 #endif
 
 			// exclude this peptide for analysis if the xCorr score is above a threshold

@@ -52,12 +52,18 @@ namespace MealTimeMS
     {        
         static void Tester()
         {
-			ProteinProphetResultTester.DoJob();
-			//ProteinProphetResultTester.DoJob();
-			//ConfidentProteinGroupData.DoJob();
-			String workDir = "C:\\Coding\\2019LavalleeLab\\temp2";
+            //ProteinProphetResultTester.DoJob();
+            //ProteinProphetResultTester.DoJob();
+            //ConfidentProteinGroupData.DoJob();
+            //ReplacingStuffInPepXML.DoJob();
+            //PostProcessingTester.DoJob();
+            //Program.ExitProgram(0);
+            String workDir = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace";
 			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(workDir) + "\\");
 			WriterClass.ExperimentOutputSetUp();
+            BrukerInstrumentConnection.PrintAllProlucidPSM();
+            Program.ExitProgram(0);
+
 			CometSingleSearchTester.CometSingleSearchTest();
 			ProteinProphetResultTester.DoJob();
 
@@ -86,12 +92,9 @@ namespace MealTimeMS
 
         static void Main(string[] args)
 		{
-            //!!!!To Alona: use pre-compile directives "SIMULATION,DDA,EXTRACT_SPECTRAL_COUNT" to build
+            //!!! use pre-compile directives "SIMULATION,DDA,EXTRACT_SPECTRAL_COUNT" to build
 
-
-            //CometSingleSearchTester.CometSingleSearchTest();
             //Tester();
-            //CometSingleSearchTester_v2.DoJob();
             //Program.ExitProgram(0);
 
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
@@ -110,9 +113,10 @@ namespace MealTimeMS
 
 			//Console.WriteLine("Bring the system to On mode and/or start an acquisition to see results.");
 
+
 			ExecuteShellCommand.CopyFile(InputFileOrganizer.MealTimeMSParamsFile, InputFileOrganizer.OutputFolderOfTheRun);
-			ExclusionExplorer.RunRealTimeExperiment();
-			//ExclusionExplorer.RunExclusionExplorer(GlobalVar.ExclusionMethod);
+			//ExclusionExplorer.RunRealTimeExperiment();
+			ExclusionExplorer.RunExclusionExplorer(GlobalVar.ExclusionMethod);
 
 			Thread.CurrentThread.Join(2000); // waits x seconds for DataProcessor to finish
             WriterClass.CloseWriter();

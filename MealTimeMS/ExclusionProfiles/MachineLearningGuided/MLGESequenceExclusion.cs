@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.ML;
 using MealTimeMS.Data;
 using MealTimeMS.Data.Graph;
+using MealTimeMS.ExclusionProfiles.TestProfile;
 using MealTimeMS.Util;
 using MealTimeMS.IO;
 using Accord.Statistics.Models.Regression.Fitting;
@@ -21,6 +22,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 				 double _ppmTolerance, double _retentionTimeWindowSize):base( logisticRegressionClassifierSaveFile,  _database,
 				  _ppmTolerance,  _retentionTimeWindowSize)
 		{
+            exclusionList = new SequenceExclusionList(-1);
 
 		}
 		override
@@ -34,7 +36,11 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			if (id != null)
 			{
 				Peptide pep = getPeptideFromIdentification(id);
+                if(pep != null)
+                {
 				isExcluded = exclusionList.containsPeptide(pep);
+
+                }
 			}
 			if (isExcluded)
 			{

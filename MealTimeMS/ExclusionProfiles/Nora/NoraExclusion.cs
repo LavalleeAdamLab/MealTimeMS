@@ -65,7 +65,11 @@ namespace MealTimeMS.ExclusionProfiles.Nora
 		}
 
 		Peptide pep = getPeptideFromIdentification(id); // if it was going to be null, it already returned
-														// is fragmented
+                                                        // is fragmented
+            if (pep == null)
+            {
+                return;
+            }
 
 		// add decoy or non-existent protein connections
 		// database.addProteinFromIdentification(pep, id.getParentProteinAccessions());
@@ -78,19 +82,20 @@ namespace MealTimeMS.ExclusionProfiles.Nora
 		// add the peptide to the exclusion list if it is over the xCorr threshold
 		if ((xCorr > 2.5))
 		{
-			performanceEvaluator.countPeptidesExcluded();
-			log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
-			exclusionList.addPeptide(pep);
-
+			
 			// calibrates our retention time alignment if the observed time is different
 			// from the predicted only if it passes this threshold
 			calibrateRetentionTime(pep);
-		}
+            exclusionList.addPeptide(pep);
+                log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
+                performanceEvaluator.countPeptidesExcluded();
+
+            }
 
 
-		// add all of the other peptides belonging to the parent protein(s) if numDB
-		// threshold is passed
-		foreach (Protein parentProtein in pep.getProteins())
+            // add all of the other peptides belonging to the parent protein(s) if numDB
+            // threshold is passed
+            foreach (Protein parentProtein in pep.getProteins())
 		{
 			if ((parentProtein.getNumDB() >= numDBThreshold) && (!parentProtein.IsExcluded()))
 			{
@@ -98,7 +103,12 @@ namespace MealTimeMS.ExclusionProfiles.Nora
 				log.Debug("Parent protein " + parentProtein.getAccession() + " is identified confidently "
 				 + parentProtein.getNumDB() + " times!");
 				performanceEvaluator.countProteinsExcluded();
-				exclusionList.addProtein(parentProtein);
+#if TRACKEXCLUSIONLISTOPERATION
+                    exclusionList.addProtein(parentProtein, id.getScanNum());
+#else
+                    exclusionList.addProtein(parentProtein);
+
+#endif
 			}
 			log.Debug(parentProtein);
 		}

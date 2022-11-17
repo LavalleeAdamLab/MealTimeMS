@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MealTimeMS.Util;
 namespace MealTimeMS.Data
 {
@@ -82,9 +83,20 @@ namespace MealTimeMS.Data
                     break;
             }
             var candidate = psm.candidates[0];
-
+            var accessions = psm.candidates[0].locus.Select(c => c.locus_name);
+            HashSet<String> parentProteins = new HashSet<String>(accessions);
+           
             IDs id = new IDs(psm.rt, psm.ms2_id, candidate.stripped_peptide, 
-                candidate.calc_mass,candidate.Xcorr, dCN);
+                candidate.calc_mass,candidate.Xcorr, dCN, parentProteins);
+            List<String> peptideSeq = candidate.stripped_peptide.ToCharArray().Select(x=>x.ToString()).ToList(); 
+            List<String> ptms = candidate.ptms.ToList();
+            List<int> ptmLocations = candidate.ptm_locations.ToList();
+            for(int i = ptms.Count-1; i >=0; i--)
+            {
+                peptideSeq.Insert(ptmLocations[i]+1, ptms[i]);
+            }
+            String modifiedPepSeq =  String.Join(separator: "", peptideSeq);
+            id.setPeptideSequence_withModification(modifiedPepSeq);
                     //(double startTime, int scanNum, String pepSeq, double pep_mass, double x_Corr, double _deltaCN)
             return id;
         }
@@ -138,12 +150,7 @@ namespace MealTimeMS.Data
 		}
 		public String getParentProteinAccessionsAsString()
 		{
-			String pp = "";
-			foreach(String acc in parent_proteins)
-			{
-				pp = pp + "," + acc;
-			}
-			return pp;
+			return String.Join(separator: ",", parent_proteins);
 		}
 
 		public double getPeptideMass()

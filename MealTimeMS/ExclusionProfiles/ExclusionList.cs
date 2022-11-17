@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MealTimeMS.Data.Graph;
 using MealTimeMS.Data;
 using MealTimeMS.Util;
+using System.IO;
 
 namespace MealTimeMS.ExclusionProfiles
 {
@@ -24,7 +25,7 @@ public class ExclusionList
 
         static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
         private double ppmTolerance;
-        private double currentTime;
+        protected double currentTime;
 
         // Peptides on the exclusion list, sorted by mass
         private List<Peptide> exclusionList;
@@ -81,7 +82,7 @@ public class ExclusionList
             return list.Contains(pep);
         }
 		// UTILITY for if a given list contains the peptide... used to clean up my code
-		public bool containsPeptide( Peptide pep)
+		public virtual bool containsPeptide( Peptide pep)
 		{
 			return exclusionList.Contains(pep);
 		}
@@ -161,10 +162,42 @@ public class ExclusionList
         {
             return exclusionList;
         }
+#if TRACKEXCLUSIONLISTOPERATION
+        private StreamWriter exclusionListOperationSW;
+        private System.Diagnostics.Stopwatch stopWatch;
+        public void StartExclusionListOperationSW()
+        {
+            exclusionListOperationSW = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"exclusionListOperationLog"));
+            exclusionListOperationSW.WriteLine(String.Join(separator: "\t", "Time_ms", "scanNum"));
+            stopWatch = new System.Diagnostics.Stopwatch();
+            stopWatch.Start();
+        }
+        public void EndExclusionListOperationSW()
+        {
+            exclusionListOperationSW.Close();
+        }
+        public void ExclusionListOperationSW_log(Peptide pep, int scanNum)
+        {
+            exclusionListOperationSW.WriteLine(String.Join(separator: "\t", stopWatch.ElapsedMilliseconds, scanNum));
+
+        }
+
+        public void addProtein(Protein p, int scanNum)
+        {
+            foreach (Peptide pep in p.getPeptides())
+            {
+                ExclusionListOperationSW_log(pep, scanNum);
+            }
+        }
+#endif
 
         // Add a single peptide to the exclusion list and sort
-        public void addPeptide(Peptide pep)
+        virtual public void addPeptide(Peptide pep)
         {
+            if (!pep.isFromFastaFile())
+            {
+                return;
+            }
             // Prevents adding peptides already on the list
             if (!containsPeptide(exclusionList, pep))
             {
@@ -215,7 +248,7 @@ public class ExclusionList
          * ppmTolerance. If any of these peptides are excluded in the specified time,
          * this function will return true.
          */
-        public bool isExcluded(double queryMass)
+        virtual public bool isExcluded(double queryMass)
         {
             List<Peptide> matchedMassesPeptides = BinarySearchUtil.findPeptides(exclusionList, queryMass, ppmTolerance);
             foreach (Peptide p in matchedMassesPeptides)

@@ -303,8 +303,8 @@ namespace MealTimeMS.IO
             {
                 log.Debug("File path: " + fileName);
                 StreamReader reader = new StreamReader(fileName);
-                String line = reader.ReadLine();
-
+                String line = reader.ReadLine();//skip header in auto-rt
+                line = reader.ReadLine(); 
                 // read lines
                 while (line != null)
                 {
@@ -324,7 +324,8 @@ namespace MealTimeMS.IO
                     else
                     {
                         // CONVERT SECONDS INTO MINUTES
-                        retentionTime = retentionTime / 60.0;
+                        //retentionTime = retentionTime / 60.0;
+                        
                     }
 
                     if (!retentionTimeDatabase.ContainsKey(peptideSequence))

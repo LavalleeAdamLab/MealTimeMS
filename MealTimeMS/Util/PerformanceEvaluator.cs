@@ -85,8 +85,12 @@ namespace MealTimeMS.Util
          */
         public void evaluateExclusion(ExclusionList exclusionList, Peptide p)
         {
-            
-            log.Debug("Evaluating peptide mass exclusion...");
+            if (exclusionList is SimplifiedExclusionList_Key)
+            {
+                return;
+            }
+
+             log.Debug("Evaluating peptide mass exclusion...");
 
 			//		// // sanity check for the pre-requisite
 			//		if (!exclusionList.isExcluded(p.getMass())) {
@@ -294,8 +298,8 @@ namespace MealTimeMS.Util
         public bool massComparer(double spectra_mass, double id_mass, double database_mass, double ppm_tolerance,
                 int scanNum)
         {
-            bool db_vs_spec = BinarySearchUtil.withinPPMTolerance(database_mass, spectra_mass, ppm_tolerance);
-            bool id_vs_spec = BinarySearchUtil.withinPPMTolerance(id_mass, spectra_mass, ppm_tolerance);
+            bool db_vs_spec = BinarySearchUtil.withinPPMTolerance(spectra_mass, database_mass, ppm_tolerance);
+            bool id_vs_spec = BinarySearchUtil.withinPPMTolerance(spectra_mass, id_mass, ppm_tolerance);
             bool id_vs_db = BinarySearchUtil.withinPPMTolerance(id_mass, database_mass, ppm_tolerance);
             log.Debug("Scan num: " + scanNum);
             log.Debug("(spectra_mass,id_mass,database_mass,ppm_tolerance) = (" + spectra_mass + "," + id_mass + ","
@@ -402,7 +406,11 @@ namespace MealTimeMS.Util
             int pastObservedSize = exclusionList.getPastObservedPeptides().Count;
             int currentObservedSize = exclusionList.getCurrentObservedPeptides().Count;
             int totalExclusionListSize = pastSize + currentSize + futureSize + pastObservedSize + currentObservedSize;
-			ChangeValue(Header.ExclusionListPastSize, pastSize);
+            if(exclusionList is SimplifiedExclusionList_Key)
+            {
+                totalExclusionListSize = ((SimplifiedExclusionList_Key)exclusionList).getExclusionListTotalSize();
+            }
+            ChangeValue(Header.ExclusionListPastSize, pastSize);
 			ChangeValue(Header.ExclusionListCurrentSize, currentSize);
 			ChangeValue(Header.ExclusionListFutureSize, futureSize);
 			ChangeValue(Header.ExclusionListPastObserved, pastObservedSize);
@@ -413,13 +421,24 @@ namespace MealTimeMS.Util
         private void postProcessingCalculations(int ddaNum, ProteinProphetResult ppr, ExclusionProfile exclusionProfile)
         {
 
-            BaselineComparison bc = baselineComparisonSet[ddaNum];
-            List<String> proteinsIdentifiedByNoExclusion = bc.getProteinsIdentifiedByNoExclusion();
-            int totalResourcesNaiveExperiment = bc.getTotalResourcesNaiveExperiment();
-            int numProteinsIdentifiedNaiveExperiment = bc.getNumProteinsIdentifiedNaiveExperiment();
+            
+                
+                BaselineComparison bc = baselineComparisonSet[ddaNum];
+                List<String> proteinsIdentifiedByNoExclusion = bc.getProteinsIdentifiedByNoExclusion();
+                int totalResourcesNaiveExperiment = bc.getTotalResourcesNaiveExperiment();
+                int numProteinsIdentifiedNaiveExperiment = bc.getNumProteinsIdentifiedNaiveExperiment();
 
-            // set proteins identified first
-            setProteinsIdentified(ppr, proteinsIdentifiedByNoExclusion);
+                // set proteins identified first
+                setProteinsIdentified(ppr, proteinsIdentifiedByNoExclusion);
+                // Resources saved in total # available MS2 - # ms2 used foreach analysis
+                int resourcesSaved = totalResourcesNaiveExperiment - (int)data[Header.NumMS2Analyzed];
+                double percentResourcesSaved = takeRatio(resourcesSaved, totalResourcesNaiveExperiment);
+                double percentResourcesUsed = 1 - percentResourcesSaved;
+                ChangeValue(Header.PercentResourcesSaved, percentResourcesSaved);
+                ChangeValue(Header.PercentResourcesUsed, percentResourcesUsed);
+
+
+
 
             int correctlyExcluded = (int)data[Header.EvaluateExclusion_FoundOnCurrentExclusionList]
 				+ (int)data[Header.EvaluateExclusion_FoundOnCurrentObservedExclusionList];
@@ -434,12 +453,7 @@ namespace MealTimeMS.Util
 			ChangeValue(Header.IncorrectlyExcluded, incorrectlyExcluded);
 			ChangeValue(Header.RatioIncorrectlyExcludedOverCorrectlyExcluded, ratioIncorrectlyExcludedOverCorrectlyExcluded);
 
-            // Resources saved in total # available MS2 - # ms2 used foreach analysis
-            int resourcesSaved = totalResourcesNaiveExperiment - (int)data[Header.NumMS2Analyzed];
-            double percentResourcesSaved = takeRatio(resourcesSaved, totalResourcesNaiveExperiment);
-            double percentResourcesUsed = 1 - percentResourcesSaved;
-			ChangeValue(Header.PercentResourcesSaved, percentResourcesSaved);
-			ChangeValue(Header.PercentResourcesUsed, percentResourcesUsed);
+            
 
 			/*-	
              * Protein Identification Sensitivity = # proteins identified / # proteins identified in whole experiment
@@ -501,6 +515,9 @@ namespace MealTimeMS.Util
         public void countMS2UnidentifiedExcluded()
         {
             incrementValue(Header.NumUnidentifiedMS2Excluded);
+        }public void countPepUnmatchedID()
+        {
+            incrementValue(Header.PepUnmatchedID);
         }
 
         public void countMS1()
@@ -528,7 +545,7 @@ namespace MealTimeMS.Util
             incrementValue(Header.NumMS2Repurposed);
         }
 
-        private void incrementValue(Header h)
+        public void incrementValue(Header h)
         {
             addValue(h, 1);
         }
@@ -616,6 +633,12 @@ namespace MealTimeMS.Util
 
         }
 
+        //a quick hack to set up a baseline as no exclusion without running no exclusion
+        public static void setBaseline_NotDoingNoExclusion(ProteinProphetResult ppr, int numMS2, int ddaNum)
+        {
+            setBaselineComparison(ppr, numMS2, ddaNum);
+            setOriginalExperiment(ppr.getProteinsIdentified().Count);
+        }
         public static void setOriginalExperiment(int numProteinsIdentified)
         {
             numProteinsIdentifiedOriginalExperiment = numProteinsIdentified;
@@ -720,7 +743,11 @@ namespace MealTimeMS.Util
 			{Header.numDB, typeof( DataTypes.DoubleType) },
 			{Header.prThr, typeof( DataTypes.DoubleType) },
 			{Header.NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins, typeof( DataTypes.IntegerType) },
-			{Header.ProteinGroupsIdentified, typeof( DataTypes.IntegerType) }
+			{Header.ProteinGroupsIdentified, typeof( DataTypes.IntegerType) },
+            {Header.SimplifiedExclusionList_correct, typeof( DataTypes.IntegerType) },
+            {Header.SimplifiedExclusionList_incorrect, typeof( DataTypes.IntegerType)},
+            {Header.PepUnmatchedID, typeof( DataTypes.IntegerType)}
+
 
 		};
 
@@ -843,7 +870,10 @@ namespace MealTimeMS.Util
 		numDB,
 		prThr,
 		NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins,
-		ProteinGroupsIdentified
+		ProteinGroupsIdentified,
+        SimplifiedExclusionList_correct,
+        SimplifiedExclusionList_incorrect,
+        PepUnmatchedID
     }
 
 }

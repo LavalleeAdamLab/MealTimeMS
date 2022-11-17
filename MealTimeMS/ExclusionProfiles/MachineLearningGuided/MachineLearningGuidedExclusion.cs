@@ -64,7 +64,10 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
             }
 			
             Peptide pep = getPeptideFromIdentification(id); // id is null, it already returned
-
+            if(pep == null)
+            {
+                return;
+            }
 			//log.Info("Peptide Observed Time: {0}\tPredicted Time: {1} -----------------", id.getScanTime(),pep.getRetentionTime().getRetentionTimeStart());
 
 
@@ -90,12 +93,12 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
             // add the peptide to the exclusion list if it is over the xCorr threshold
             if ((xCorr > XCORR_THRESHOLD))
             {
-                performanceEvaluator.countPeptidesExcluded();
-                log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
-                exclusionList.addPeptide(pep);
                 // calibrates our retention time alignment if the observed time is different
                 // from the predicted only if it passes this threshold
                 calibrateRetentionTime(pep);
+                exclusionList.addPeptide(pep);
+                log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
+                performanceEvaluator.countPeptidesExcluded();
             }
 			
 			// Add all the peptides corresponding to the parent protein, if the parent
@@ -119,16 +122,14 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 						excludedProteinFeatureList.Add(parentProtein.vectorize().ItemArray);
 #endif
                         parentProtein.setExcluded(true);
-                        log.Debug("Parent protein " + parentProtein.getAccession() + " is identified confidently "
-                                + parentProtein.getNumDB() + " times!");
+                        log.Debug("Confidence for parent protein " + parentProtein.getAccession()+"has crossed the probability threshold," +
+                            "adding to exclusion list.");
                         performanceEvaluator.countProteinsExcluded();
                         proteinsToExclude.Add(parentProtein);
                     }
                 }
             }
             exclusionList.addProteins(proteinsToExclude);
-			
-
         }
 
 

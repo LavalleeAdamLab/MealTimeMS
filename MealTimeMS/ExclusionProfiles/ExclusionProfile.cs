@@ -36,7 +36,8 @@ namespace MealTimeMS.ExclusionProfiles
         {
             database = _database;
            
-            exclusionList = new ExclusionList(_ppmTolerance);
+            //exclusionList = new ExclusionList(_ppmTolerance);
+            exclusionList = new SimplifiedExclusionList_Key(_ppmTolerance);
 			performanceEvaluator = new PerformanceEvaluator();
             currentTime = 0.0;
             includedSpectra = new List<int>();
@@ -113,8 +114,8 @@ namespace MealTimeMS.ExclusionProfiles
         public bool evaluate(Spectra spec)
         {
 			
-			currentTime = spec.getStartTime();
-            updateExclusionList(spec);
+			
+            updateCurrentTimeAndExclusionListTime(spec.getStartTime());
             if (spec.getMSLevel() == 1)
             {
 				log.Debug("Evaluating ms1 scan");
@@ -175,6 +176,9 @@ namespace MealTimeMS.ExclusionProfiles
             Peptide pep = database.getPeptide(peptideSequence);
             if (pep == null)
             {
+                //log.Warn(String.Format("Peptide sequence {0} is reported by the search engine but " +
+                //    "is not present in the fasta database digested with the given number of miscleavages," +
+                //    "this psm will be ignored", peptideSequence));
                 log.Debug("Adding peptide...");
                 pep = database.addPeptideFromIdentification(id, currentTime);
                 log.Debug("Added peptide " + peptideSequence + ".");
@@ -214,13 +218,18 @@ namespace MealTimeMS.ExclusionProfiles
                 performanceEvaluator.countPeptideCalibration();
             }
             //changes the status of the peptide from isPredicted = true to false, because now you have observed it
-            exclusionList.observedPeptide(pep, currentTime, database.getRetentionTimeWindow());
+            double observedTime = currentTime;
+#if SIMPLIFIEDEXCLUSIONLIST
+            observedTime = currentTime - RetentionTime.getRetentionTimeOffset();
+#endif
+            exclusionList.observedPeptide(pep, observedTime, database.getRetentionTimeWindow());
         }
 
-        private void updateExclusionList(Spectra spec)
+        private void updateCurrentTimeAndExclusionListTime(double spectra_startTime)
         {
-            currentTime = spec.getStartTime(); // in minutes
-            exclusionList.setCurrentTime(currentTime);
+            //rn with the thermo data it's in minutes
+            this.currentTime = spectra_startTime;
+            exclusionList.setCurrentTime(spectra_startTime);
             performanceEvaluator.countSpectra();
         }
 
@@ -235,11 +244,19 @@ namespace MealTimeMS.ExclusionProfiles
             }
 
             Peptide pep = getPeptideFromIdentification(id);
+            if(pep == null)
+            {
+              
+                return;
+            }
 #if (!DONTEVALUATE)
 			performanceEvaluator.evaluateExclusion(exclusionList, pep);
+
 #endif
 			// no peptide retention time calibration since it was excluded
 		}
+
+        
 
         protected void processMS1(Spectra spec)
         {
@@ -263,19 +280,45 @@ namespace MealTimeMS.ExclusionProfiles
                                                                         //in a real experiment, this should never equal to true
                                                                         //since the mass should not have been scanned in the first place 
                                                                         //if MS exclusion table was updated correctly through API
-           
+            RecordSpecInfo(spec);
 			
             if (isExcluded)
             {
+                performanceEvaluator.countExcludedSpectra();
+                excludedSpectra.Add(spec.getScanNum());
 #if (SIMULATION)
-				IDs id = performDatabaseSearch(spec);
-				
+                IDs id = performDatabaseSearch(spec);
+                WriterClass.LogScanTime("Excluded", (int)spec.getIndex());
+                
                 log.Debug("Mass " + spectraMass + " is on the exclusion list. Scan " + spec.getScanNum() + " excluded.");
                 evaluateExclusion(id);
-                WriterClass.LogScanTime("Excluded",(int)spec.getIndex());
+                if (id == null || id.getXCorr()<0.5)
+                {
+                    return false;
+                }
+                var pep = getPeptideFromIdentification(id);
+                if (pep == null)
+                {
+                    performanceEvaluator.countPepUnmatchedID();
+                    return false;
+                }
+                if (exclusionList is SimplifiedExclusionList_Key & pep.isFromFastaFile())
+                {
+                    var simplifiedExclusionList = (SimplifiedExclusionList_Key)exclusionList;
+                    if (simplifiedExclusionList.EvaluateExclusion(spec, pep))
+                    {
+                        performanceEvaluator.incrementValue(Header.SimplifiedExclusionList_correct);
+                    }
+                    else
+                    {
+                        performanceEvaluator.incrementValue(Header.SimplifiedExclusionList_incorrect);
+                    }
+                  
+                }
+                
 #endif
-				performanceEvaluator.countExcludedSpectra();
-				excludedSpectra.Add(spec.getScanNum());
+				
+
 				return false;
             }
             else
@@ -284,7 +327,14 @@ namespace MealTimeMS.ExclusionProfiles
 				performanceEvaluator.countAnalyzedSpectra();
                 log.Debug("Mass " + spectraMass + " was not on the exclusion list. Scan " + spec.getScanNum() + " analyzed.");
                 evaluateIdentification(id);
-                includedSpectra.Add(spec.getScanNum());
+                if (id!=null && id.getXCorr() > 0.00001)
+                {
+                    includedSpectra.Add(spec.getScanNum());
+                }
+                if (id!= null && getPeptideFromIdentification(id) == null)
+                {
+                    performanceEvaluator.countPepUnmatchedID();
+                }
                 // calibrate peptide if the observed retention time doesn't match the predicted
                 //WriterClass.LogScanTime("Processed", (int)spec.getIndex());
 				return true;
@@ -292,8 +342,35 @@ namespace MealTimeMS.ExclusionProfiles
             
 
         }
-        public void evaluateIdentification_public_access_wrapper(IDs id)
+       
+        public virtual  void RecordSpecInfo(Spectra spec)
         {
+        }
+        //This function looks at the bruker ms2 spectra, decides if it's supposed to be
+        //excluded, then adds the scanNumber to either included spectra or excluded spectra
+        //returns whether the ms2 is supposed to be excluded.
+        public bool process_bruker_ms2(double spectra_rt_seconds, double precursorMass, int scanNum)
+        {
+            
+            updateCurrentTimeAndExclusionListTime(spectra_rt_seconds);
+            Boolean isExcluded = exclusionList.isExcluded(precursorMass);
+            if (isExcluded)
+            {
+                excludedSpectra.Add(scanNum);
+            }
+            else
+            {
+                includedSpectra.Add(scanNum);
+            }
+            return isExcluded;
+        }
+        public void evaluateIdentificationAndUpdateCurrentTime(IDs id)
+        {
+            //Note the process bruker ms2 function also updates the current time
+            //Need to fix this because if both threads are not synchronized the current time is 
+            //updated by both the psm and ms2 which is an issue when one thread lags behind the other
+            currentTime = id.getScanTime();
+            updateCurrentTimeAndExclusionListTime(currentTime);
             evaluateIdentification(id);
         }
         protected abstract void evaluateIdentification(IDs id);

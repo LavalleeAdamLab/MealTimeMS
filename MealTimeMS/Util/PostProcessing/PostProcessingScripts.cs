@@ -32,7 +32,7 @@ namespace MealTimeMS.Util.PostProcessing
 			}
 			String outputName = peptideProphetOutputDirectory+IOUtils.getBaseName(IOUtils.getBaseName(cometFile)) + "_interact.pep.xml";
 			String cometFilePath = IOUtils.getAbsolutePath(cometFile);
-			String command = programName + " -N" + outputName + " -D" + database+ " " + cometFilePath;
+			String command = programName + " -N" + outputName + " -D" + database+ " -PPM -OAp " + cometFilePath;
 
 			// System.out.println(command);
 			// String result = ExecuteShellCommand.executeCommand(command);
@@ -93,7 +93,7 @@ namespace MealTimeMS.Util.PostProcessing
 		public static ProteinProphetResult RunProteinProphet(String cometFilePath, String outputFolder, Boolean keepResults)
 		{
 			Logger.debug("Post processing comet file: ");
-            Console.WriteLine("\nRunnign protein prophet\n!!!if program doesn't respond for a long time, try pressing a typing a few keys into the command line!!!\n");
+            //Console.WriteLine("\nRunnign protein prophet\n!!!if program doesn't respond for a long time, try pressing a typing a few keys into the command line!!!\n");
             String proteinProphetOutput = ProteinProphetSearch(cometFilePath,outputFolder,keepResults);
 			ProteinProphetResult ppr = ProteinProphetEvaluator.getProteinProphetResult(proteinProphetOutput);
 			ppr.SetProteinGroup(ProteinProphetEvaluator.ExtractPositiveProteinGroups(proteinProphetOutput));

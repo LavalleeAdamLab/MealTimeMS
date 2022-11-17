@@ -15,14 +15,16 @@ namespace MealTimeMS
 		static StreamWriter sw5;
         static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		static System.Diagnostics.Stopwatch watch;
+        static String summaryFile = "";
 
-		public static void initiateWriter(String filePath)
+        public static void initiateWriter(String filePath)
         {
            
             Console.WriteLine("Writing results to: {0}\\",Path.GetDirectoryName( filePath));
-          
 
-            sw = new StreamWriter(filePath+"_Summary.txt");
+            summaryFile = filePath + "_Summary.txt";
+            sw = new StreamWriter(summaryFile);
+            sw.Close();
 			sw2 = new StreamWriter(filePath+"_ProcessTime_output.txt");
 			//sw3 = new StreamWriter(filePath + "_ExcludedSpectra.txt");
 			//sw4 = new StreamWriter(filePath + "_IncludedSpectra.txt");
@@ -104,9 +106,13 @@ namespace MealTimeMS
 			try
 			{
 				// It's safe for this thread to access from the shared resource.
-				sw.WriteLine(str);
-				sw.Flush();
-			}
+				//sw.WriteLine(str);
+				//sw.Flush();
+                using (StreamWriter w = File.AppendText(summaryFile))
+                {
+                    w.WriteLine(str);
+                }
+            }
 			finally
 			{
 				// Ensure that the lock is released.
@@ -125,7 +131,7 @@ namespace MealTimeMS
 
         public static void CloseWriter()
         {
-            sw.Close();
+            //sw.Close();
             sw2.Close();
 			//sw3.Close();
 			//sw4.Close();
@@ -135,13 +141,13 @@ namespace MealTimeMS
 
         public static void writePrintln(String str)
         {
-            sw.WriteLine(str);
+            writeln(str);
             logger.Info(str);
         }
 
         public static void Flush()
         {
-            sw.Flush();
+            //sw.Flush();
         }
         
 
@@ -155,5 +161,6 @@ namespace MealTimeMS
 		ExcludedSpectraScanNum,
 		IncludedSpectraScanNum,
 		peptideRTTime
+
 	}
 }

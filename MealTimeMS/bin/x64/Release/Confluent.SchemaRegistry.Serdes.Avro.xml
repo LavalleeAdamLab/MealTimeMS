@@ -1,0 +1,301 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Confluent.SchemaRegistry.Serdes.Avro</name>
+    </assembly>
+    <members>
+        <member name="T:Confluent.SchemaRegistry.Serdes.AvroDeserializer`1">
+            <summary>
+                (async) Avro deserializer. Use this deserializer with GenericRecord,
+                types generated using the avrogen.exe tool or one of the following 
+                primitive types: int, long, float, double, boolean, string, byte[].
+            </summary>
+            <remarks>
+                Serialization format:
+                  byte 0:           Magic byte use to identify the protocol format.
+                  bytes 1-4:        Unique global id of the Avro schema that was used for encoding (as registered in Confluent Schema Registry), big endian.
+                  following bytes:  The serialized data.
+            </remarks>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Serdes.AvroDeserializer`1.#ctor(Confluent.SchemaRegistry.ISchemaRegistryClient,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+                Initialize a new AvroDeserializer instance.
+            </summary>
+            <param name="schemaRegistryClient">
+                An implementation of ISchemaRegistryClient used for
+                communication with Confluent Schema Registry.
+            </param>
+            <param name="config">
+                Deserializer configuration properties (refer to 
+                <see cref="T:Confluent.SchemaRegistry.Serdes.AvroDeserializerConfig" />).
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Serdes.AvroDeserializer`1.DeserializeAsync(System.ReadOnlyMemory{System.Byte},System.Boolean,Confluent.Kafka.SerializationContext)">
+            <summary>
+                Deserialize an object of type <typeparamref name="T"/>
+                from a byte array.
+            </summary>
+            <param name="data">
+                The raw byte data to deserialize.
+            </param>
+            <param name="isNull">
+                True if this is a null value.
+            </param>
+            <param name="context">
+                Context relevant to the deserialize operation.
+            </param>
+            <returns>
+                A <see cref="T:System.Threading.Tasks.Task" /> that completes
+                with the deserialized value.
+            </returns>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.Serdes.AvroDeserializerConfig">
+            <summary>
+                <see cref="T:Confluent.SchemaRegistry.Serdes.AvroDeserializer`1" />
+                configuration properties.
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.Serdes.AvroSerializer`1">
+            <summary>
+                (async) Avro serializer. Use this serializer with GenericRecord,
+                types generated using the avrogen.exe tool or one of the following 
+                primitive types: int, long, float, double, boolean, string, byte[].
+            </summary>
+            <remarks>
+                Serialization format:
+                  byte 0:           Magic byte use to identify the protocol format.
+                  bytes 1-4:        Unique global id of the Avro schema that was used for encoding (as registered in Confluent Schema Registry), big endian.
+                  following bytes:  The serialized data.
+            </remarks>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.AvroSerializer`1.DefaultInitialBufferSize">
+            <summary>
+                The default initial size (in bytes) of buffers used for message 
+                serialization.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Serdes.AvroSerializer`1.#ctor(Confluent.SchemaRegistry.ISchemaRegistryClient,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+                Initialize a new instance of the AvroSerializer class.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Serdes.AvroSerializer`1.#ctor(Confluent.SchemaRegistry.ISchemaRegistryClient,Confluent.SchemaRegistry.Serdes.AvroSerializerConfig)">
+            <summary>
+                Initialize a new instance of the AvroSerializer class.
+                When passed as a parameter to the Confluent.Kafka.Producer constructor,
+                the following configuration properties will be extracted from the producer's
+                configuration property collection:
+                
+                avro.serializer.buffer.bytes (default: 128) - Initial size (in bytes) of the buffer 
+                    used for message serialization. Use a value high enough to avoid resizing 
+                    the buffer, but small enough to avoid excessive memory use. Inspect the size of 
+                    the byte array returned by the Serialize method to estimate an appropriate value. 
+                    Note: each call to serialize creates a new buffer.
+                
+                avro.serializer.auto.register.schemas (default: true) - true if the serializer should 
+                    attempt to auto-register unrecognized schemas with Confluent Schema Registry, 
+                    false if not.
+            </summary>
+            <param name="schemaRegistryClient">
+                An implementation of ISchemaRegistryClient used for
+                communication with Confluent Schema Registry.
+            </param>
+            <param name="config">
+                Serializer configuration properties (refer to 
+                <see cref="T:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig" />)
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Serdes.AvroSerializer`1.SerializeAsync(`0,Confluent.Kafka.SerializationContext)">
+            <summary>
+                Serialize an instance of type <typeparamref name="T"/> to a byte array in Avro format. The serialized
+                data is preceded by a "magic byte" (1 byte) and the id of the schema as registered
+                in Confluent's Schema Registry (4 bytes, network byte order). This call may block or throw 
+                on first use for a particular topic during schema registration.
+            </summary>
+            <param name="value">
+                The value to serialize.
+            </param>
+            <param name="context">
+                Context relevant to the serialize operation.
+            </param>
+            <returns>
+                A <see cref="T:System.Threading.Tasks.Task" /> that completes with 
+                <paramref name="value" /> serialized as a byte array.
+            </returns>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig">
+            <summary>
+                <see cref="T:Confluent.SchemaRegistry.Serdes.AvroSerializer`1" />
+                configuration properties.
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.PropertyNames">
+            <summary>
+                Configuration property names specific to 
+                <see cref="T:Confluent.SchemaRegistry.Serdes.AvroSerializer`1" />.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.PropertyNames.BufferBytes">
+             <summary>
+                 Specifies the initial size (in bytes) of the buffer used for Avro message
+                 serialization. Use a value high enough to avoid resizing the buffer, but
+                 small enough to avoid excessive memory use. Inspect the size of the byte
+                 array returned by the Serialize method to estimate an appropriate value.
+                 Note: each call to serialize creates a new buffer.
+            
+                 default: 1024
+             </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.PropertyNames.AutoRegisterSchemas">
+             <summary>
+                 Specifies whether or not the Avro serializer should attempt to auto-register
+                 unrecognized schemas with Confluent Schema Registry.
+            
+                 default: true
+             </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.PropertyNames.NormalizeSchemas">
+             <summary>
+                 Specifies whether to normalize schemas, which will transform schemas
+                 to have a consistent format, including ordering properties and references.
+            
+                 default: false
+             </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.PropertyNames.UseLatestVersion">
+             <summary>
+                 Specifies whether or not the Avro serializer should use the latest subject
+                 version for serialization.
+                 WARNING: There is no check that the latest schema is backwards compatible
+                 with the schema of the object being serialized.
+            
+                 default: false
+             </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.PropertyNames.SubjectNameStrategy">
+            <summary>
+                The subject name strategy to use for schema registration / lookup.
+                Possible values: <see cref="T:Confluent.SchemaRegistry.SubjectNameStrategy" />
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.#ctor">
+            <summary>
+                Initialize a new <see cref="T:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig" />.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+                Initialize a new <see cref="T:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig" /> from the provided
+                key/value pair collection.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.BufferBytes">
+            <summary>
+                Specifies the initial size (in bytes) of the buffer used for Avro message
+                serialization. Use a value high enough to avoid resizing the buffer, but
+                small enough to avoid excessive memory use. Inspect the size of the byte
+                array returned by the Serialize method to estimate an appropriate value.
+                Note: each call to serialize creates a new buffer.
+            
+                default: 1024
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.AutoRegisterSchemas">
+             <summary>
+                 Specifies whether or not the Avro serializer should attempt to auto-register
+                 unrecognized schemas with Confluent Schema Registry.
+            
+                 default: true
+             </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.NormalizeSchemas">
+             <summary>
+                 Specifies whether to normalize schemas, which will transform schemas
+                 to have a consistent format, including ordering properties and references.
+            
+                 default: false
+             </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.UseLatestVersion">
+             <summary>
+                 Specifies whether or not the Avro serializer should use the latest subject
+                 version for serialization.
+                 WARNING: There is no check that the latest schema is backwards compatible
+                 with the schema of the object being serialized.
+            
+                 default: false
+             </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Serdes.AvroSerializerConfig.SubjectNameStrategy">
+            <summary>
+                Subject name strategy.
+                
+                default: SubjectNameStrategy.Topic
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.Constants.MagicByte">
+            <summary>
+                Magic byte that identifies a message with Confluent Platform framing.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.GenericDeserializerImpl.datumReaderBySchemaId">
+            <remarks>
+                A datum reader cache (one corresponding to each write schema that's been seen)
+                is maintained so that they only need to be constructed once.
+            </remarks>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Serdes.GenericSerializerImpl.Serialize(System.String,Avro.Generic.GenericRecord,System.Boolean)">
+            <summary>
+                Serialize GenericRecord instance to a byte array in Avro format. The serialized
+                data is preceded by a "magic byte" (1 byte) and the id of the schema as registered
+                in Confluent's Schema Registry (4 bytes, network byte order). This call may block or throw 
+                on first use for a particular topic during schema registration.
+            </summary>
+            <param name="topic">
+                The topic associated with the data.
+            </param>
+            <param name="data">
+                The object to serialize.
+            </param>
+            <param name="isKey">
+                whether or not the data represents a message key.
+            </param>
+            <returns>
+                <paramref name="data" /> serialized as a byte array.
+            </returns>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.Serdes.SerdeType">
+            <summary>
+                Enumeration of serde types recognized by the 
+                Avro ProduceAsync and Produce methods.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.SerdeType.Regular">
+            <summary>
+                Use the regular serializer.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.SerdeType.Avro">
+            <summary>
+                Use the Avro serializer.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.SpecificDeserializerImpl`1.datumReaderBySchemaId">
+            <remarks>
+                A datum reader cache (one corresponding to each write schema that's been seen) 
+                is maintained so that they only need to be constructed once.
+            </remarks>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Serdes.SpecificDeserializerImpl`1.ReaderSchema">
+            <summary>
+                The Avro schema used to read values of type <typeparamref name="T"/>
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Serdes.SpecificSerializerImpl`1.SerializerSchemaData.writerSchemaId">
+            <remarks>
+                A given schema is uniquely identified by a schema id, even when
+                registered against multiple subjects.
+            </remarks>
+        </member>
+    </members>
+</doc>

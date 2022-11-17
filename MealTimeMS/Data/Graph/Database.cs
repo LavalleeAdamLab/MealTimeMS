@@ -160,6 +160,11 @@ public class Database
                 foreach (String peptideSequence in peptideRetentionTimes.Keys)
                 {
                     Peptide pep = getPeptide(peptideSequence);
+                    if(pep == null)
+                    {
+                        log.Warn("Peptide sequence {0} is present in the retention time prediction file but not present in the digested fasta",peptideSequence);
+                        continue;
+                    }
                     double rt = peptideRetentionTimes[peptideSequence];
                     pep.setRetentionTime(
                             RetentionTimeUtil.convertDoubleToRetentionTime(rt, retentionTimeWindow, retentionTimeWindow));
@@ -213,8 +218,8 @@ public class Database
                 {
                  
                     //If the this parent protein of the peptide is a decoy, don't do anything about it
-                    log.Info("Decoy parent protein for this peptide was not found!!");
-                    log.Info(acc);
+                    log.Debug("Decoy parent protein for this peptide was not found!!");
+                    log.Debug(acc);
                     continue;
                 }
                 if (AccesstionToProtein.ContainsKey(acc))
@@ -333,7 +338,7 @@ public class Database
         {
             // reset scores on all peptides
             // remove all added peptides, from their parent protein too
-            IEnumerable<String> itr = SequenceToPeptide.Keys.AsEnumerable();
+            List<String> itr = SequenceToPeptide.Keys.ToList();
             foreach(String pep in itr)
             {
                 Peptide p = getPeptide(pep);
@@ -344,6 +349,7 @@ public class Database
                     {
                         parentProtein.removePeptide(p);
                     }
+                    SequenceToPeptide.Remove(pep);
                 }
                 else
                 {

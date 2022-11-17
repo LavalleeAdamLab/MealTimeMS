@@ -1,0 +1,1290 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Confluent.SchemaRegistry</name>
+    </assembly>
+    <members>
+        <member name="T:Confluent.SchemaRegistry.AuthCredentialsSource">
+            <summary>
+                Auth credentials source.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.AuthCredentialsSource.UserInfo">
+            <summary>
+                Credentials are specified via the `schema.registry.basic.auth.user.info` config property in the form username:password.
+                If `schema.registry.basic.auth.user.info` is not set, authentication is disabled.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.AuthCredentialsSource.SaslInherit">
+            <summary>
+                Credentials are specified via the `sasl.username` and `sasl.password` configuration properties.
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.CachedSchemaRegistryClient">
+             <summary>
+                 A caching Schema Registry client.
+            
+                 The following method calls cache results:
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetSchemaIdAsync(System.String,Confluent.SchemaRegistry.Schema,System.Boolean)" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetSchemaIdAsync(System.String,System.String,System.Boolean)" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetSchemaAsync(System.Int32,System.String)" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.RegisterSchemaAsync(System.String,Confluent.SchemaRegistry.Schema,System.Boolean)" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.RegisterSchemaAsync(System.String,System.String,System.Boolean)" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetRegisteredSchemaAsync(System.String,System.Int32)" />
+            
+                 The following method calls do NOT cache results:
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.LookupSchemaAsync(System.String,Confluent.SchemaRegistry.Schema,System.Boolean,System.Boolean)" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetLatestSchemaAsync(System.String)" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetAllSubjectsAsync" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetSubjectVersionsAsync(System.String)" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.IsCompatibleAsync(System.String,Confluent.SchemaRegistry.Schema)" />
+                  - <see cref="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.IsCompatibleAsync(System.String,System.String)" />
+             </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.CachedSchemaRegistryClient.DefaultTimeout">
+            <summary>
+                The default timeout value for Schema Registry REST API calls.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.CachedSchemaRegistryClient.DefaultMaxCachedSchemas">
+            <summary>
+                The default maximum capacity of the local schema cache.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.CachedSchemaRegistryClient.DefaultEnableSslCertificateVerification">
+            <summary>
+                The default SSL server certificate verification for Schema Registry REST API calls.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.CachedSchemaRegistryClient.DefaultKeySubjectNameStrategy">
+            <summary>
+                The default key subject name strategy.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.CachedSchemaRegistryClient.DefaultValueSubjectNameStrategy">
+            <summary>
+                The default value subject name strategy.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.CachedSchemaRegistryClient.MaxCachedSchemas">
+            <inheritdoc />
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}},Confluent.SchemaRegistry.IAuthenticationHeaderValueProvider)">
+            <summary>
+                Initialize a new instance of the SchemaRegistryClient class with a custom <see cref="T:Confluent.SchemaRegistry.IAuthenticationHeaderValueProvider"/>
+            </summary>
+            <param name="config">
+                Configuration properties.
+            </param>
+            <param name="authenticationHeaderValueProvider">
+                The authentication header value provider
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+                Initialize a new instance of the SchemaRegistryClient class.
+            </summary>
+            <param name="config">
+                Configuration properties.
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.CleanCacheIfFull">
+            <remarks>
+                This is to make sure memory doesn't explode in the case of incorrect usage.
+            
+                It's behavior is pretty extreme - remove everything and start again if the 
+                cache gets full. However, in practical situations this is not expected.
+            
+                TODO: Implement an LRU Cache here or something instead.
+            </remarks>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.SetSslConfig(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+                Add certificates for SSL handshake.
+            </summary>
+            <param name="config">
+                Configuration properties.
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetSchemaIdAsync(System.String,System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetSchemaIdAsync(System.String,Confluent.SchemaRegistry.Schema,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.RegisterSchemaAsync(System.String,Confluent.SchemaRegistry.Schema,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.RegisterSchemaAsync(System.String,System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.checkSchemaMatchesFormat(System.String,System.String)">
+            <summary>
+                Check if the given schema string matches a given format name.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.LookupSchemaAsync(System.String,Confluent.SchemaRegistry.Schema,System.Boolean,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetSchemaAsync(System.Int32,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetRegisteredSchemaAsync(System.String,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetSchemaAsync(System.String,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetLatestSchemaAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetAllSubjectsAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.GetSubjectVersionsAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.IsCompatibleAsync(System.String,Confluent.SchemaRegistry.Schema)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.IsCompatibleAsync(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.ConstructKeySubjectName(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.ConstructValueSubjectName(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.Dispose">
+            <summary>
+                Releases unmanaged resources owned by this CachedSchemaRegistryClient instance.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.CachedSchemaRegistryClient.Dispose(System.Boolean)">
+            <summary>
+                Releases the unmanaged resources used by this object
+                and optionally disposes the managed resources.
+            </summary>
+            <param name="disposing">
+                true to release both managed and unmanaged resources;
+                false to release only unmanaged resources.
+            </param>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.ISchemaRegistryClient">
+            <summary>
+                An interface implemented by Confluent Schema Registry clients.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.ISchemaRegistryClient.MaxCachedSchemas">
+            <summary>
+                The maximum capacity of the local schema cache.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.RegisterSchemaAsync(System.String,System.String,System.Boolean)">
+            <summary>
+                Register an Avro schema or get the schema id if it's already 
+                registered.
+            </summary>
+            <param name="subject">
+                The subject to register the schema against.
+            </param>
+            <param name="avroSchema">
+                The schema to register.
+            </param>
+            <param name="normalize">
+                Whether to normalize schemas.
+            </param>
+            <returns>
+                A unique id identifying the schema.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.RegisterSchemaAsync(System.String,Confluent.SchemaRegistry.Schema,System.Boolean)">
+            <summary>
+                Register a schema or get the schema id if it's already 
+                registered.
+            </summary>
+            <param name="subject">
+                The subject to register the schema against.
+            </param>
+            <param name="schema">
+                The schema to register.
+            </param>
+            <param name="normalize">
+                Whether to normalize schemas.
+            </param>
+            <returns>
+                A unique id identifying the schema.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.GetSchemaIdAsync(System.String,System.String,System.Boolean)">
+            <summary>
+              Get the unique id of the specified avro schema registered against 
+              the specified subject.
+            </summary>
+            <param name="subject">
+              The subject the schema is registered against.
+            </param>
+            <param name="avroSchema">
+              The schema to get the id for.
+            </param>
+            <param name="normalize">
+              Whether to normalize schemas.
+            </param>
+            <returns>
+              The unique id identifying the schema.
+            </returns>
+            <exception cref="T:Confluent.SchemaRegistry.SchemaRegistryException">
+              Thrown if the schema is not registered against the subject.
+            </exception>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.GetSchemaIdAsync(System.String,Confluent.SchemaRegistry.Schema,System.Boolean)">
+            <summary>
+              Get the unique id of the specified schema registered against 
+              the specified subject.
+            </summary>
+            <param name="subject">
+              The subject the schema is registered against.
+            </param>
+            <param name="schema">
+              The schema to get the id for.
+            </param>
+            <param name="normalize">
+              Whether to normalize schemas.
+            </param>
+            <returns>
+              The unique id identifying the schema.
+            </returns>
+            <exception cref="T:Confluent.SchemaRegistry.SchemaRegistryException">
+              Thrown if the schema is not registered against the subject.
+            </exception>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.GetSchemaAsync(System.Int32,System.String)">
+            <summary>
+                Gets the schema uniquely identified by <paramref name="id" />.
+            </summary>
+            <param name="id">
+                The unique id of schema to get.
+            </param>
+            <param name="format">
+                The format of the schema to get. Currently, the only supported
+                value is "serialized", and this is only valid for protobuf
+                schemas. If 'serialized', the SchemaString property of the returned
+                value will be a base64 encoded protobuf file descriptor. If null,
+                SchemaString will be human readable text.
+            </param>
+            <returns>
+                The schema identified by <paramref name="id" />.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.LookupSchemaAsync(System.String,Confluent.SchemaRegistry.Schema,System.Boolean,System.Boolean)">
+            <summary>
+                Get the registered schema details (including version and id)
+                given a subject name and schema, or throw an exception if
+                the schema is not registered against the subject.
+            </summary>
+            <param name="subject">
+                The subject name the schema is registered against.
+            </param>
+            <param name="schema">
+                The schema to lookup.
+            </param>
+            <param name="ignoreDeletedSchemas">
+                Whether or not to ignore deleted schemas.
+            </param>
+            <param name="normalize">
+                Whether to normalize schemas.
+            </param>
+            <returns>
+                The schema identified by the specified <paramref name="subject" /> and <paramref name="schema" />.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.GetRegisteredSchemaAsync(System.String,System.Int32)">
+            <summary>
+                Gets a schema given a <paramref name="subject" /> and <paramref name="version" /> number.
+            </summary>
+            <param name="subject">
+                The subject to get the schema for.
+            </param>
+            <param name="version">
+                The version number of schema to get.
+            </param>
+            <returns>
+                The schema identified by the specified <paramref name="subject" /> and <paramref name="version" />.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.GetSchemaAsync(System.String,System.Int32)">
+            <summary>
+                DEPRECATED. Superseded by GetRegisteredSchemaAsync(string subject, int version)
+                Gets a schema given a <paramref name="subject" /> and <paramref name="version" /> number.
+            </summary>
+            <param name="subject">
+                The subject to get the schema for.
+            </param>
+            <param name="version">
+                The version number of schema to get.
+            </param>
+            <returns>
+                The schema identified by the specified <paramref name="subject" /> and <paramref name="version" />.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.GetLatestSchemaAsync(System.String)">
+            <summary>
+                Get the latest schema registered against the specified <paramref name="subject" />.
+            </summary>
+            <param name="subject">
+                The subject to get the latest associated schema for.
+            </param>
+            <returns>
+                The latest schema registered against <paramref name="subject" />.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.GetAllSubjectsAsync">
+            <summary>
+                Gets a list of all subjects with registered schemas.
+            </summary>
+            <returns>
+                A list of all subjects with registered schemas.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.GetSubjectVersionsAsync(System.String)">
+            <summary>
+                Gets a list of versions registered under the specified <paramref name="subject" />.
+            </summary>
+            <param name="subject">
+                The subject to get versions registered under.
+            </param>
+            <returns>
+                A list of versions registered under the specified <paramref name="subject" />.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.IsCompatibleAsync(System.String,System.String)">
+            <summary>
+                Check if an avro schema is compatible with latest version registered against a 
+                specified subject.
+            </summary>
+            <param name="subject">
+                The subject to check.
+            </param>
+            <param name="avroSchema">
+                The schema to check.
+            </param>
+            <returns>
+                true if <paramref name="avroSchema" /> is compatible with the latest version 
+                registered against a specified subject, false otherwise.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.IsCompatibleAsync(System.String,Confluent.SchemaRegistry.Schema)">
+            <summary>
+                Check if a schema is compatible with latest version registered against a 
+                specified subject.
+            </summary>
+            <param name="subject">
+                The subject to check.
+            </param>
+            <param name="schema">
+                The schema to check.
+            </param>
+            <returns>
+                true if <paramref name="schema" /> is compatible with the latest version 
+                registered against a specified subject, false otherwise.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.ConstructKeySubjectName(System.String,System.String)">
+            <summary>
+                DEPRECATED. SubjectNameStrategy should now be specified via serializer configuration.
+                Returns the schema registry key subject name given a topic name.
+            </summary>
+            <param name="topic">
+                The topic name.
+            </param>
+            <param name="recordType">
+                The fully qualified record type. May be null if not required by
+                the configured subject naming strategy.
+            </param>
+            <returns>
+                The key subject name given a topic name.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ISchemaRegistryClient.ConstructValueSubjectName(System.String,System.String)">
+            <summary>
+                DEPRECATED. SubjectNameStrategy should now be specified via serializer configuration.
+                Returns the schema registry value subject name given a topic name.
+            </summary>
+            <param name="topic">
+                The topic name.
+            </param>
+            <param name="recordType">
+                The fully qualified record type. May be null if not required by
+                the configured subject naming strategy.
+            </param>
+            <returns>
+                The value subject name given a topic name.
+            </returns>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.ReferenceSubjectNameStrategyDelegate">
+            <summary>
+                Construct the subject name under which a referenced schema
+                should be registered in Schema Registry.
+            </summary>
+            <param name="context">
+                The serialization context.
+            </param>
+            <param name="referenceName">
+                The name used to reference the schema.
+            </param>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.ReferenceSubjectNameStrategy">
+            <summary>
+                Subject name strategy for referenced schemas.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.ReferenceSubjectNameStrategy.ReferenceName">
+            <summary>
+                (default): Use the reference name as the subject name.
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.ReferenceSubjectNameStrategyExtensions">
+            <summary>
+                Extension methods for the ReferenceSubjectNameStrategy type.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.ReferenceSubjectNameStrategyExtensions.ToDelegate(Confluent.SchemaRegistry.ReferenceSubjectNameStrategy)">
+            <summary>
+                Provide a functional implementation corresponding to the enum value.
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.BasicAuthenticationHeaderValueProvider">
+             <summary>
+                 A HTTP authentication header value provider implementing the 'Basic' scheme.
+            
+                 See: https://datatracker.ietf.org/doc/html/rfc7617
+             </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.BasicAuthenticationHeaderValueProvider.#ctor(System.String,System.String)">
+            <summary>
+                Initialize a new instance of the BasicAuthenticationHeaderValueProvider class.
+            </summary>
+            <param name="username">
+                The username
+            </param>
+            <param name="password">
+                The password
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.BasicAuthenticationHeaderValueProvider.GetAuthenticationHeader">
+            <inheritdoc/>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.IAuthenticationHeaderValueProvider">
+            <summary>
+                An interface defining HTTP client authentication header values.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.IAuthenticationHeaderValueProvider.GetAuthenticationHeader">
+            <summary>
+              Get the authentication header for HTTP requests
+            </summary>
+            <returns>
+              The authentication header for HTTP request messages
+            </returns>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.Compatibility">
+            <summary>
+                Enumerates the schema compatibility types.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Compatibility.None">
+            <summary>
+                No schema compatibility.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Compatibility.Forward">
+            <summary>
+                Forward schema compatibility.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Compatibility.Backward">
+            <summary>
+                Backward schema compatibility.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Compatibility.Full">
+            <summary>
+                Full schema compatibility.
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.ErrorMessage">
+            <summary>
+                Generic JSON error message.
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.RegisteredSchema">
+            <summary>
+                Represents a Schema stored in Schema Registry.
+            </summary>
+            <remarks>
+                Inherits from Schema to enable API backwards compatibility only.
+                In the future, this relationship will be removed.
+            </remarks>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.RegisteredSchema.Subject">
+            <summary>
+                The subject the schema is registered against.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.RegisteredSchema.Version">
+            <summary>
+                The schema version.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.RegisteredSchema.Id">
+            <summary>
+                Unique identifier of the schema.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.RegisteredSchema.Schema">
+            <summary>
+                The unregistered schema corresponding to this schema.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RegisteredSchema.#ctor">
+            <summary>
+                Included to enable API backwards compatibility only, do not use.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RegisteredSchema.#ctor(System.String,System.Int32,System.Int32,System.String,Confluent.SchemaRegistry.SchemaType,System.Collections.Generic.List{Confluent.SchemaRegistry.SchemaReference})">
+            <summary>
+                Initializes a new instance of this class.
+            </summary>
+            <param name="subject">
+                The subject the schema is registered against.
+            </param>
+            <param name="version">
+                The schema version, >= 0
+            </param>
+            <param name="id">
+                The globally unique identifier of the schema, >= 0
+            </param>
+            <param name="schemaString">
+                String representation of the schema.
+            </param>
+            <param name="schemaType">
+                The schema type: AVRO, PROTOBUF, JSON
+            </param>
+            <param name="references">
+                A list of schemas referenced by this schema.
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RegisteredSchema.ToString">
+            <summary>
+                Returns a summary string representation of the object.
+            </summary>
+            <returns>
+                A string that represents the object.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RegisteredSchema.GetHashCode">
+            <summary>
+                Returns a hash code for this Schema.
+            </summary>
+            <returns>
+                An integer that specifies a hash value for this Schema.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RegisteredSchema.CompareTo(Confluent.SchemaRegistry.RegisteredSchema)">
+            <summary>
+                Compares this instance with a specified RegisteredSchema object and indicates whether this 
+                instance precedes, follows, or appears in the same position in the sort order as
+                the specified schema.
+            </summary>
+            <param name="other">
+                The schema to compare with this instance.
+            </param>
+            <returns>
+                A 32-bit signed integer that indicates whether this instance precedes, follows, or
+                appears in the same position in the sort order as the other parameter. Less than 
+                zero: this instance precedes other. Zero: this instance has the same position in
+                the sort order as other. Greater than zero: This instance follows other OR other 
+                is null.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RegisteredSchema.Equals(System.Object)">
+            <summary>
+                Determines whether this instance and a specified object, which must also be a Schema 
+                object, have the same value (Overrides Object.Equals(Object))
+            </summary>
+            <param name="obj">
+                The Schema to compare to this instance.
+            </param>
+            <returns>
+                true if obj is a Schema and its value is the same as this instance; otherwise, false. 
+                If obj is null, the method returns false.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RegisteredSchema.Equals(Confluent.SchemaRegistry.RegisteredSchema)">
+            <summary>
+                Determines whether this instance and another specified Schema object are the same.
+            </summary>
+            <param name="other">
+                The schema to compare to this instance.
+            </param>
+            <returns>
+                true if the value of the other parameter is the same as the value of this instance; 
+                otherwise, false. If other is null, the method returns false.
+            </returns>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.Schema">
+            <summary>
+                Represents a schema.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Schema.Subject">
+            <summary>
+                DEPRECATED. The subject the schema is registered against.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Schema.Version">
+            <summary>
+                DEPRECATED. The schema version.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Schema.Id">
+            <summary>
+                DEPRECATED. Unique identifier of the schema.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.#ctor(System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+                DEPRECATED. Initializes a new instance of the Schema class.
+            </summary>
+            <param name="subject">
+                The subject the schema is registered against.
+            </param>
+            <param name="version">
+                The schema version, >= 0
+            </param>
+            <param name="id">
+                The globally unique identifier of the schema, >= 0
+            </param>
+            <param name="schemaString">
+                String representation of the schema.
+            </param>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Schema.SchemaString">
+            <summary>
+                A string representation of the schema.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Schema.References">
+            <summary>
+                A list of schemas referenced by this schema.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.Schema.SchemaType">
+            <summary>
+                The type of schema
+            </summary>
+            <remarks>
+                The .NET serialization framework has no way to convert
+                an enum to a corresponding string value, so this property
+                is backed by a string property, which is what is serialized.
+            </remarks>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.#ctor">
+            <summary>
+                Empty constructor for serialization
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.#ctor(System.String,System.Collections.Generic.List{Confluent.SchemaRegistry.SchemaReference},Confluent.SchemaRegistry.SchemaType)">
+            <summary>
+                Initializes a new instance of this class.
+            </summary>
+            <param name="schemaString">
+                String representation of the schema.
+            </param>
+            <param name="schemaType">
+                The schema type: AVRO, PROTOBUF, JSON
+            </param>
+            <param name="references">
+                A list of schemas referenced by this schema.
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.#ctor(System.String,Confluent.SchemaRegistry.SchemaType)">
+            <summary>
+                Initializes a new instance of this class.
+            </summary>
+            <param name="schemaString">
+                String representation of the schema.
+            </param>
+            <param name="schemaType">
+                The schema type: AVRO, PROTOBUF, JSON
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.Equals(System.Object)">
+            <summary>
+                Determines whether this instance and a specified object, which must also be an
+                instance of this type, have the same value (Overrides Object.Equals(Object))
+            </summary>
+            <param name="obj">
+                The instance to compare to this instance.
+            </param>
+            <returns>
+                true if obj is of the required type and its value is the same as this instance;
+                otherwise, false. If obj is null, the method returns false.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.Equals(Confluent.SchemaRegistry.Schema)">
+            <summary>
+                Determines whether this instance and another specified object of the same type are
+                the same.
+            </summary>
+            <param name="other">
+                The instance to compare to this instance.
+            </param>
+            <returns>
+                true if the value of the other parameter is the same as the value of this instance; 
+                otherwise, false. If other is null, the method returns false.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.GetHashCode">
+            <summary>
+                Returns a hash code for this instance.
+            </summary>
+            <returns>
+                An integer that specifies a hash value for this instance.
+            </returns>
+            <remarks>
+                The hash code returned is that of the Schema property,
+                since the other properties are effectively derivatives
+                of this property.
+            </remarks>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.CompareTo(Confluent.SchemaRegistry.Schema)">
+            <summary>
+                Compares this instance with another instance of this object type and indicates whether
+                this instance precedes, follows, or appears in the same position in the sort order
+                as the specified schema reference.
+            </summary>
+            <param name="other">
+                The instance to compare with this instance.
+            </param>
+            <returns>
+                A 32-bit signed integer that indicates whether this instance precedes, follows, or
+                appears in the same position in the sort order as the other parameter. Less than 
+                zero: this instance precedes other. Zero: this instance has the same position in
+                the sort order as other. Greater than zero: This instance follows other OR other 
+                is null.
+            </returns>
+            <remarks>
+                This method considers only the Schema property, since the other two properties are
+                effectively derivatives of this property.
+            </remarks>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.ToString">
+            <summary>
+                Returns a summary string representation of the object.
+            </summary>
+            <returns>
+                A string that represents the object.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.Schema.op_Implicit(Confluent.SchemaRegistry.Schema)~System.String">
+            <summary>
+                implicit cast to string.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaId.#ctor">
+            <summary>
+                Empty constructor for serialization
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.SchemaReference">
+            <summary>
+                Represents a reference to a Schema stored in Schema Registry.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaReference.Name">
+            <summary>
+                The schema name.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaReference.Subject">
+            <summary>
+                The subject the schema is registered against.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaReference.Version">
+            <summary>
+                The schema version.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaReference.#ctor(System.String,System.String,System.Int32)">
+            <summary>
+                Initializes a new instance of the SchemaReference class.
+            </summary>
+            <param name="name">
+                The name the schema is registered against.
+            </param>
+            <param name="subject">
+                The subject the schema is registered against.
+            </param>
+            <param name="version">
+                The schema version, >= 0
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaReference.ToString">
+            <summary>
+                Returns a string representation of the Schema object.
+            </summary>
+            <returns>
+                A string that represents the schema object.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaReference.GetHashCode">
+            <summary>
+                Returns a hash code for this SchemaReference.
+            </summary>
+            <returns>
+                An integer that specifies a hash value for this SchemaReference.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaReference.CompareTo(Confluent.SchemaRegistry.SchemaReference)">
+            <summary>
+                Compares this instance with a specified SchemaReference object and indicates whether
+                this  instance precedes, follows, or appears in the same position in the sort order
+                as the specified schema reference.
+            </summary>
+            <param name="other">
+                The schema reference to compare with this instance.
+            </param>
+            <returns>
+                A 32-bit signed integer that indicates whether this instance precedes, follows, or
+                appears in the same position in the sort order as the other parameter. Less than 
+                zero: this instance precedes other. Zero: this instance has the same position in
+                the sort order as other. Greater than zero: This instance follows other OR other 
+                is null.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaReference.Equals(System.Object)">
+            <summary>
+                Determines whether this instance and a specified object, which must also be a
+                SchemaReference object, have the same value (Overrides Object.Equals(Object))
+            </summary>
+            <param name="obj">
+                The SchemaReference to compare to this instance.
+            </param>
+            <returns>
+                true if obj is a SchemaReference and its value is the same as this instance;
+                otherwise, false. If obj is null, the method returns false.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaReference.Equals(Confluent.SchemaRegistry.SchemaReference)">
+            <summary>
+                Determines whether this instance and another specified SchemaReference object are
+                the same.
+            </summary>
+            <param name="other">
+                The schema reference to compare to this instance.
+            </param>
+            <returns>
+                true if the value of the other parameter is the same as the value of this instance; 
+                otherwise, false. If other is null, the method returns false.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaString.#ctor">
+            <summary>
+                Empty constructor for serialization
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.SchemaType">
+            <summary>
+                Enumerates the types of schema supported by Schema Registry.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaType.Avro">
+            <summary>
+                Avro
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaType.Protobuf">
+            <summary>
+                Protobuf
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaType.Json">
+            <summary>
+                JSON
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.IRestService">
+            <remarks>
+                It may be useful to expose this publicly, but this is not
+                required by the serializers, so we will keep this internal 
+                for now to minimize documentation / risk of API change etc.
+            </remarks>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.RestService">
+            <remarks>
+                It may be useful to expose this publicly, but this is not
+                required by the Avro serializers, so we will keep this internal
+                for now to minimize documentation / risk of API change etc.
+            </remarks>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.RestService.lastClientUsed">
+            <summary>
+                The index of the last client successfully used (or random if none worked).
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.RestService.clients">
+            <summary>
+                HttpClient instances corresponding to each provided schema registry Uri.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.RestService.authenticationHeaderValueProvider">
+            <summary>
+                HTTP request authentication value provider
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RestService.#ctor(System.String,System.Int32,Confluent.SchemaRegistry.IAuthenticationHeaderValueProvider,System.Collections.Generic.List{System.Security.Cryptography.X509Certificates.X509Certificate2},System.Boolean)">
+            <summary>
+                Initializes a new instance of the RestService class.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RestService.RequestAsync``1(System.String,System.Net.Http.HttpMethod,System.Object[])">
+            <remarks>
+                Used for end points that return a json object { ... }
+            </remarks>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.RestService.RequestListOfAsync``1(System.String,System.Net.Http.HttpMethod,System.Object[])">
+            <remarks>
+                Used for end points that return a json array [ ... ]
+            </remarks>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.Versions.GenericRequest">
+            <remarks>
+                This type is completely generic and carries no actual information about the type of data, but
+                it is the default for request entities if no content type is specified. Well behaving users
+                of the API will always specify the content type, but ad hoc use may omit it. We treat this as
+                JSON since that's all we currently support.
+            </remarks>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.SchemaRegistryConfig">
+            <summary>
+                <see cref="T:Confluent.SchemaRegistry.CachedSchemaRegistryClient" /> configuration properties.
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames">
+            <summary>
+                Configuration property names specific to the schema registry client.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SchemaRegistryUrl">
+            <summary>
+                A comma-separated list of URLs for schema registry instances that are
+                used to register or lookup schemas.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SchemaRegistryRequestTimeoutMs">
+             <summary>
+                 Specifies the timeout for requests to Confluent Schema Registry.
+            
+                 default: 30000
+             </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SchemaRegistryMaxCachedSchemas">
+             <summary>
+                 Specifies the maximum number of schemas CachedSchemaRegistryClient
+                 should cache locally.
+            
+                 default: 1000
+             </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SchemaRegistryBasicAuthCredentialsSource">
+            <summary>
+                Specifies the configuration property(ies) that provide the basic authentication credentials.
+                USER_INFO: Credentials are specified via the `schema.registry.basic.auth.user.info` config property in the form username:password.
+                           If `schema.registry.basic.auth.user.info` is not set, authentication is disabled.
+                SASL_INHERIT: Credentials are specified via the `sasl.username` and `sasl.password` configuration properties.
+            
+                default: USER_INFO
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SchemaRegistryBasicAuthUserInfo">
+            <summary>
+                Basic auth credentials in the form {username}:{password}.
+            
+                default: "" (no authentication).
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SchemaRegistryKeySubjectNameStrategy">
+            <summary>
+                Key subject name strategy.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SchemaRegistryValueSubjectNameStrategy">
+            <summary>
+                Value subject name strategy.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SslCaLocation">
+            <summary>
+                File path to CA certificate(s) for verifying the Schema Registry's key. System CA certs will be used if not specified.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SslKeystoreLocation">
+            <summary>
+                SSL keystore (PKCS#12) location.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.SslKeystorePassword">
+            <summary>
+                SSL keystore (PKCS#12) password.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.PropertyNames.EnableSslCertificateVerification">
+             <summary>
+                 Enable SSL verification. Disabling SSL verification is insecure and should only be done for reasons
+                 of convenience in test/dev environments.
+            
+                 default: true
+             </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.BasicAuthCredentialsSource">
+            <summary>
+                Specifies the configuration property(ies) that provide the basic authentication credentials.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.Url">
+            <summary>
+                A comma-separated list of URLs for schema registry instances that are
+                used to register or lookup schemas.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.RequestTimeoutMs">
+            <summary>
+                Specifies the timeout for requests to Confluent Schema Registry.
+            
+                default: 30000
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.SslCaLocation">
+             <summary>
+                 File or directory path to CA certificate(s) for verifying the schema registry's key.
+            
+                 default: ''
+                 importance: low
+             </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.SslKeystoreLocation">
+             <summary>
+                 Path to client's keystore (PKCS#12) used for authentication.
+            
+                 default: ''
+                 importance: low
+             </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.SslKeystorePassword">
+             <summary>
+                 Client's keystore (PKCS#12) password.
+            
+                 default: ''
+                 importance: low
+             </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.EnableSslCertificateVerification">
+             <summary>
+                 Enable/Disable SSL server certificate verification. Only use in contained test/dev environments.
+            
+                 default: ''
+                 importance: low
+             </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.MaxCachedSchemas">
+            <summary>
+                Specifies the maximum number of schemas CachedSchemaRegistryClient
+                should cache locally.
+            
+                default: 1000
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.BasicAuthUserInfo">
+            <summary>
+                Basic auth credentials in the form {username}:{password}.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.KeySubjectNameStrategy">
+            <summary>
+                Key subject name strategy.
+                
+                default: SubjectNameStrategy.Topic
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryConfig.ValueSubjectNameStrategy">
+             <summary>
+                 Value subject name strategy.
+            
+                 default: SubjectNameStrategy.Topic
+             </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaRegistryConfig.Set(System.String,System.String)">
+            <summary>
+                Set a configuration property using a string key / value pair.
+            </summary>
+            <param name="key">
+                The configuration property name.
+            </param>
+            <param name="val">
+                The property value.
+            </param>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaRegistryConfig.SetObject(System.String,System.Object)">
+            <summary>
+                Set a configuration property using a key / value pair (null checked).
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaRegistryConfig.Get(System.String)">
+            <summary>
+                Gets a configuration property value given a key. Returns null if 
+                the property has not been set.
+            </summary>
+            <param name="key">
+                The configuration property to get.
+            </param>
+            <returns>
+                The configuration property value.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaRegistryConfig.GetInt(System.String)">
+            <summary>
+                Gets a configuration property int? value given a key.
+            </summary>
+            <param name="key">
+                The configuration property to get.
+            </param>
+            <returns>
+                The configuration property value.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaRegistryConfig.GetBool(System.String)">
+            <summary>
+                Gets a configuration property bool? value given a key.
+            </summary>
+            <param name="key">
+                The configuration property to get.
+            </param>
+            <returns>
+                The configuration property value.
+            </returns>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SchemaRegistryConfig.properties">
+            <summary>
+                The configuration properties.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaRegistryConfig.GetEnumerator">
+            <summary>
+                	Returns an enumerator that iterates through the property collection.
+            </summary>
+            <returns>
+                    An enumerator that iterates through the property collection.
+            </returns>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaRegistryConfig.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+                	Returns an enumerator that iterates through the property collection.
+            </summary>
+            <returns>
+                    An enumerator that iterates through the property collection.
+            </returns>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.SchemaRegistryException">
+            <summary>
+                Represents an error returned by Confluent Schema Registry.
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryException.ErrorCode">
+            <summary>
+                An error code specific to Schema Registry of the form XXX or XXXYY.
+                where XXX is standard http error status (400-500) and YY specific to schema registry
+                Example: 40403 = Schema not found
+            </summary>
+        </member>
+        <member name="P:Confluent.SchemaRegistry.SchemaRegistryException.Status">
+            <summary>
+                Standard HTTP response code.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SchemaRegistryException.#ctor(System.String,System.Net.HttpStatusCode,System.Int32)">
+            <summary>
+                Initialize a new instance of SchemaRegistryException.
+            </summary>
+            <param name="message">
+                Additional information about the error.
+            </param>
+            <param name="status">
+                The HTTP Status Code.
+            </param>
+            <param name="errorCode">
+                The Confluent Schema Registry error code.
+            </param>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.SubjectNameStrategyDelegate">
+            <summary>
+                Construct the subject name under which the schema
+                associated with a record should be registered in
+                Schema Registry.
+            </summary>
+            <param name="context">
+                The serialization context.
+            </param>
+            <param name="recordType">
+                The type name of the data being written.
+            </param>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.SubjectNameStrategy">
+            <summary>
+                Subject name strategy. Refer to: https://www.confluent.io/blog/put-several-event-types-kafka-topic/
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SubjectNameStrategy.Topic">
+            <summary>
+                (default): The subject name for message keys is &lt;topic&gt;-key, and &lt;topic&gt;-value for message values.
+                This means that the schemas of all messages in the topic must be compatible with each other.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SubjectNameStrategy.Record">
+            <summary>
+                The subject name is the fully-qualified name of the Avro record type of the message.
+                Thus, the schema registry checks the compatibility for a particular record type, regardless of topic.
+                This setting allows any number of different event types in the same topic.
+            </summary>
+        </member>
+        <member name="F:Confluent.SchemaRegistry.SubjectNameStrategy.TopicRecord">
+            <summary>
+                The subject name is &lt;topic&gt;-&lt;type&gt;, where &lt;topic&gt; is the Kafka topic name, and &lt;type&gt;
+                is the fully-qualified name of the Avro record type of the message. This setting also allows any number of event
+                types in the same topic, and further constrains the compatibility check to the current topic only.
+            </summary>
+        </member>
+        <member name="T:Confluent.SchemaRegistry.SubjectNameStrategyExtensions">
+            <summary>
+                Extension methods for the SubjectNameStrategy type.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SubjectNameStrategyExtensions.ToDelegate(Confluent.SchemaRegistry.SubjectNameStrategy)">
+            <summary>
+                Provide a functional implementation corresponding to the enum value.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SubjectNameStrategyExtensions.ConstructKeySubjectName(Confluent.SchemaRegistry.SubjectNameStrategy,System.String,System.String)">
+            <summary>
+                Helper method to construct the key subject name given the specified parameters.
+            </summary>
+        </member>
+        <member name="M:Confluent.SchemaRegistry.SubjectNameStrategyExtensions.ConstructValueSubjectName(Confluent.SchemaRegistry.SubjectNameStrategy,System.String,System.String)">
+            <summary>
+                Helper method to construct the value subject name given the specified parameters.
+            </summary>
+        </member>
+    </members>
+</doc>
