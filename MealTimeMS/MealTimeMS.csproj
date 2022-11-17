@@ -462,6 +462,7 @@
     <Compile Include="Tester\ProteinProphetResultTester.cs" />
     <Compile Include="Tester\PSMTSVReaderWriter.cs" />
     <Compile Include="Tester\QuickRandomExclusion.cs" />
+    <Compile Include="Tester\QuickSimulation.cs" />
     <Compile Include="Tester\RandomTesterFunctions.cs" />
     <Compile Include="Tester\ReadLessLines.cs" />
     <Compile Include="Tester\RealTimeCometSearchValidator.cs" />

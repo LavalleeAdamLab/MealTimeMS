@@ -15,8 +15,6 @@ using MealTimeMS.ExclusionProfiles.TestProfile;
 using MealTimeMS.Tester;
 using MealTimeMS.ExclusionProfiles.Nora;
 using MealTimeMS.ExclusionProfiles;
-//using MealTimeMS.ExclusionProfiles.TaxonGuided;
-//using MealTimeMS.ExclusionProfiles.TaxonGuided.TaxonClass;
 using MealTimeMS.Simulation;
 using System.Diagnostics;
 

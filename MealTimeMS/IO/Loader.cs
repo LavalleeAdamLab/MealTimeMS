@@ -414,6 +414,7 @@ namespace MealTimeMS.IO
                 double startTime=0;
                 double precursorMz=0;
                 int precursorCharge=0;
+                double ionMobility = -1;
                 //parse header
                 while (line != null)
                 {
@@ -424,11 +425,16 @@ namespace MealTimeMS.IO
                         precursorMz = double.Parse(str[3]); //isolation window
                     }else if (str[0].Equals("I"))
                     {
-                        if (str[1].Equals("RTime"))
+                        if (str[1].Equals("RTime")||str[1].Equals("RetTime"))
                         {
                             startTime = double.Parse(str[2]);
                         }
-                    }else if (str[0].Equals("Z"))
+                        if (str[1].Equals("Ion Mobility"))
+                        {
+                            ionMobility = double.Parse(str[2]);
+                        }
+                    }
+                    else if (str[0].Equals("Z"))
                     {
                         precursorCharge = int.Parse(str[1]);
 						//TODO Remove, only to test if using Accurate Monoisotopic M/z instead of isolation window
@@ -459,7 +465,8 @@ namespace MealTimeMS.IO
                     peakIntensity[i] = double.Parse(peaks[i][1]);
                 }
                 Spectra spec = new Spectra(index, scanNum, msLevel, peakCount, peakMz, peakIntensity,
-                    startTime, precursorMz, precursorCharge);
+                    startTime, precursorMz, precursorCharge );
+                spec.SetIonMobility(ionMobility);
                 spectraArray.Add(spec);
                 index++;
             }

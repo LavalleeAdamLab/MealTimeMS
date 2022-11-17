@@ -52,39 +52,12 @@ namespace MealTimeMS
     {        
         static void Tester()
         {
-            //ProteinProphetResultTester.DoJob();
-            //ProteinProphetResultTester.DoJob();
-            //ConfidentProteinGroupData.DoJob();
-            //ReplacingStuffInPepXML.DoJob();
-            //PostProcessingTester.DoJob();
-            //Program.ExitProgram(0);
             String workDir = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace";
 			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(workDir) + "\\");
 			WriterClass.ExperimentOutputSetUp();
             BrukerInstrumentConnection.PrintAllProlucidPSM();
             Program.ExitProgram(0);
 
-			CometSingleSearchTester.CometSingleSearchTest();
-			ProteinProphetResultTester.DoJob();
-
-			//ProteinSpectraVSExcludedSpectraGenerator.DoJob();
-			//ExtractPPRFromProteinProphetResult.DoJob();
-			//JunkTester.DoJob();
-			//Console.WriteLine("Logistic Regression Training");
-			//InputFileOrganizer.SetWorkDir(str);
-			//RealTimeCometSearchValidator.TestValidity();
-			//PostProcessingTester.DoJob();
-			//PartialPepXMLWriterTester.DoJob();
-			//ProteinProphetResultTester.DoJob();
-			//DecoyConcacenatedGeneratorTester.DoJob();
-			//FeatureExtractor.ExtractFeatures(true);
-			//IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel();
-			//IdentificationLogisticRegressionTrainer.DoJob();
-			//ExcludedProteinOverlapAnalyzer.DoJob();
-			//IdentificationLogisticRegressionTrainer.TestLRModel("C:\\Coding\\2019LavalleeLab\\temp2\\Output\\ModdedTraining_PreExFile_output\\MS_QC_240min_extractedFeatures_positiveAndNonPositive_ClassifierCoefficient.txt", 
-			//"C:\\Coding\\2019LavalleeLab\\temp2\\Output\\ModdedTraining_PreExFile_output\\MS_QC_240min_extractedFeatures_positiveAndNonPositive.tsv",
-			//"C:\\Coding\\2019LavalleeLab\\temp2\\Output\\Modded_120FeatureExtraction_output\\MS_QC_120min_extractedFeatures_positiveAndNonPositive_NoDecoy.tsv");
-			//ProteinSpectraVSExcludedSpectraGenerator.FilterForConfidentlyIdentifiedProteinOnly();
 			Console.WriteLine("program finished, press any key to continute");
             Console.ReadKey();
             Environment.Exit(0);
@@ -110,15 +83,11 @@ namespace MealTimeMS
 			//WriterClass responsible for writing the any output to a file
 			WriterClass.ExperimentOutputSetUp();
 
-
-			//Console.WriteLine("Bring the system to On mode and/or start an acquisition to see results.");
-
-
 			ExecuteShellCommand.CopyFile(InputFileOrganizer.MealTimeMSParamsFile, InputFileOrganizer.OutputFolderOfTheRun);
-			//ExclusionExplorer.RunRealTimeExperiment();
-			ExclusionExplorer.RunExclusionExplorer(GlobalVar.ExclusionMethod);
+            QuickSimulation.RunSimulation();
 
-			Thread.CurrentThread.Join(2000); // waits x seconds for DataProcessor to finish
+
+            Thread.CurrentThread.Join(2000); // waits x seconds for DataProcessor to finish
             WriterClass.CloseWriter();
             Console.WriteLine("Program finished");
 

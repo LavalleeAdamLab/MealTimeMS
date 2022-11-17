@@ -16,9 +16,9 @@ namespace MealTimeMS.Data
 		//params used only by this program locally
 		private double index; // The index of the spectra locally in MTMS, only used to track progress. This is not the scanNum, see the variable scanNum.
 		private double arrivalTime; //As opposed to "startTime", arrivalTime is the time recorded using the clock on the computer
-
+        private double ionMobility;
         /*--> spectrum*/
-		private int scanNum; //The scanNum provided by the instrument. Retrieve by spectrum.getScan()
+        private int scanNum; //The scanNum provided by the instrument. Retrieve by spectrum.getScan()
         private int msLevel; // cvParams.get(1).value()
                              // private ? positiveScan; //cvParams.get(2).value()
                              // private ? profileSpec; //cvParams.get(3).value()
@@ -92,6 +92,7 @@ namespace MealTimeMS.Data
 			arrivalTime = _arrivalTime;
 
 		}
+        
 
         public static Spectra GetSpectraFromPasefMs2Spectrum(com.bruker.paser.avro.PasefMs2Spectrum pSpec)
         {
@@ -115,11 +116,18 @@ namespace MealTimeMS.Data
 		{
 			return new Spectra(-1, _scanNum, 1,-1,new double[] { 0,0}, new double[] { 0,0},-1,-1,-1);
 		}
-
-			// Functions to access the private values from class Spectra
-			public double getCalculatedPrecursorMass()
+        public void SetIonMobility(double _ionMobility)
+        {
+            ionMobility = _ionMobility;
+        }
+            // Functions to access the private values from class Spectra
+        public double getCalculatedPrecursorMass()
         {
             return calculatedPrecursorMass;
+        }
+        public double getIonMobility()
+        {
+            return ionMobility;
         }
 
 		public double getArrivalTime()
