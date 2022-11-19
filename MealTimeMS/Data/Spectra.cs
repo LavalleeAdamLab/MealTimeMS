@@ -2,7 +2,7 @@ using System;
 using MealTimeMS.Util;
 namespace MealTimeMS.Data
 {
-    
+
 
     /*
      * Used when reading the .ms2 file 
@@ -11,14 +11,14 @@ namespace MealTimeMS.Data
      */
     public class Spectra
     {
-		//Each attribute is private so that other programs cannot change their values
+        //Each attribute is private so that other programs cannot change their values
 
-		//params used only by this program locally
-		private double index; // The index of the spectra locally in MTMS, only used to track progress. This is not the scanNum, see the variable scanNum.
-		private double arrivalTime; //As opposed to "startTime", arrivalTime is the time recorded using the clock on the computer
-
+        //params used only by this program locally
+        private double index; // The index of the spectra locally in MTMS, only used to track progress. This is not the scanNum, see the variable scanNum.
+        private double arrivalTime; //As opposed to "startTime", arrivalTime is the time recorded using the clock on the computer
+        private double ionMobility;
         /*--> spectrum*/
-		private int scanNum; //The scanNum provided by the instrument. Retrieve by spectrum.getScan()
+        private int scanNum; //The scanNum provided by the instrument. Retrieve by spectrum.getScan()
         private int msLevel; // cvParams.get(1).value()
                              // private ? positiveScan; //cvParams.get(2).value()
                              // private ? profileSpec; //cvParams.get(3).value()
@@ -52,7 +52,7 @@ namespace MealTimeMS.Data
                 double lowMZ, double highMZ, double startTime, String filter, double scanConfig, double injectionTime,
                 double scanLower, double scanUpper, double calculatedPrecursorMass)
         {
-         
+
             this.index = index;
             this.scanNum = scanNum;
             this.msLevel = msLevel;
@@ -82,23 +82,25 @@ namespace MealTimeMS.Data
             this.peakIntensity = peakIntensity;
             this.startTime = startTime;
             this.precursorMz = precursorMz;
-            this.precursorCharge = (int) precursorCharge;
+            this.precursorCharge = (int)precursorCharge;
             this.calculatedPrecursorMass = MassConverter.convertMZ(precursorMz, (int)precursorCharge);
         }
-		public Spectra(double index, int scanNum, int msLevel, int peakCount, double[] peakMz, double[] peakIntensity,
-			double startTime, double precursorMz, double precursorCharge, double _arrivalTime):this(index, scanNum, msLevel, peakCount,  peakMz, peakIntensity,
-			startTime, precursorMz, precursorCharge)
-		{
-			arrivalTime = _arrivalTime;
+        public Spectra(double index, int scanNum, int msLevel, int peakCount, double[] peakMz, double[] peakIntensity,
+            double startTime, double precursorMz, double precursorCharge, double _arrivalTime) : this(index, scanNum, msLevel, peakCount, peakMz, peakIntensity,
+            startTime, precursorMz, precursorCharge)
+        {
+            arrivalTime = _arrivalTime;
 
-		}
+        }
+
 
         public static Spectra GetSpectraFromPasefMs2Spectrum(com.bruker.paser.avro.PasefMs2Spectrum pSpec)
         {
             pSpec.ms2_id = GlobalVar.TIMSTOF_Precursor_ID_to_ms2_id[pSpec.ms2_id];
             double rt_min = pSpec.rt / 60.0;
-            var spec =  new Spectra(-1, pSpec.ms2_id, 2, pSpec.intensity_data.Length, null, null,
+            var spec = new Spectra(-1, pSpec.ms2_id, 2, pSpec.intensity_data.Length, null, null,
                rt_min, pSpec.mono_mz, pSpec.charge);
+            spec.SetIonMobility(pSpec.ooK0);
             if (GlobalVar.CheatingMonoPrecursorMassTable != null)
             {
                 double correctedPrecursorMass = 0;
@@ -111,23 +113,30 @@ namespace MealTimeMS.Data
         }
 
 
-		public static Spectra CreateEmptyMS1(int _scanNum)
-		{
-			return new Spectra(-1, _scanNum, 1,-1,new double[] { 0,0}, new double[] { 0,0},-1,-1,-1);
-		}
-
-			// Functions to access the private values from class Spectra
-			public double getCalculatedPrecursorMass()
+        public static Spectra CreateEmptyMS1(int _scanNum)
+        {
+            return new Spectra(-1, _scanNum, 1, -1, new double[] { 0, 0 }, new double[] { 0, 0 }, -1, -1, -1);
+        }
+        public void SetIonMobility(double _ionMobility)
+        {
+            ionMobility = _ionMobility;
+        }
+        // Functions to access the private values from class Spectra
+        public double getCalculatedPrecursorMass()
         {
             return calculatedPrecursorMass;
         }
+        public double getIonMobility()
+        {
+            return ionMobility;
+        }
 
-		public double getArrivalTime()
-		{
-			return arrivalTime;
-		}
+        public double getArrivalTime()
+        {
+            return arrivalTime;
+        }
 
-		public double getIndex()
+        public double getIndex()
         {
             return index;
         }
@@ -222,7 +231,7 @@ namespace MealTimeMS.Data
         public String ToString()
         {
             return "Spectra{index=" + index + "; scanNum=" + scanNum + "; msLevel=" + msLevel + "; start_t=" + startTime
-                + "; precursor_MZ= " + precursorMz +"; precursor_Charge= " + precursorCharge + "; calculated_p_mass=" + calculatedPrecursorMass
+                + "; precursor_MZ= " + precursorMz + "; precursor_Charge= " + precursorCharge + "; calculated_p_mass=" + calculatedPrecursorMass
                 + "; base_mz=" + baseMZ
                     + "; base_intens=" + baseIntensity + "; tot_curr=" + totCurr + "; low_mz=" + lowMZ + "; high_mz="
                     + highMZ + "; start_t=" + startTime + "; filter=" + filter + "; scan_config=" + scanConfig

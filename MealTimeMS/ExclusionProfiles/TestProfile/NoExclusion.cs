@@ -83,7 +83,8 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
             ObservedPeptideRtTrackerObject observedPep = new ObservedPeptideRtTrackerObject(id.getScanNum(), pep.getSequence(), id.getPeptideSequence_withModification(), id.getScanTime(), id.getXCorr(), id.getDeltaCN(),
                 rt.getRetentionTimePeak(), rt.getRetentionTimeStart() + GlobalVar.retentionTimeWindowSize,
                 RetentionTime.getRetentionTimeOffset(), rtCalcPredictedRT[pep.getSequence()], (rt.IsPredicted() ? 1 : 0),
-                pep.getMass(), spec.getCalculatedPrecursorMass(), id.getPeptideMass(), String.Join(separator: ",", id.getParentProteinAccessions()));
+                pep.getMass(), spec.getCalculatedPrecursorMass(), id.getPeptideMass(),
+                spec.getPrecursorMz(),spec.getPrecursorCharge(), spec.getIonMobility(), String.Join(separator: ",", id.getParentProteinAccessions()));
 
             observedPep.offset = RetentionTime.getRetentionTimeOffset();
             peptideIDRT.Add(observedPep);
@@ -122,12 +123,16 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
         public double chainsawMass;
         public double ms2CalcPrecursorNeutralMass;
         public double sqtCalcMass;
+        public double precursorMz;
+        public int precursorCharge;
+        public double ionMobility;
 
         public String parentProteins;
         public ObservedPeptideRtTrackerObject(int _scanNum, String _peptideSequence,String _peptideSequence_withModification, 
             double _arrivalTime, double _xcorr, double _dCN,double _rtPeak, double _correctedRT, 
             double _offset, double _originalRTCalcPredictedValue, int _isPredicted,
-            double _chainSawMass, double _ms2CalcNeutralMass, double _sqtCalcMass, String _parentProteins)
+            double _chainSawMass, double _ms2CalcNeutralMass, double _sqtCalcMass,
+            double _precursormz, int _precursorCharge, double _ionMobility, String _parentProteins)
 		{
             scanNum = _scanNum;
 			peptideSequence = _peptideSequence;
@@ -143,6 +148,9 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
             chainsawMass = _chainSawMass;
             ms2CalcPrecursorNeutralMass = _ms2CalcNeutralMass;
             sqtCalcMass = _sqtCalcMass;
+            precursorMz = _precursormz;
+            precursorCharge = _precursorCharge;
+            ionMobility = _ionMobility;
             parentProteins = _parentProteins;
 		}
 		public ObservedPeptideRtTrackerObject() {
@@ -150,14 +158,14 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 		public static String getHeader()
 		{
 			return String.Join("\t", "scanNum","pepSeq","pepSeqWithMod", "arrivalTime", "xCorr", "dCN", "rtPeak", "correctedRT", "offset", "originalRTCalcPredictedValue", "isPredicted",
-                "chainsawMass","ms2CalcPrecursorNeutralMass","sqtCalcMass","parentProteins");
+                "chainsawMass","ms2CalcPrecursorNeutralMass","sqtCalcMass","precursorMz","precursorCharge","ionMobility","parentProteins");
 		}
 
 		override
 		public String ToString()
 		{
 			String str = String.Join("\t", scanNum, peptideSequence, peptideSequence_withModification, arrivalTime, xcorr,dCN, rtPeak, correctedRT, offset, originalRTCalcPredictedValue, isPredicted,
-                chainsawMass, ms2CalcPrecursorNeutralMass, sqtCalcMass, parentProteins);
+                chainsawMass, ms2CalcPrecursorNeutralMass, sqtCalcMass, precursorMz, precursorCharge, ionMobility, parentProteins);
 			return str;
 		}
 	}
