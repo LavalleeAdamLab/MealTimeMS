@@ -25,14 +25,10 @@ namespace MealTimeMS.RunTime
     class BrukerInstrumentConnection
     {
         static List<IDs> psmTracker;
-        const  double timeOutThresholdMiliseconds = 300000;
+        const  double timeOutThresholdMiliseconds = 300000; //After receiving the acquisition-stopped signal from the paser_control kafka topic, will wait for this amount of miliseconds to elapse after the last message is consumed by psm or ms2 thread before stopping the psm/ms2 consuming thread
         static ConcurrentDictionary<int , bool> includedScanNum;
         static int psmReceived=1; //will be updated to 1 everytime the prolucid processing thread receives a psm. Used for the timer in the paserControl thread 
-        public static void DoJob()
-        {
 
-
-        }
         public static void Connect(ExclusionProfile exclusionProfile, BrukerConnectionEnum connectionMode, bool runWithoutExclusionProfile = false)
         {
             //string bootstrapServers = args[0];
@@ -49,17 +45,13 @@ namespace MealTimeMS.RunTime
 
             var schemaRegistryConfig = new SchemaRegistryConfig
             {
-                // Note: you can specify more than one schema registry url using the
-                // schema.registry.url property for redundancy (comma separated list). 
-                // The property name is not plural to follow the convention set by
-                // the Java implementation.
                 Url = schemaRegistryUrl
             };
 
             var consumerConfig = new ConsumerConfig
             {
                 BootstrapServers = bootstrapServers,
-                GroupId = "avro-specific-example-group",
+                GroupId = "MealTime-MS-Consumer-Group",
                 AutoOffsetReset = AutoOffsetReset.Latest,
               
             };
@@ -340,6 +332,7 @@ namespace MealTimeMS.RunTime
 
 
         //a unit test function that connects to Kafka broker and prints all psms to a file
+        //NoExclusion.RecordSpecInfo() does something similar to this function 
         static StreamWriter sw;
         public static void PrintAllProlucidPSM()
         {

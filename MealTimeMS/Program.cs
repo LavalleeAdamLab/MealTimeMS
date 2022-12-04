@@ -99,29 +99,26 @@ namespace MealTimeMS
 
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
+            //Parse Command Line options, and reads the MealTimeMS.param file to populate GlobalVar and InputFileOrganizer variables
             CommandLine.Parser.Default.ParseArguments<Options, PrintParams, TrainClassifier>(args)
 			.WithParsed<Options>(RunSimulation)
 			.WithParsed<PrintParams>(RunPrintParameters)
 			.WithParsed<TrainClassifier>(RunTrainClassifier)
 			.WithNotParsed(HandleParseError);
-			//SetUpOptions(args);
 
 			//Sets up the output directory and creates the output files
 			//WriterClass responsible for writing the any output to a file
 			WriterClass.ExperimentOutputSetUp();
-
-
-			//Console.WriteLine("Bring the system to On mode and/or start an acquisition to see results.");
-
-
+            //Copies the user-specified MealTimeMS param file to the output directory
 			ExecuteShellCommand.CopyFile(InputFileOrganizer.MealTimeMSParamsFile, InputFileOrganizer.OutputFolderOfTheRun);
 			//ExclusionExplorer.RunRealTimeExperiment();
+            
+            //Entry point to simulation
 			ExclusionExplorer.RunExclusionExplorer(GlobalVar.ExclusionMethod);
 
 			Thread.CurrentThread.Join(2000); // waits x seconds for DataProcessor to finish
-            WriterClass.CloseWriter();
+            WriterClass.CloseWriter(); //Closes all the writerclass StreamWriters
             Console.WriteLine("Program finished");
-
 			ExitProgram(0);
         }
 		static void RunSimulation(Options opts)

@@ -25,6 +25,14 @@ namespace MealTimeMS.Simulation
 			//TestFunction_WriteNumMS2PerMS1(_specList);
 
 		}
+
+        public QuickDDAInstrumentSimulation(Experiment e, List<Spectra> _specList)
+        {
+            foreach(Spectra spec in _specList)
+            {
+                e.exclusionProfile.evaluate(spec); 
+            }
+        }
 		private static void StartSimulation(ExclusionProfile exclusionProfile, List<List<Spectra>> groupedMS2, int TopN)
 		{
 			int totalMS2SentCounter = 0;

@@ -243,6 +243,12 @@ public class ExclusionList
 				addProtein(p);
             }
         }
+
+        virtual public bool isExcluded(Spectra spec)
+        {
+            return isExcluded(spec.getCalculatedPrecursorMass());
+        }
+
         /*
          * Finds the list of peptides that match the query mass, within the
          * ppmTolerance. If any of these peptides are excluded in the specified time,
@@ -265,7 +271,7 @@ public class ExclusionList
             return exclusionList;
         }
 
-        public void reset()
+        public virtual void reset()
         {
             exclusionList.Clear();
             currentTime = 0;

@@ -25,7 +25,7 @@ namespace MealTimeMS.ExclusionProfiles
             {
                 case ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
                     return "MLGE";
-                case ExclusionProfileEnum.NORA_EXCLUSION_PROFILE:
+                case ExclusionProfileEnum.HEURISTIC_EXCLUSION_PROFILE:
                     return "Heuristic";
                 case ExclusionProfileEnum.NO_EXCLUSION_PROFILE:
                     return "NoEx";
@@ -52,7 +52,7 @@ namespace MealTimeMS.ExclusionProfiles
 				case ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
 					paramsRequired.Add(ExclusionTypeParamEnum.prThr);
 					break;
-				case ExclusionProfileEnum.NORA_EXCLUSION_PROFILE:
+				case ExclusionProfileEnum.HEURISTIC_EXCLUSION_PROFILE:
 					paramsRequired.Add(ExclusionTypeParamEnum.xCorr);
 					paramsRequired.Add(ExclusionTypeParamEnum.numDB);
 					break;
@@ -88,15 +88,15 @@ namespace MealTimeMS.ExclusionProfiles
         [Description("MachineLearningGuidedExclusionProfile")]
         MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE,
         [Description("HeuristicExclusionProfile")]
-        NORA_EXCLUSION_PROFILE,
+        HEURISTIC_EXCLUSION_PROFILE,
         [Description("NoExclusionProfile")]
         NO_EXCLUSION_PROFILE,
         [Description("RandomExclusionProfile")]
         RANDOM_EXCLUSION_PROFILE,
 		[Description("MLGEPepSequenceExclusionProfile")]
 		MLGE_SEQUENCE_EXCLUSION_PROFILE,
-		[Description("NoraSequenceExclusionProfile")]
-		NORA_SEQUENCE_EXCLUSION_PROFILE,
+		[Description("HeuristicSequenceExclusionProfile")]
+		HEURISTIC_SEQUENCE_EXCLUSION_PROFILE,
 		[Description("CombinedExclusionProfile")]
 		COMBINED_EXCLUSION,
 		[Description("SVMExclusionProfile")]
@@ -142,8 +142,8 @@ namespace MealTimeMS.ExclusionProfiles
 	//        {
 	//            case ProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
 	//                return "MLGE";
-	//            case ProfileEnum.NORA_EXCLUSION_PROFILE:
-	//                return "Nora";
+	//            case ProfileEnum.HEURISTIC_EXCLUSION_PROFILE:
+	//                return "Heuristic";
 	//            case ProfileEnum.NO_EXCLUSION_PROFILE:
 	//                return "NoEx";
 	//        }

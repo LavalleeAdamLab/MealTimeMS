@@ -8,12 +8,12 @@ using MealTimeMS.Data.Graph;
 using MealTimeMS.Util;
 using MealTimeMS.IO;
 
-namespace MealTimeMS.ExclusionProfiles.Nora
+namespace MealTimeMS.ExclusionProfiles.Heuristic
 {
-	public class NoraSequenceExclusion : NoraExclusion
+	public class HeuristicSequenceExclusion : HeuristicExclusion
 	{
 		static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
-		public NoraSequenceExclusion(Database _database, double _xCorrThreshold,
+		public HeuristicSequenceExclusion(Database _database, double _xCorrThreshold,
 			double _ppmTolerance, int _numDBThreshold, double _retentionTimeWindowSize) : base(_database, _xCorrThreshold, _ppmTolerance, _numDBThreshold, _retentionTimeWindowSize)
 		{
 
@@ -59,7 +59,7 @@ namespace MealTimeMS.ExclusionProfiles.Nora
 		override
 		public ExclusionProfileEnum getAnalysisType()
 		{
-			return ExclusionProfileEnum.NORA_SEQUENCE_EXCLUSION_PROFILE;
+			return ExclusionProfileEnum.HEURISTIC_SEQUENCE_EXCLUSION_PROFILE;
 		}
 	}
 }

@@ -401,8 +401,8 @@
     <Compile Include="ExclusionProfiles\MachineLearningGuided\MachineLearningGuidedExclusion.cs" />
     <Compile Include="ExclusionProfiles\MachineLearningGuided\MLGESequenceExclusion.cs" />
     <Compile Include="ExclusionProfiles\MachineLearningGuided\SVMExclusion.cs" />
-    <Compile Include="ExclusionProfiles\Nora\NoraExclusion.cs" />
-    <Compile Include="ExclusionProfiles\Nora\NoraSequenceExclusion.cs" />
+    <Compile Include="ExclusionProfiles\Heuristic\HeuristicExclusion.cs" />
+    <Compile Include="ExclusionProfiles\Heuristic\HeuristicSequenceExclusion.cs" />
     <Compile Include="ExclusionProfiles\RandomExclusion_Percentage.cs" />
     <Compile Include="ExclusionProfiles\SimplifiedExclusionList.cs" />
     <Compile Include="ExclusionProfiles\TaxonGuided\TaxonClass.cs" />
@@ -414,6 +414,8 @@
     <Compile Include="ExclusionProfiles\TestProfile\RandomExclusion_Fast.cs" />
     <Compile Include="ExclusionProfiles\TestProfile\SequenceExclusion.cs" />
     <Compile Include="ExclusionProfiles\TestProfile\SequenceExclusionList.cs" />
+    <Compile Include="ExclusionProfiles\TestProfile\SimplifiedExclusionList_IM.cs" />
+    <Compile Include="ExclusionProfiles\TestProfile\SimplifiedExclusionList_IM2.cs" />
     <Compile Include="ExclusionProfiles\TestProfile\SimplifiedExclusionList_Key.cs" />
     <Compile Include="IO\IOUtils.cs" />
     <Compile Include="IO\MealTimeMSParamsParser.cs" />
@@ -445,8 +447,6 @@
     <Compile Include="Tester\DecoyConcacenatedGeneratorTester.cs" />
     <Compile Include="Tester\ExcludedProteinOverlapAnalyzer.cs" />
     <Compile Include="Tester\ExtractNumberOfPeptidePerIdentifiedProtein.cs" />
-    <Compile Include="Tester\JunkTester.cs" />
-    <Compile Include="Tester\Junk\Cat.cs" />
     <Compile Include="Tester\Junk\CometSingleSearchTester_v2.cs" />
     <Compile Include="Tester\Junk\ConfidentProteinGroupData.cs" />
     <Compile Include="Tester\Junk\ExtractPPRFromProteinProphetResult.cs" />

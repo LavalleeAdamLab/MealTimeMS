@@ -8,9 +8,9 @@ using MealTimeMS.Data.Graph;
 using MealTimeMS.Util;
 using MealTimeMS.IO;
 
-namespace MealTimeMS.ExclusionProfiles.Nora
+namespace MealTimeMS.ExclusionProfiles.Heuristic
 {
-	public class NoraExclusion : ExclusionProfile
+	public class HeuristicExclusion : ExclusionProfile
 	{
 		static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
@@ -18,14 +18,14 @@ namespace MealTimeMS.ExclusionProfiles.Nora
 	private double xCorrThreshold;
 	private int numDBThreshold;
 
-	public NoraExclusion(Database _database, double _xCorrThreshold,
+	public HeuristicExclusion(Database _database, double _xCorrThreshold,
 			double _ppmTolerance, int _numDBThreshold, double _retentionTimeWindowSize): this(_database, _xCorrThreshold, _ppmTolerance, _numDBThreshold)
 		{
 		
 		setRetentionTimeWindow(_retentionTimeWindowSize);
 	}
 
-	public NoraExclusion(Database _database, double _xCorrThreshold,
+	public HeuristicExclusion(Database _database, double _xCorrThreshold,
 			double _ppmTolerance, int _numDBThreshold):base(_database, _ppmTolerance)
 	{
 		
@@ -121,14 +121,14 @@ namespace MealTimeMS.ExclusionProfiles.Nora
 	{
 		double retentionTimeWindow = database.getRetentionTimeWindow();
 		double ppmTolerance = exclusionList.getPPMTolerance();
-		return "NoraExclusion[" + "RT_window: " + retentionTimeWindow + ";ppmTolerance: " + ppmTolerance
+		return "HeuristicExclusion[" + "RT_window: " + retentionTimeWindow + ";ppmTolerance: " + ppmTolerance
 				+ ";xCorrThreshold: " + xCorrThreshold + ";numDBThreshold: " + numDBThreshold + "]";
 	}
 
 	override
 	public ExclusionProfileEnum getAnalysisType()
 	{
-		return ExclusionProfileEnum.NORA_EXCLUSION_PROFILE;
+		return ExclusionProfileEnum.HEURISTIC_EXCLUSION_PROFILE;
 	}
 }
 }

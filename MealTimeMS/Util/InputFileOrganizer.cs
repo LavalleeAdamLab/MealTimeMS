@@ -53,9 +53,10 @@ namespace MealTimeMS.Util
 		public static String DecoyFasta;
 		public static String IDXDataBase;
 		public static String MeasuredPeptideRetentionTime;
+        public static String PredictedIonMobility;
 
-		//suffixes
-		public static String PepXMLSuffix = ".pep.xml";
+        //suffixes
+        public static String PepXMLSuffix = ".pep.xml";
 
 		//test files/ supplementary files
 		public static String SVMSavedFile = "";

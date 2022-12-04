@@ -13,7 +13,7 @@ using MealTimeMS.Util.PostProcessing;
 using MealTimeMS.ExclusionProfiles.MachineLearningGuided;
 using MealTimeMS.ExclusionProfiles.TestProfile;
 using MealTimeMS.Tester;
-using MealTimeMS.ExclusionProfiles.Nora;
+using MealTimeMS.ExclusionProfiles.Heuristic;
 
 using MealTimeMS.ExclusionProfiles;
 namespace MealTimeMS.Tester

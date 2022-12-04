@@ -14,10 +14,11 @@ namespace MealTimeMS.Util
 		public const String programName = "MealTimeMS";
 		
 		//Pre-experiment setup directions
-        public static bool IsSimulation = true;
-		public static bool useRTCalcComputedFile = false;
-	    public static bool useChainsawComputedFile = false;
-		public static bool useIDXComputedFile = false;
+        public static bool IsSimulation = true;         //is this a simulation or if we're actually connecting this to a mass spec
+        //For the boolean flags below that starts with use..., if a corresponding file is provided in the params file this will automatically be set to true
+        public static bool useRTCalcComputedFile = false;   
+	    public static bool useChainsawComputedFile = false;  
+        public static bool useIDXComputedFile = false;  
 		public static bool useDecoyFastaComputedFile = false;
 		public static bool usePepXMLComputedFile = false;
 		public static bool useLogisticRegressionTrainedFile = false;
@@ -44,13 +45,16 @@ namespace MealTimeMS.Util
         public static bool SeeExclusionFormat = false;
         public static bool SetExclusionTable = false;
         public static int NUM_MISSED_CLEAVAGES = 1;
-        public static double ppmTolerance = 5.0/1000000.0;
-        public static double retentionTimeWindowSize = 1.0;
         public static int MinimumPeptideLength = 6;
 		public static String DecoyPrefix = "DECOY_";
 		public static String DBTargetProteinStartString = "sp|";
 		public static double AccordThreshold = 0.70; // Probability threshold for the logistic regression classifier
-		//Nora Parameters
+        //Exclusion tolerance parameters
+        public static double ppmTolerance = 5.0/1000000.0;
+        public static double retentionTimeWindowSize = 1.0;
+        public static double IMWindowSize = 0.03;
+
+		//Heuristic Exclusion Parameters
 		public static double XCorr_Threshold = 2.5;
 		public static int NumDBThreshold = 2;
 		//runtime var
@@ -61,9 +65,9 @@ namespace MealTimeMS.Util
 		public static int ExperimentTotalScans;
 
 		public static int ddaNum = 100;
-
-		//Simulation var
-		public static double ExperimentTotalMS2 = -1;
+        public static bool includeIonMobility = true;
+        //Simulation var
+        public static double ExperimentTotalMS2 = -1;
 
 
 
@@ -75,6 +79,7 @@ namespace MealTimeMS.Util
         //ExclusionExplorerParamsList
         public static List<double> PPM_TOLERANCE_LIST;
 		public static List<double> RETENTION_TIME_WINDOW_LIST;
+		public static List<double> ION_MOBILITY_WINDOW_LIST;
 
 		public static List<double> LR_PROBABILITY_THRESHOLD_LIST;
 

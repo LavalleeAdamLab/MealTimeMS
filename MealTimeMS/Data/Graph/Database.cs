@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MealTimeMS.Data.InputFiles;
 using MealTimeMS.Util;
+using MealTimeMS.IO;
 using System.Diagnostics;
 
 namespace MealTimeMS.Data.Graph
@@ -32,6 +33,7 @@ public class Database
 
         private double retentionTimeWindow;
         private Dictionary<String, Double> peptideRetentionTimes;
+        private Dictionary<String, Dictionary<int, double>> peptideIonMobility;
 
         public Database(FastaFile fastaFile, DigestedFastaFile digestedFastaFile) :
             this(fastaFile, digestedFastaFile, DEFAULT_INCLUDE_CARBAMIDO_MODIFICATION, DEFAULT_INCLUDE_RETENTION_TIME)
@@ -108,12 +110,13 @@ public class Database
 
             // add retention time information
             setRetentionTimes();
+            setIonMobility();
 
             peptides.Sort((Peptide x, Peptide y) => (y.getMass()).CompareTo(x.getMass()));
             log.Debug("Done adding peptides.");
         }
 
-        // line 152 in MapDigest.c# in Nora's original code
+        // line 152 in MapDigest.c# in Heuristic's original code
         private double carbamidoModificationMass(String peptideSequence, double peptideMass)
         {
             // Mass of the modification on cysteine (Da)
@@ -173,8 +176,34 @@ public class Database
             }
         }
 
-		
-        
+        public void setIonMobility()
+        {
+            if (GlobalVar.includeIonMobility)
+            {
+                log.Debug("Setting IonMobility...");
+                // parse the ion mobility if not already parsed
+                if (peptideIonMobility == null)
+                {
+                    log.Debug("Parsing ionMobility table");
+                    peptideIonMobility = Loader.ParsePredictedIonMobility(InputFileOrganizer.PredictedIonMobility);
+                }
+                foreach (String peptideSequence in peptideIonMobility.Keys)
+                {
+                    Peptide pep = getPeptide(peptideSequence);
+                    if (pep == null)
+                    {
+                        log.Warn("Peptide sequence {0} is present in the ion mobility prediction file but not present in the digested fasta", peptideSequence);
+                        continue;
+                    }
+                    Dictionary<int,double> z_IM = peptideIonMobility[peptideSequence];
+                    pep.setIonMobility(z_IM);
+                }
+                log.Debug("Done setting retention times.");
+            }
+
+        }
+
+
         /*
          * These are from the experiment and will be removed if you call reset on the
          * graph

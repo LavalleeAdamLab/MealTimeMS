@@ -29,6 +29,7 @@ namespace MealTimeMS.IO
 			new Parameter("ExperimentParameters","ExclusionMethod",true,"1","0: No Exclusion. 1: MealTimeMS. 2: Heuristic exclusion. 3: CombinedExclusion"),
 			new Parameter("ExperimentParameters","ppmTolerance",true,"5.0","(default 5.0) The mass ppm tolerance for peptide exclusion. Units in ppm, so a value of 5.0 would become 5.0/1000000.0. Separate by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","retentionTimeWindowSize",true,"1.0","(default 1.0)The retention time window (minutes) allowed to deviate (beyond or below) from predicted peptide retention time used for peptide exclusion. Separate by comma if multiple values are provided"),
+			new Parameter("ExperimentParameters","IonMobilityWindowSize",true,"0.035","(default 0.035) The ion mobility (1/K0) window allowed to deviate (beyond or below) from predicted peptide precursor ion mobility used for precursor exclusion. Separate by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","XCorr_Threshold",true,"2.0","(default 2.0)XCorrelation threshold used by heuristic exclusion method. Separate by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","NumDBThreshold",true,"2"," (default 2)Threshold for number of peptides detected for a protein, used by heuristic exclusion. Separate intergers by comma if multiple values are provided"),
 			new Parameter("ExperimentParameters","LogisticRegressionDecisionThreshold",true,"0.5","(default 0.5)Logistic regression classifier decision threshold used MealTimeMS. Separate by comma if multiple values are provided"),
@@ -36,6 +37,7 @@ namespace MealTimeMS.IO
 				"To generate a traiend logistic regression classifier model saved coefficient file, use command: \"MealTimeMS.exe -train\" option",true),
             new Parameter("PrecomputedFiles","ChainSawDigestedDatabase",false,"","Fasta file digested with Chainsaw, this is used to construct the in-program database",true),
             new Parameter("PrecomputedFiles","RTCalcPredictedPeptideRT",false,"","RTCalc predicted peptide retention time result file, in seconds",true),
+            new Parameter("PrecomputedFiles","PredictedPrecursorIonMobility",false,"","A tsv with three columns in this order: sequence, charge, ionMobility(ooko)",true),
 			//new Parameter("PrecomputedFiles","DecoyFasta",false,"","",true),
 			new Parameter("PrecomputedFiles","IDXDataBase",false,"","",true),
 			new Parameter("PrecomputedFiles","OriginalCometOutput",false,"","",true),
@@ -147,6 +149,9 @@ namespace MealTimeMS.IO
 							case "retentionTimeWindowSize":
 								GlobalVar.RETENTION_TIME_WINDOW_LIST = ParseDoubleListFromCSV(value);
 								break;
+                            case "IonMobilityWindowSize":
+								GlobalVar.ION_MOBILITY_WINDOW_LIST = ParseDoubleListFromCSV(value);
+								break;
 							case "MinimumPeptideLength":
 								GlobalVar.MinimumPeptideLength = int.Parse(value);
 								break;
@@ -188,7 +193,10 @@ namespace MealTimeMS.IO
                                 case "RTCalcPredictedPeptideRT":
 									InputFileOrganizer.RTCalcResult = value;
 									GlobalVar.useRTCalcComputedFile = true;
-
+									break;
+                                case "PredictedPrecursorIonMobility":
+									InputFileOrganizer.PredictedIonMobility = value;
+                                    GlobalVar.includeIonMobility = true;
 									break;
 								//case "DecoyFasta":
 								//	InputFileOrganizer.DecoyFasta = value;
@@ -362,7 +370,7 @@ namespace MealTimeMS.IO
 					return ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE;
 					break;
 				case 2:
-					return ExclusionProfileEnum.NORA_EXCLUSION_PROFILE;
+					return ExclusionProfileEnum.HEURISTIC_EXCLUSION_PROFILE;
 					break;
 				case 3:
 					return ExclusionProfileEnum.COMBINED_EXCLUSION;

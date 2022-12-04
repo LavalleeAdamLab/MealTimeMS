@@ -16,7 +16,7 @@ namespace MealTimeMS.Data
         //params used only by this program locally
         private double index; // The index of the spectra locally in MTMS, only used to track progress. This is not the scanNum, see the variable scanNum.
         private double arrivalTime; //As opposed to "startTime", arrivalTime is the time recorded using the clock on the computer
-        private double ionMobility;
+        private double ionMobility = -1.0;
         /*--> spectrum*/
         private int scanNum; //The scanNum provided by the instrument. Retrieve by spectrum.getScan()
         private int msLevel; // cvParams.get(1).value()

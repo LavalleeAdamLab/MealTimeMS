@@ -374,6 +374,7 @@ namespace MealTimeMS.Util
 		{
 			ChangeValue(Header.ppmTol, GlobalVar.ppmTolerance);
 			ChangeValue(Header.rtWin, GlobalVar.retentionTimeWindowSize);
+			ChangeValue(Header.imWin, GlobalVar.IMWindowSize);
 			ChangeValue(Header.xCorr, GlobalVar.XCorr_Threshold);
 			ChangeValue(Header.numDB, GlobalVar.NumDBThreshold);
 			ChangeValue(Header.prThr, GlobalVar.AccordThreshold);
@@ -381,7 +382,7 @@ namespace MealTimeMS.Util
 			
 			
 
-			if (data[Header.ExperimentType].Equals(ExclusionProfileEnum.NORA_EXCLUSION_PROFILE.getDescription()))
+			if (data[Header.ExperimentType].Equals(ExclusionProfileEnum.HEURISTIC_EXCLUSION_PROFILE.getDescription()))
 			{
 				ChangeValue(Header.prThr, -1);
 			}
@@ -409,6 +410,12 @@ namespace MealTimeMS.Util
             if(exclusionList is SimplifiedExclusionList_Key)
             {
                 totalExclusionListSize = ((SimplifiedExclusionList_Key)exclusionList).getExclusionListTotalSize();
+            }if(exclusionList is SimplifiedExclusionList_IM)
+            {
+                totalExclusionListSize = ((SimplifiedExclusionList_IM)exclusionList).getExclusionListTotalSize();
+            }if(exclusionList is SimplifiedExclusionList_IM2)
+            {
+                totalExclusionListSize = ((SimplifiedExclusionList_IM2)exclusionList).getExclusionListTotalSize();
             }
             ChangeValue(Header.ExclusionListPastSize, pastSize);
 			ChangeValue(Header.ExclusionListCurrentSize, currentSize);
@@ -739,6 +746,7 @@ namespace MealTimeMS.Util
             {Header.ProteinIdentificationSensitivityLimitedDDA, typeof( DataTypes.DoubleType) },
 			{Header.ppmTol, typeof( DataTypes.DoubleType) },
 			{Header.rtWin, typeof( DataTypes.DoubleType) },
+			{Header.imWin, typeof( DataTypes.DoubleType) },
 			{Header.xCorr, typeof( DataTypes.DoubleType) },
 			{Header.numDB, typeof( DataTypes.DoubleType) },
 			{Header.prThr, typeof( DataTypes.DoubleType) },
@@ -746,9 +754,12 @@ namespace MealTimeMS.Util
 			{Header.ProteinGroupsIdentified, typeof( DataTypes.IntegerType) },
             {Header.SimplifiedExclusionList_correct, typeof( DataTypes.IntegerType) },
             {Header.SimplifiedExclusionList_incorrect, typeof( DataTypes.IntegerType)},
+            {Header.SE_AnalysisSuccessful, typeof( DataTypes.IntegerType)},
+            {Header.SE_ExclusionFailed, typeof( DataTypes.IntegerType)},
+            {Header.SE_ExclusionSuccessfulAtCorrectWindow, typeof( DataTypes.IntegerType)},
+            {Header.SE_ExclusionSuccessfulAtIncorrectWIndow, typeof( DataTypes.IntegerType)},
+            {Header.SE_AnalysisFailed, typeof( DataTypes.IntegerType)},
             {Header.PepUnmatchedID, typeof( DataTypes.IntegerType)}
-
-
 		};
 
 
@@ -866,13 +877,19 @@ namespace MealTimeMS.Util
         ProteinIdentificationSensitivityLimitedDDA,
 		ppmTol,
 		rtWin,
-		xCorr,
+        imWin,
+        xCorr,
 		numDB,
 		prThr,
 		NumProteinOverlap_ExcludedProteinsAgainstNoExclusionProteins,
 		ProteinGroupsIdentified,
         SimplifiedExclusionList_correct,
         SimplifiedExclusionList_incorrect,
+        SE_AnalysisSuccessful,
+        SE_ExclusionFailed,
+        SE_ExclusionSuccessfulAtCorrectWindow,
+        SE_ExclusionSuccessfulAtIncorrectWIndow,
+        SE_AnalysisFailed,
         PepUnmatchedID
     }
 

@@ -21,6 +21,7 @@ namespace MealTimeMS.Data.Graph
         // also make it accept retention time pairs (ExclusionPair.java)
 
         private Dictionary<String, Protein> parentProteins;
+        private Dictionary<int, double> z_ook0;
 
         public Peptide(String _sequence, double _mass, bool _fromFasta)
         {
@@ -32,6 +33,7 @@ namespace MealTimeMS.Data.Graph
             parentProteins = new Dictionary<String, Protein>();
             scores = new List<Double>();
 			dCNs = new List<Double>();
+            z_ook0 = new Dictionary<int, double>();
         }
         
         public void addScore(double score, double dCN)
@@ -99,7 +101,14 @@ namespace MealTimeMS.Data.Graph
             }
             return ls;
         }
-
+        public void setIonMobility (Dictionary<int, double> _z_ook0)
+        {
+            z_ook0 = _z_ook0;
+        }
+        public Dictionary<int, double> getIonMobility()
+        {
+            return z_ook0;
+        }
         public void setRetentionTime(RetentionTime _retentionTime)
         {
             retentionTime = _retentionTime;

@@ -472,6 +472,39 @@ namespace MealTimeMS.IO
         }
 
 
+        //Returns a Dictionary<peptide sequence, Dictionary<Charge, ionMobility>>
+        //File should be in the format of Sequence \t Charge \t ion mobility
+        public static  Dictionary<String, Dictionary<int, double>> ParsePredictedIonMobility(String filePath){
+            var IMDictionary = new Dictionary<String, Dictionary<int, double>>();
+            StreamReader sr = new StreamReader(filePath);
+            String line  = sr.ReadLine();
+            if (line.Contains("sequence"))
+            {
+                line = sr.ReadLine();
+            }
+            while (line != null)
+            {
+                String[] info = line.Split("\t".ToCharArray());
+                String sequence = info[0];
+                int charge = int.Parse(info[1]);
+                double ook0 = double.Parse(info[2]);
+                Dictionary<int, double> z_IM_records;
+                if (IMDictionary.TryGetValue(sequence, out z_IM_records))
+                {
+                    // if IMDictionary already contains the peptide sequence
+                    if(!z_IM_records.ContainsKey(charge))
+                        z_IM_records.Add(charge, ook0);
+                }
+                else
+                {
+                    z_IM_records = new Dictionary<int, double>();
+                    z_IM_records.Add(charge, ook0);
+                    IMDictionary.Add(sequence, z_IM_records);
+                }
+                line = sr.ReadLine();
+            }
+            return IMDictionary;
+        } 
         public static MZMLFile parseMZMLCSV (String fileName, int num)
         {
             List<Spectra> spectraArray = new List<Spectra>();

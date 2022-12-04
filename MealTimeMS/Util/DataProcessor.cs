@@ -14,7 +14,7 @@ using MealTimeMS.Util.PostProcessing;
 using MealTimeMS.RunTime;
 using MealTimeMS.ExclusionProfiles.MachineLearningGuided;
 using MealTimeMS.ExclusionProfiles.TestProfile;
-using MealTimeMS.ExclusionProfiles.Nora;
+using MealTimeMS.ExclusionProfiles.Heuristic;
 using MealTimeMS.ExclusionProfiles;
 using MealTimeMS.Simulation;
 using IMsScan = Thermo.Interfaces.InstrumentAccess_V2.MsScanContainer.IMsScan;
@@ -45,7 +45,7 @@ namespace MealTimeMS
         {
 			//log.Debug("Loading logistic regression model and creating exclusion profile");
 			//exclusionProfile = new MachineLearningGuidedExclusion(InputFileOrganizer.logisticRegressionClassifierSaveFile, ExclusionExplorer.database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
-			//exclusionProfile = new NoraExclusion(database,GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
+			//exclusionProfile = new HeuristicExclusion(database,GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
 			//exclusionProfile = new RandomExclusion(InputFileOrganizer.logisticRegressionClassifierSaveFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
 
 			log.Debug("Initiating up DataProcessor Variables");
@@ -153,7 +153,7 @@ namespace MealTimeMS
 
 			log.Debug("Loading logistic regression model and creating exclusion profile");
             //exclusionProfile = new MachineLearningGuidedExclusion(InputFileOrganizer.logisticRegressionClassifierSaveFile, ExclusionExplorer.database , GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
-			//exclusionProfile = new NoraExclusion(database,GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
+			//exclusionProfile = new HeuristicExclusion(database,GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
 			//exclusionProfile = new RandomExclusion(InputFileOrganizer.logisticRegressionClassifierSaveFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
 
 

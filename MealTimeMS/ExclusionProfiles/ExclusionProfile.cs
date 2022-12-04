@@ -37,7 +37,8 @@ namespace MealTimeMS.ExclusionProfiles
             database = _database;
            
             //exclusionList = new ExclusionList(_ppmTolerance);
-            exclusionList = new SimplifiedExclusionList_Key(_ppmTolerance);
+            //exclusionList = new SimplifiedExclusionList_Key(_ppmTolerance);
+            exclusionList = new SimplifiedExclusionList_IM2(_ppmTolerance);
 			performanceEvaluator = new PerformanceEvaluator();
             currentTime = 0.0;
             includedSpectra = new List<int>();
@@ -212,10 +213,16 @@ namespace MealTimeMS.ExclusionProfiles
                 // only calibrate RT prediction if it was a predicted peptide...
                 // peptides which were observed should not affect RT prediction calibration
                 double predictedRT = pep.getRetentionTime().getRetentionTimePeak();
-                double rtPredictionError = currentTime - predictedRT;
-                double newOffset = RetentionTimeUtil.computeRTOffset(rtPredictionError, currentTime);
-                RetentionTime.setRetentionTimeOffset(newOffset);
-                performanceEvaluator.countPeptideCalibration();
+                //The rt of some peptides (eg. length >60) cannot be predicted by autoRT, in which case 
+                //its rt peak, start, end will all be set by default to RetentionTime.MINIMUM_RETENTION_TIME
+                //We do NOT want to calibrate RT offset according to these
+                if(predictedRT!= RetentionTime.MINIMUM_RETENTION_TIME)
+                { 
+                    double rtPredictionError = currentTime - predictedRT;
+                    double newOffset = RetentionTimeUtil.computeRTOffset(rtPredictionError, currentTime);
+                    RetentionTime.setRetentionTimeOffset(newOffset);
+                    performanceEvaluator.countPeptideCalibration();
+                }
             }
             //changes the status of the peptide from isPredicted = true to false, because now you have observed it
             double observedTime = currentTime;
@@ -276,12 +283,12 @@ namespace MealTimeMS.ExclusionProfiles
 
             // check if mass is on exclusion list
             double spectraMass = spec.getCalculatedPrecursorMass();
-            Boolean isExcluded = exclusionList.isExcluded(spectraMass); //checks if the mass should've been excluded, 
+            Boolean isExcluded = exclusionList.isExcluded(spec);
+            //Boolean isExcluded = exclusionList.isExcluded(spectraMass); //checks if the mass should've been excluded, 
                                                                         //in a real experiment, this should never equal to true
                                                                         //since the mass should not have been scanned in the first place 
                                                                         //if MS exclusion table was updated correctly through API
             RecordSpecInfo(spec);
-			
             if (isExcluded)
             {
                 performanceEvaluator.countExcludedSpectra();
@@ -302,16 +309,17 @@ namespace MealTimeMS.ExclusionProfiles
                     performanceEvaluator.countPepUnmatchedID();
                     return false;
                 }
-                if (exclusionList is SimplifiedExclusionList_Key & pep.isFromFastaFile())
+                if (exclusionList is SimplifiedExclusionList_IM2 & pep.isFromFastaFile())
                 {
-                    var simplifiedExclusionList = (SimplifiedExclusionList_Key)exclusionList;
-                    if (simplifiedExclusionList.EvaluateExclusion(spec, pep))
+                    var simplifiedExclusionList = (SimplifiedExclusionList_IM2)exclusionList;
+                    if (simplifiedExclusionList.EvaluateExclusion(performanceEvaluator, spec, pep))
                     {
                         performanceEvaluator.incrementValue(Header.SimplifiedExclusionList_correct);
                     }
                     else
                     {
                         performanceEvaluator.incrementValue(Header.SimplifiedExclusionList_incorrect);
+                        //includedSpectra.Add(spec.getScanNum());
                     }
                   
                 }
@@ -326,18 +334,35 @@ namespace MealTimeMS.ExclusionProfiles
 				IDs id = performDatabaseSearch(spec);
 				performanceEvaluator.countAnalyzedSpectra();
                 log.Debug("Mass " + spectraMass + " was not on the exclusion list. Scan " + spec.getScanNum() + " analyzed.");
-                evaluateIdentification(id);
-                if (id!=null && id.getXCorr() > 0.00001)
+                if (id != null && id.getXCorr() > 0.00001)
                 {
                     includedSpectra.Add(spec.getScanNum());
+                    var pep = getPeptideFromIdentification(id);
+                    if (pep == null)
+                    {
+                        performanceEvaluator.countPepUnmatchedID();
+                    }
+                    else
+                    {
+                        if (exclusionList is SimplifiedExclusionList_IM2 & pep.isFromFastaFile())
+                        {
+                            var simplifiedExclusionList = (SimplifiedExclusionList_IM2)exclusionList;
+                            if(!simplifiedExclusionList.EvaluateAnalysis(performanceEvaluator, spec, pep))
+                            {
+                                //includedSpectra.Remove(spec.getScanNum());
+                            }
+                        }
+                    }
                 }
-                if (id!= null && getPeptideFromIdentification(id) == null)
+                if (id != null && getPeptideFromIdentification(id) == null)
                 {
                     performanceEvaluator.countPepUnmatchedID();
                 }
+                
+                evaluateIdentification(id);
                 // calibrate peptide if the observed retention time doesn't match the predicted
                 //WriterClass.LogScanTime("Processed", (int)spec.getIndex());
-				return true;
+                return true;
             }
             
 
