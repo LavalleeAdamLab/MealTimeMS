@@ -95,11 +95,13 @@ namespace MealTimeMS.Util
 			return targetOutputDirectory;
 		}
 
-        public static void RunBrukerAcquisitionSimulator()
+        public static void RunBrukerAcquisitionSimulator(String BrukerDotDFolder, String sqtFile)
         {
 
             //String command = "python -m bdal.paser.acquisitionsimulator -q --ip 127.0.0.1 --pid -1 --wid -1 --no_ms1 -d 30 -l 3 -r 0 --kafka-port 9092 --schema-port 8083 --sqt_file D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\200ngHeLaPASEF_2min.d\\200ngHeLaPASEF_2min_PaSER2023.sqt --input D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\200ngHeLaPASEF_2min.d";
-            String command = "python -m bdal.paser.acquisitionsimulator -q --ip 127.0.0.1 --pid -1 --wid -1 --no_ms1 -d 15 -l 3 -r 0 --kafka-port 9092 --schema-port 8083 --sqt_file D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\20200821K562300ng90min_1_Slot1-1_1_1638.d\\20200821K562300ng90min_1_Slot1-1_1_1638_nopd.sqt --input D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\20200821K562300ng90min_1_Slot1-1_1_1638.d";
+            String command = String.Format("python -m bdal.paser.acquisitionsimulator -q --ip 127.0.0.1 " +
+                "--pid -1 --wid -1 --no_ms1 -d 15 -l 3 -r 0 --kafka-port 9092 --schema-port 8083 " +
+                "--sqt_file {0} --input {1}", sqtFile, BrukerDotDFolder);
             var runBrukerAcquisitionSimulatorSThread = Task.Run(() =>
             {
                 Console.WriteLine("Run acquisition simulator");

@@ -39,7 +39,7 @@ public class PerformDigestion
 
         public static DigestedFastaFile performDigest(String fastaFilePath, int numMissedCleavages, Boolean keepFile)
         {
-            if (GlobalVar.useChainsawComputedFile)
+            if (!InputFileOrganizer.ChainSawResult.Equals(""))
             {
                 return Loader.parseDigestedFasta(InputFileOrganizer.ChainSawResult);
             }

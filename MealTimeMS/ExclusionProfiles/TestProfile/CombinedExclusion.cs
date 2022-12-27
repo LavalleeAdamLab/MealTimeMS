@@ -38,7 +38,10 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 			}
 
 			Peptide pep = getPeptideFromIdentification(id); // id is null, it already returned
-
+            if(pep == null)
+            {
+                return;
+            }
 			// add decoy or non-existent protein connections
 			// database.AddProteinFromIdentification(pep, id.getParentProteinAccessions());
 

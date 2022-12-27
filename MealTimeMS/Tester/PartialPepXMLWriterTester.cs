@@ -19,7 +19,7 @@ namespace MealTimeMS.Tester
 			String originalComet = InputFileOrganizer.OriginalCometOutput;//"C:\\Coding\\2019LavalleeLab\\GoldStandardData\\pepxml\\MS_QC_120min.pep.xml";
 			String outputCometFile = InputFileOrganizer.OutputRoot + "300partialOut.pep.xml"; //"C:\\Coding\\2019LavalleeLab\\GoldStandardData\\pepxml\\MS_QC_120min_partial.pep.xml";
 			String fastaFile = InputFileOrganizer.FASTA_FILE;//"C:\\Coding\\2019LavalleeLab\\GoldStandardData\\Database\\uniprot_SwissProt_Human_1_11_2017.fasta";
-			String mzml = InputFileOrganizer.MZMLSimulationTestFile;//"C:\\Coding\\2019LavalleeLab\\GoldStandardData\\MZML_Files\\MS_QC_120min.mzml";
+            String mzml = "";// InputFileOrganizer.MZMLSimulationTestFile;//"C:\\Coding\\2019LavalleeLab\\GoldStandardData\\MZML_Files\\MS_QC_120min.mzml";
             PartialPepXMLWriter.writePartialPepXMLFile(originalComet, ls,
                 outputCometFile, mzml, fastaFile, outputCometFile);
         }

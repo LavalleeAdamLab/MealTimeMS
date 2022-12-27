@@ -119,6 +119,11 @@ public class ExclusionList
             currentTime = d;
         }
 
+        public virtual void setRetentionTimeOffset(double rtOffset)
+        {
+
+        }
+
         public double getPPMTolerance()
         {
             return ppmTolerance;
@@ -218,7 +223,7 @@ public class ExclusionList
         public void observedPeptide(Peptide pep, double time, double rt_window)
         {
             // set a new RT
-            RetentionTime newRT = new RetentionTime(time + rt_window, rt_window, rt_window, false);
+            RetentionTime newRT = new RetentionTime(time + rt_window*0.5, rt_window, rt_window, false);
             // excludes it for 2*rt_window time
             pep.setRetentionTime(newRT);
 
@@ -236,7 +241,7 @@ public class ExclusionList
 			}
         }
 
-        public void addProteins(List<Protein> proteins)
+        public virtual void addProteins(List<Protein> proteins)
         {
             foreach(Protein p in proteins)
             {

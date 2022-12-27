@@ -21,13 +21,35 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 		static String OutputFile_PositiveAndNonPositive_NoDecoy = "";
 
 		static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
-		//static string mzmlFileBaseName="MS_QC_240min";
-		public static void ExtractFeatures(String ms2File, out String extractedFeatureSavedFile_posAndNeg, out String extractedFeatureSavedFile_posAndNonPos)
+        //static string mzmlFileBaseName="MS_QC_240min";
+        public static void ExtractFeatures_Bruker(String BrukerdotDFolder, out String extractedFeatureSavedFile_posAndNeg, out String extractedFeatureSavedFile_posAndNonPos)
+        {
+            Console.WriteLine("Extracting features from {0}", InputFileOrganizer.BrukerdotDFolder);
+            //InputFileOrganizer.MZMLSimulationTestFile = mzmlFile;
+            String dataFileBaseName = new DirectoryInfo(BrukerdotDFolder).Name ;
+            OutputFile_PositiveAndNegative = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, dataFileBaseName + "_extractedFeatures_PositiveAndNegative.tsv");
+            OutputFile_PositiveAndNonPositive = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, dataFileBaseName + "_extractedFeatures_positiveAndNonPositive.tsv");
+            OutputFile_PositiveAndNonPositive_NoDecoy = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, dataFileBaseName + "_extractedFeatures_positiveAndNonPositive_NoDecoy.tsv");
+
+            log.Info("Running No Exclusion Simulation");
+            ExclusionProfile exclusionProfile = ExclusionExplorer.SimulationForFeatureExtraction();
+
+            log.Info("Extracting identification feature from exclusion profile");
+            List<IdentificationFeatures> idf = exclusionProfile.getFeatures();
+            log.Info("Recalibrating stDev");
+            idf = IdentificationFeatureExtractionUtil.recalibrateStDev(idf);
+
+            writeFeatures(idf);
+            extractedFeatureSavedFile_posAndNeg = OutputFile_PositiveAndNegative;
+            extractedFeatureSavedFile_posAndNonPos = OutputFile_PositiveAndNonPositive;
+            Console.WriteLine("Extracted Feature written to {0} and {1}", OutputFile_PositiveAndNegative, OutputFile_PositiveAndNonPositive);
+
+        }
+        public static void ExtractFeatures(String ms2File, out String extractedFeatureSavedFile_posAndNeg, out String extractedFeatureSavedFile_posAndNonPos)
 		{
 			Console.WriteLine("Extracting features from {0}", ms2File);
 			
 			InputFileOrganizer.MS2SimulationTestFile = ms2File;
-			//InputFileOrganizer.MZMLSimulationTestFile = mzmlFile;
 			String ms2FileBaseName = Path.GetFileNameWithoutExtension(ms2File);
 			OutputFile_PositiveAndNegative = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, ms2FileBaseName + "_extractedFeatures_PositiveAndNegative.tsv");
 			OutputFile_PositiveAndNonPositive = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, ms2FileBaseName + "_extractedFeatures_positiveAndNonPositive.tsv");
@@ -68,23 +90,10 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			String decoyConcatDB = DecoyConcacenatedDatabaseGenerator.GenerateConcacenatedDecoyFasta(InputFileOrganizer.FASTA_FILE, InputFileOrganizer.OutputFolderOfTheRun);
 			InputFileOrganizer.ExclusionDBFasta = decoyConcatDB; //sets the in-program databse to one that contains decoy protein - for feature generation only
 			InputFileOrganizer.DecoyFasta = decoyConcatDB;
-			GlobalVar.useDecoyFastaComputedFile = true;
-			GlobalVar.useIDXComputedFile = false;
 
-			GlobalVar.useChainsawComputedFile = false;
-			GlobalVar.usePepXMLComputedFile = false;
-			GlobalVar.useRTCalcComputedFile = false;
 			//InputFileOrganizer.RTCalcResult = "C:\\Users\\LavalleeLab\\Documents\\JoshTemp\\RealTimeMS\\TestData\\PreComputedFiles\\tempOutputPeptideList_rtOutput_240min.txt";
 		}
 
-		private static void regularSetUp()
-		{
-			GlobalVar.useDecoyFastaComputedFile = true;
-			GlobalVar.useIDXComputedFile = true;
-			GlobalVar.useChainsawComputedFile = true;
-			GlobalVar.useRTCalcComputedFile = true;
-			GlobalVar.usePepXMLComputedFile = true; //add something
-		}
 
 		private static void writeFeatures(List<IdentificationFeatures> idf)
 		{

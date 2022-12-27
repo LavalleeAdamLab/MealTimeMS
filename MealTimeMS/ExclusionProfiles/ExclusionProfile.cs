@@ -221,6 +221,7 @@ namespace MealTimeMS.ExclusionProfiles
                     double rtPredictionError = currentTime - predictedRT;
                     double newOffset = RetentionTimeUtil.computeRTOffset(rtPredictionError, currentTime);
                     RetentionTime.setRetentionTimeOffset(newOffset);
+                    exclusionList.setRetentionTimeOffset(newOffset);
                     performanceEvaluator.countPeptideCalibration();
                 }
             }
@@ -354,12 +355,10 @@ namespace MealTimeMS.ExclusionProfiles
                         }
                     }
                 }
-                if (id != null && getPeptideFromIdentification(id) == null)
+                if (id!=null && id.getXCorr() > 0.1)
                 {
-                    performanceEvaluator.countPepUnmatchedID();
+                    evaluateIdentification(id);
                 }
-                
-                evaluateIdentification(id);
                 // calibrate peptide if the observed retention time doesn't match the predicted
                 //WriterClass.LogScanTime("Processed", (int)spec.getIndex());
                 return true;
@@ -391,11 +390,20 @@ namespace MealTimeMS.ExclusionProfiles
         }
         public void evaluateIdentificationAndUpdateCurrentTime(IDs id)
         {
+            if (id == null)
+            {
+                return;
+            }
+            if (id.getXCorr() < 0.1)
+            {
+                return;
+            }
             //Note the process bruker ms2 function also updates the current time
             //Need to fix this because if both threads are not synchronized the current time is 
             //updated by both the psm and ms2 which is an issue when one thread lags behind the other
             currentTime = id.getScanTime();
             updateCurrentTimeAndExclusionListTime(currentTime);
+            includedSpectra.Add(id.getScanNum());
             evaluateIdentification(id);
         }
         protected abstract void evaluateIdentification(IDs id);

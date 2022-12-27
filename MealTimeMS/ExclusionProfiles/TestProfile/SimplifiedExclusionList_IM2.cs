@@ -36,9 +36,13 @@ namespace MealTimeMS.ExclusionProfiles
             PepSeqToExclusionKey = new Dictionary<String, Dictionary<int, String>>();
             peptidesWithinExclusionWindow_cache = new HashSet<String>();
             exclusionTracker = new List<HashSet<string>>();
-            if(GlobalVar.includeIonMobility == false)
+            if(GlobalVar.IMWindowSize>5 )
             {
                 ionMobilityBinSize = 100; // sets the bin so large so that we doesn't consider IM
+            }
+            else
+            {
+                ionMobilityBinSize = 0.005;
             }
         }
 
@@ -208,9 +212,9 @@ namespace MealTimeMS.ExclusionProfiles
         }
         private double getPPMOffset()
         {
-            //return 0;
+            return 0;
             //average of ppm calculated from ms2Precursor mass - theoretical pep mass
-            return 5.660 / 1000000;
+           // return 5.660 / 1000000;
         }
         public bool EvaluateAnalysis(PerformanceEvaluator pe, Spectra spec, Peptide pep)
         {
@@ -273,7 +277,6 @@ namespace MealTimeMS.ExclusionProfiles
                 recordExclusion(spec.getScanNum(), "AnalysisFailed", GetQueryExclusionKeyFromSpec(spec), matchedExclusionKey_cache, pep.getRetentionTime().IsPredicted());
                 return false;
             }
-
             return true;
         }
 
@@ -318,12 +321,12 @@ namespace MealTimeMS.ExclusionProfiles
             return Math.Round(ook0 - ook0 % ionMobilityBinSize,IMRoundingDecimal);
         }
 
-
         //method that find floor of the mz value
         private static double FixMass(double mass)
         { 
             return Math.Round(mass - mass % massBinSize , massRoundingDecimal); 
         }
+
         public int getExclusionListTotalSize()
         {
             return PepSeqToExclusionKey.Count;

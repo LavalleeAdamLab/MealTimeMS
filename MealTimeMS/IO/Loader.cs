@@ -323,7 +323,6 @@ namespace MealTimeMS.IO
                     }
                     else
                     {
-                        // CONVERT SECONDS INTO MINUTES
                         //retentionTime = retentionTime / 60.0;
                         
                     }
@@ -412,6 +411,7 @@ namespace MealTimeMS.IO
                 int msLevel = _mslevel;
                 int peakCount=0;
                 double startTime=0;
+                double ionMobility = -1;
                 double precursorMz=0;
                 int precursorCharge=0;
                 //parse header
@@ -428,6 +428,11 @@ namespace MealTimeMS.IO
                         {
                             startTime = double.Parse(str[2]);
                         }
+                        if (str[1].Equals("Ion Mobility"))
+                        {
+                            ionMobility = double.Parse(str[2]);
+                        }
+                        
                     }else if (str[0].Equals("Z"))
                     {
                         precursorCharge = int.Parse(str[1]);
@@ -460,6 +465,7 @@ namespace MealTimeMS.IO
                 }
                 Spectra spec = new Spectra(index, scanNum, msLevel, peakCount, peakMz, peakIntensity,
                     startTime, precursorMz, precursorCharge);
+                spec.SetIonMobility(ionMobility);
                 spectraArray.Add(spec);
                 index++;
             }

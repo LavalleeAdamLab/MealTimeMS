@@ -47,6 +47,7 @@ namespace MealTimeMS.ExclusionProfiles
 
 			paramsRequired.Add(ExclusionTypeParamEnum.ppmTol);
 			paramsRequired.Add(ExclusionTypeParamEnum.rtWin);
+			paramsRequired.Add(ExclusionTypeParamEnum.imWin);
 			switch (e)
 			{
 				case ExclusionProfileEnum.MACHINE_LEARNING_GUIDED_EXCLUSION_PROFILE:
@@ -73,6 +74,8 @@ namespace MealTimeMS.ExclusionProfiles
 					return "ppmTol";
 				case ExclusionTypeParamEnum.rtWin:
 					return "rtWin";
+                case ExclusionTypeParamEnum.imWin:
+					return "imWin";
 				case ExclusionTypeParamEnum.xCorr:
 					return "xCorr";
 				case ExclusionTypeParamEnum.numDB:
@@ -109,7 +112,9 @@ namespace MealTimeMS.ExclusionProfiles
 		ppmTol,
 		[Description("Retention time window")]
 		rtWin,
-		[Description("XCorr Threshold")]
+        [Description("Ion mobility window")]
+        imWin,
+        [Description("XCorr Threshold")]
 		xCorr,
 		[Description("Number of ms2 above xCorr threshold")]
 		numDB,

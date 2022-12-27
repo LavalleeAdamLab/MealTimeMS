@@ -151,7 +151,7 @@ public class Database
                 {
                     peptideRetentionTimes = RetentionTimeUtil.calculateRetentionTime(peptides);
 
-					if (GlobalVar.useMeasuredRT)
+					if (!InputFileOrganizer.MeasuredPeptideRetentionTime.Equals(""))
 					{
 						MealTimeMS.Tester.RandomTesterFunctions.LoadAndReplaceRT(ref peptideRetentionTimes);
 					}
@@ -198,7 +198,7 @@ public class Database
                     Dictionary<int,double> z_IM = peptideIonMobility[peptideSequence];
                     pep.setIonMobility(z_IM);
                 }
-                log.Debug("Done setting retention times.");
+                log.Debug("Done setting ion mobility.");
             }
 
         }
@@ -261,8 +261,8 @@ public class Database
                 {
                     //If the parent protein is not a decoy, but somehow is not present in the Database, this would mean the comet results was 
                     //searched using a different fasta file from the one given to MTMS, a little big issue here
-                    log.Warn("WARNINGin Non-decoy parent protein for this peptide was not found!!");
-                    log.Warn(acc);
+                    log.Debug("WARNING Non-decoy parent protein for this peptide was not found!!");
+                    log.Debug(acc);
                 }
             }
 

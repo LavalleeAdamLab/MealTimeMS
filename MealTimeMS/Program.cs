@@ -52,16 +52,23 @@ namespace MealTimeMS
     {        
         static void Tester()
         {
+            return;
             //ProteinProphetResultTester.DoJob();
             //ProteinProphetResultTester.DoJob();
             //ConfidentProteinGroupData.DoJob();
-            //ReplacingStuffInPepXML.DoJob();
+           // ReplacingStuffInPepXML.DoJob();
             //PostProcessingTester.DoJob();
             //Program.ExitProgram(0);
             String workDir = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace";
 			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(workDir) + "\\");
 			WriterClass.ExperimentOutputSetUp();
-            BrukerInstrumentConnection.PrintAllProlucidPSM();
+            ProteinProphetResultTester.DoJob();
+            Program.ExitProgram(1);
+            String savedClassifierCoeff = IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel(@"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\Output\Training_test_id0.1xCorFilter\20200821K562300ng90min_1_Slot1-1_1_1638.d_extractedFeatures_positiveAndNonPositive.tsv", InputFileOrganizer.OutputFolderOfTheRun);
+            Program.ExitProgram(1);
+            BrukerInstrumentConnection.PrintAllProlucidPSM(
+                "D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\20200821K562200ng90min_1_Slot1-1_1_1630.d",
+                "D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\20200821K562200ng90min_1_Slot1-1_1_1630.d\\20200821K562200ng90min_1_Slot1-1_1_1630_nopd.sqt");
             Program.ExitProgram(0);
 
 			CometSingleSearchTester.CometSingleSearchTest();
@@ -94,17 +101,18 @@ namespace MealTimeMS
 		{
             //!!! use pre-compile directives "SIMULATION,DDA,EXTRACT_SPECTRAL_COUNT" to build
 
-            //Tester();
+            Tester();
             //Program.ExitProgram(0);
 
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
             //Parse Command Line options, and reads the MealTimeMS.param file to populate GlobalVar and InputFileOrganizer variables
-            CommandLine.Parser.Default.ParseArguments<Options, PrintParams, TrainClassifier>(args)
-			.WithParsed<Options>(RunSimulation)
+            CommandLine.Parser.Default.ParseArguments<SimulationOptions, PrintParams, TrainClassifier, BrukerRuntimeCoreOptions>(args)
+			.WithParsed<SimulationOptions>(RunSimulation)
 			.WithParsed<PrintParams>(RunPrintParameters)
 			.WithParsed<TrainClassifier>(RunTrainClassifier)
-			.WithNotParsed(HandleParseError);
+            .WithParsed<BrukerRuntimeCoreOptions>(RunBrukerRuntimeCore)
+            .WithNotParsed(HandleParseError);
 
 			//Sets up the output directory and creates the output files
 			//WriterClass responsible for writing the any output to a file
@@ -121,7 +129,7 @@ namespace MealTimeMS
             Console.WriteLine("Program finished");
 			ExitProgram(0);
         }
-		static void RunSimulation(Options opts)
+		static void RunSimulation(SimulationOptions opts)
 		{
 			//handle options
 			if (!File.Exists(opts.paramsFile))
@@ -162,6 +170,9 @@ namespace MealTimeMS
 					case ExclusionTypeParamEnum.rtWin:
 						variableInfo = String.Format("{0}: {1}", variableName, String.Join(",", GlobalVar.RETENTION_TIME_WINDOW_LIST));
 						break;
+                    case ExclusionTypeParamEnum.imWin:
+						variableInfo = String.Format("{0}: {1}", variableName, String.Join(",", GlobalVar.ION_MOBILITY_WINDOW_LIST));
+						break;
 					case ExclusionTypeParamEnum.xCorr:
 						variableInfo = String.Format("{0}: {1}", variableName, String.Join(",", GlobalVar.XCORR_THRESHOLD_LIST));
 						break;
@@ -175,7 +186,7 @@ namespace MealTimeMS
 				}
 				Console.WriteLine(variableInfo);
 			}
-			if (GlobalVar.useMeasuredRT)
+			if (!InputFileOrganizer.MeasuredPeptideRetentionTime.Equals(""))
 			{
 				Console.WriteLine("Using measured peptide retention time with {0} seconds of perturbation from file:\n  {1}",GlobalVar.amountPerturbationAroundMeasuredRetentionTimeInSeconds, InputFileOrganizer.MeasuredPeptideRetentionTime);
 			}
@@ -194,18 +205,52 @@ namespace MealTimeMS
 		{
 			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(tc.workPlaceDir) + "\\");
 			WriterClass.ExperimentOutputSetUp();
-			InputFileOrganizer.FASTA_FILE = tc.fasta;
-			InputFileOrganizer.CometParamsFile = tc.cometParams;
-			String extractedFeatureSavedFile_posAndNeg;
+            GlobalVar.isSimulationForFeatureExtraction = true;
+            GlobalVar.NUM_MISSED_CLEAVAGES = tc.misCleavage;
+            GlobalVar.MinimumPeptideLength = tc.minPepLength;
+            GlobalVar.includeIonMobility = false;
+            InputFileOrganizer.OriginalCometOutput = tc.DatabaseSearchResult;
+            //Debug
+            //InputFileOrganizer.OriginalProtXMLFile = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\Output\dfgdfg32423\preExperimentFiles\20200821K562300ng90min_1_Slot1-1_1_1638_nopd_replaced_interact.prot.xml";
+            //GlobalVar.useComputedProteinProphet = true;
+//
+            InputFileOrganizer.FASTA_FILE = tc.fasta;
+            InputFileOrganizer.ExclusionDBFasta = tc.fasta;
+            InputFileOrganizer.BrukerdotDFolder = tc.BrukerDotDFolder;
+            string[] sqtfiles = Directory.GetFiles(tc.BrukerDotDFolder, "*.sqt");
+            InputFileOrganizer.ProlucidSQTFile = sqtfiles[0];
+            string[] dotMS2files = Directory.GetFiles(tc.BrukerDotDFolder, "*.ms2");
+            InputFileOrganizer.MS2SimulationTestFile = dotMS2files[0];
+            if (sqtfiles.Length > 1 | dotMS2files.Length > 1)
+            {
+                Console.WriteLine("Multiple .sqt or .ms2 files found in the .d folder provided. Program will now exit");
+                Program.ExitProgram(2);
+            }
+            
+            Console.WriteLine("Num missed cleavages: {0}\nMin peptide length: {1}\nSimulating data from: {2}",
+                GlobalVar.NUM_MISSED_CLEAVAGES, GlobalVar.MinimumPeptideLength, InputFileOrganizer.BrukerdotDFolder);
+
+            String extractedFeatureSavedFile_posAndNeg;
 			String extractedFeatureSavedFile_posAndNonPos;
-			FeatureExtractor.ExtractFeatures(tc.MS2_ClassifierTraining, out extractedFeatureSavedFile_posAndNeg, out extractedFeatureSavedFile_posAndNonPos);
+            FeatureExtractor.ExtractFeatures_Bruker(InputFileOrganizer.BrukerdotDFolder, out extractedFeatureSavedFile_posAndNeg, out extractedFeatureSavedFile_posAndNonPos);
 			
 			String savedClassifierCoeff = IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel(extractedFeatureSavedFile_posAndNonPos, InputFileOrganizer.OutputFolderOfTheRun);
 			Console.WriteLine("Classifier training successful, coefficient written to {0}", savedClassifierCoeff);
 			Program.ExitProgram(0);
 
 		}
-		static void HandleParseError(IEnumerable<Error> errs)
+        static void RunBrukerRuntimeCore(BrukerRuntimeCoreOptions brcOptions)
+        {
+            String kafka_url = String.Concat(brcOptions.kafka_ip , ":" , brcOptions.kafka_port);
+            String schemaReg_url = String.Concat("http://" + brcOptions.schema_ip, ":", brcOptions.schema_port);
+            String exclusionMS_url = String.Concat(brcOptions.exclusionMS_ip, ":", brcOptions.exclusionMS_port);
+            GlobalVar.kafka_url = kafka_url;
+            GlobalVar.schemaRegistry_url = schemaReg_url;
+            GlobalVar.exclusionMS_url = exclusionMS_url;
+            BrukerRuntimeCore.BrukerRuntimeCore_Main();
+        }
+
+        static void HandleParseError(IEnumerable<Error> errs)
 		{
 			//handle errors
 
@@ -218,7 +263,7 @@ namespace MealTimeMS
 		}
 
 		[Verb("-run", HelpText = "Runs the program")]
-		class Options
+		class SimulationOptions
 		{
 			[Value(0, MetaName = "workPlaceDir",Required =true, HelpText = "Directory of the output folder")]
 			public String workPlaceDir { get; set; }
@@ -247,51 +292,57 @@ namespace MealTimeMS
 			[Value(0, MetaName = "workPlaceDir", Required = true,Default ="", HelpText = "Directory of the output folder to write the template params file")]
 			public String workPlaceDir { get; set; }
 		}
+        [Verb("-c", HelpText = "Launches MTMS as a standalone application that takes prolucid stream as input and makes http post calls to exclusionMS webserver")]
+		class BrukerRuntimeCoreOptions
+        { //normal options here
+
+			//[Value(0, MetaName = "kafka_ip", Required = true,Default ="", HelpText = "ip of the kafka broker")]
+            [Option( "kafka_ip", Required = true, HelpText = "ip of the kafka broker")]
+            public String kafka_ip { get; set; }
+            [Option( "kafka_port", Required = true, HelpText = "port number of the kafka broker")]
+            public int kafka_port { get; set; }
+            [Option( "schema_ip", Required = true, HelpText = "ip of the schema registry")]
+            public String schema_ip { get; set; }
+            [Option( "schema_port", Required = true, HelpText = "port number of the schema registry")]
+            public String schema_port { get; set; }
+            [Option("exclusionMS_ip", Required = true, HelpText = "ip of the exclusionMS webserver")]
+            public String exclusionMS_ip { get; set; }
+            [Option("exclusionMS_port", Required = true, HelpText = "port number of the exclusionMS webserver")]
+            public String exclusionMS_port { get; set; }
+
+
+        }
 
 		[Verb("-train", HelpText = "Trains the logistic regression classifier from a MS experiment spectral data and generates a coefficient file\n" +
 			"Usage:\n" +
-			"-train <Work Place Directory> <MS2 File Directory> <Fasta Database> <Comet Parameter File>")]
+			"-train <Work Place Directory> <Bruker .d folder path> <Fasta Database> <pep.xml Database search result>")]
 		class TrainClassifier
 		{ //normal options here
 
-			[Value(0, MetaName = "workPlaceDir", Required = true, Default = "", HelpText = "Directory of the output folder to write the template params file")]
-			public String workPlaceDir { get; set; }
+			
 			//[Value(1, MetaName = "MZMLFile", Required = true, Default = "", HelpText = "The MZML file from the experiment")]
 			//public String MZML_ClassifierTraining { get; set; }
-			[Value(1, MetaName = "MS2File", Required = true, Default = "", HelpText = "The MS2 file from the experiment, converted from the MZML file")]
-			public String MS2_ClassifierTraining { get; set; }
-			[Value(2, MetaName = "FastaDatabase", Required = true, Default = "", HelpText = "The protein database in .fasta format")]
+			[Value(0, MetaName = "misCleavage", Required = true, Default = "", HelpText = "Number of miscleavages for protein digestion")]
+			public int misCleavage { get; set; }
+            [Value(1, MetaName = "minPepLength", Required = true, Default = "", HelpText = "Minimum peptide length")]
+			public int minPepLength { get; set; }
+            [Value(2, MetaName = "workPlaceDir", Required = true, Default = "", HelpText = "Directory of the output folder to write the template params file")]
+            public String workPlaceDir { get; set; }
+            [Value(3, MetaName = "BrukerDotDFolder", Required = true, Default = "", HelpText = "The MS2 file from the experiment, converted from the MZML file")]
+			public String BrukerDotDFolder { get; set; }
+			[Value(4, MetaName = "FastaDatabase", Required = true, Default = "", HelpText = "The protein database in .fasta format")]
 			public String fasta{ get; set; }
-			[Value(3, MetaName = "CometParams", Required = true, Default = "", HelpText = "Comet parameters file version 2019")]
-			public String cometParams{ get; set; }
+            [Value(5, MetaName = "DatabaseSearchResult", Required = true, Default = "", HelpText = "A .pep.xml search result file")]
+            public String DatabaseSearchResult { get; set; }
+            //[Value(3, MetaName = "RetentionTimePredictions", Required = true, Default = "", HelpText = "Predicted peptide retention time (minutes)")]
+            //public String rtPredictionsFile{ get; set; }
+            //         [Value(4, MetaName = "IonMobilityPredictions", Required = true, Default = "", HelpText = "Predicted ion mobility")]
+            //         public String IonMobilityPredictionFile { get; set; }
 
-				
-			
-		}
-		public static void SetUpOptions(String[] args)
-		{
-			for (int i = 3; i < args.Length; i++)
-			{
-				String option = args[i];
-				if (option.Equals("E"))
-				{
-					//see exclusion format
-					GlobalVar.SeeExclusionFormat = true;
-					WriterClass.writePrintln("Exclusion table detail set to true, details will be written");
-				}
 
-				else if (option.Equals("SE"))
-				{
-					// set exclusion table
-					GlobalVar.SetExclusionTable = true;
-					WriterClass.writePrintln("Set Table set to true, app will attempt to set exclusion table");
 
-				}
-			}
-			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(args[0]) + "\\");
-			GlobalVar.IsSimulation = bool.Parse(args[1]);
-			GlobalVar.ScansPerOutput = int.Parse(args[2]);
-		}
+        }
+		
 		public static void SetNLogLevel(String _logLevel)
 		{
 			LogLevel logLevel;

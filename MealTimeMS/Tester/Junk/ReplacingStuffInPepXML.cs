@@ -12,8 +12,8 @@ namespace MealTimeMS.Tester.Junk
 
         public static void DoJob()
         {
-            String file = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\TestData\20200821K562300ng90min_1_Slot1-1_1_1638_nopd.pep.xml";
-            String outputFile = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\TestData\20200821K562300ng90min_1_Slot1-1_1_1638_nopd_replaced.pep.xml";
+            String file = @"D:\CodingLavaleeAdamCDriveBackup\APIO\APIO_testData\20200821K562200ng90min_1_Slot1-1_1_1630.d\20200821K562200ng90min_1_Slot1-1_1_1630_nopd.pep.xml";
+            String outputFile = @"D:\CodingLavaleeAdamCDriveBackup\APIO\APIO_testData\20200821K562200ng90min_1_Slot1-1_1_1630.d\20200821K562200ng90min_1_Slot1-1_1_1630_nopd_replaced.pep.xml";
             var sr = new StreamReader(file);
             var sw = new StreamWriter(outputFile);
             String line = sr.ReadLine();

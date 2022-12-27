@@ -15,15 +15,6 @@ namespace MealTimeMS.Util
 		
 		//Pre-experiment setup directions
         public static bool IsSimulation = true;         //is this a simulation or if we're actually connecting this to a mass spec
-        //For the boolean flags below that starts with use..., if a corresponding file is provided in the params file this will automatically be set to true
-        public static bool useRTCalcComputedFile = false;   
-	    public static bool useChainsawComputedFile = false;  
-        public static bool useIDXComputedFile = false;  
-		public static bool useDecoyFastaComputedFile = false;
-		public static bool usePepXMLComputedFile = false;
-		public static bool useLogisticRegressionTrainedFile = false;
-		public static bool useMeasuredRT = false;
-		public static bool useComputedProteinProphet = false;
 
 		public static bool isSimulationForFeatureExtraction = false;
 
@@ -41,7 +32,7 @@ namespace MealTimeMS.Util
 		//public static double AminoAcid_M_modifiedMass = 15.9949;
 
 		//Experiment Params
-		public static int ScansPerOutput = 100;
+		public static int ScansPerOutput = 1000;
         public static bool SeeExclusionFormat = false;
         public static bool SetExclusionTable = false;
         public static int NUM_MISSED_CLEAVAGES = 1;
@@ -69,10 +60,13 @@ namespace MealTimeMS.Util
         //Simulation var
         public static double ExperimentTotalMS2 = -1;
 
+        //Connection var
+        public static String kafka_url = "localhost:9092";
+        public static String schemaRegistry_url = "http://localhost:8083";
+        public static String exclusionMS_url; // url of the exclusionMS webserver
 
-
-		//temp variables
-		public static int randomRepeatsPerExperiment = 3;
+        //temp variables
+        public static int randomRepeatsPerExperiment = 3;
         public static bool useRT = true;
         public static Dictionary<int, int> TIMSTOF_Precursor_ID_to_ms2_id = null;
         public static Dictionary<int, double> CheatingMonoPrecursorMassTable = null;

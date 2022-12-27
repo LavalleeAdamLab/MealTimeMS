@@ -29,13 +29,13 @@ namespace MealTimeMS.RunTime
         static ConcurrentDictionary<int , bool> includedScanNum;
         static int psmReceived=1; //will be updated to 1 everytime the prolucid processing thread receives a psm. Used for the timer in the paserControl thread 
 
-        public static void Connect(ExclusionProfile exclusionProfile, BrukerConnectionEnum connectionMode, bool runWithoutExclusionProfile = false)
+        public static void Connect(ExclusionProfile exclusionProfile, String brukerDotDFolder, String sqtFile, BrukerConnectionEnum connectionMode, bool runWithoutExclusionProfile = false)
         {
             //string bootstrapServers = args[0];
             //string schemaRegistryUrl = args[1];
             //string topicName = args[2];
-            string bootstrapServers = "localhost:9092";
-            string schemaRegistryUrl = "http://localhost:8083";
+            string bootstrapServers = GlobalVar.kafka_url;
+            string schemaRegistryUrl =GlobalVar.schemaRegistry_url;
             string topicName = "psm_prolucid";
 
             var producerConfig = new ProducerConfig
@@ -150,7 +150,7 @@ namespace MealTimeMS.RunTime
                     Thread.Sleep(3000);
                     Console.WriteLine("Consumer connecting to kafka broker, topic {0}",topicName);
                     Console.WriteLine("Invoking command line util to start acquisition simulator");
-                    CommandLineProcessingUtil.RunBrukerAcquisitionSimulator();
+                    CommandLineProcessingUtil.RunBrukerAcquisitionSimulator(brukerDotDFolder, sqtFile );
                     try
                     {
                         
@@ -160,10 +160,14 @@ namespace MealTimeMS.RunTime
                             {
                                 var consumeResult = consumer.Consume(cts.Token);
                                 var psm = consumeResult.Message.Value;
-                                
-                                Console.WriteLine($"key: {consumeResult.Message.Key}, psm- ms2_id: {psm.ms2_id}, rt: {psm.rt}, mono mz: {psm.mono_mz},charge: {psm.charge}, " +
+
+                                if (psm.ms2_id % GlobalVar.ScansPerOutput == 0)
+                                {
+                                    Console.WriteLine($"key: {consumeResult.Message.Key}, psm- ms2_id: {psm.ms2_id}, rt: {psm.rt}, mono mz: {psm.mono_mz},charge: {psm.charge}, " +
                                     $"parent_id: {psm.parent_id}");
-                                Console.WriteLine("Offset {0}", consumeResult.Offset);
+                                    Console.WriteLine("Offset {0}", consumeResult.Offset);
+                                }
+                                
                                
                                 bool scanIncluded = false;
                                 //while (true)
@@ -186,6 +190,7 @@ namespace MealTimeMS.RunTime
                                 psmReceived = 1;
                                 if (!runWithoutExclusionProfile)
                                 {
+                                    
                                     exclusionProfile.evaluateIdentificationAndUpdateCurrentTime(id);
                                 }
                                 else
@@ -239,7 +244,7 @@ namespace MealTimeMS.RunTime
                     Thread.Sleep(2000);
                     Console.WriteLine("Consumer connecting to kafka broker, topic {0}", ms2TopicName);
                     Console.WriteLine("Invoking command line util to start acquisition simulator");
-                    CommandLineProcessingUtil.RunBrukerAcquisitionSimulator();
+                    CommandLineProcessingUtil.RunBrukerAcquisitionSimulator(brukerDotDFolder, sqtFile);
 
                     try
                     {
@@ -334,19 +339,13 @@ namespace MealTimeMS.RunTime
         //a unit test function that connects to Kafka broker and prints all psms to a file
         //NoExclusion.RecordSpecInfo() does something similar to this function 
         static StreamWriter sw;
-        public static void PrintAllProlucidPSM()
+        public static void PrintAllProlucidPSM(String brukerDotDFolder, String sqtFile)
         {
             psmTracker = new List<IDs>();
             sw = new StreamWriter(
                 Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"ProlucidPSMs.tsv"));
             sw.WriteLine(String.Join(separator: "\t","ms2_id", "peptide_stripped","peptide_modified", "rt(sec)","calc_mass","xcorr","dCN","accessions"));
-            Connect(null, BrukerConnectionEnum.ProLucidConnectionOnly, true);
-            //foreach(IDs id in psmTracker)
-            //{
-            //    sw.WriteLine(String.Join(separator: "\t",
-            //        id.getScanNum(), id.getPeptideSequence(),id.getScanTime(), 
-            //        id.getPeptideMass(), id.getXCorr(), id.getDeltaCN()));
-            //}
+            Connect(null, brukerDotDFolder, sqtFile, BrukerConnectionEnum.ProLucidConnectionOnly, true);
             sw.Close();
         }
 

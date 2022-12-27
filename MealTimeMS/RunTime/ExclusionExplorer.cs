@@ -31,11 +31,10 @@ namespace MealTimeMS.RunTime
 
         public static void RunExclusionExplorer(ExclusionProfileEnum exclusionType)
         {
-            //QuickRandomExclusion.DoJob(new double[] {0.55,0.5,0.45 }, 1);
+            //QuickRandomExclusion.DoJob(new double[] {1, 0.95, 0.9, 0.85,0.8, 0.75, 0.7, 0.65,0.6,0.55,0.5,0.45 }, 2);
             PreExperimentSetUp();
             WriterClass.writeln(new PerformanceEvaluator().getHeader());
             int experimentNumber = 0;
-
 
             //Run a baseline no-exclusion experiment in order to set up a benchmark against which that we can compare the exclusion experiments
             if (exclusionType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
@@ -194,10 +193,10 @@ namespace MealTimeMS.RunTime
 #endif
 
 #if DDA
-            new QuickDDAInstrumentSimulation(e, ms2SpectraList, GlobalVar.ddaNum);
+            new QuickDDAInstrumentSimulation(e, ms2SpectraList);
 #else
             //new DataReceiverSimulation().DoJob(e.exclusionProfile, ms2SpectraList);
-            BrukerInstrumentConnection.Connect(e.exclusionProfile, BrukerInstrumentConnection.BrukerConnectionEnum.MS2ConnectionOnly);
+            BrukerInstrumentConnection.Connect(e.exclusionProfile, InputFileOrganizer.BrukerdotDFolder,InputFileOrganizer.ProlucidSQTFile, BrukerInstrumentConnection.BrukerConnectionEnum.MS2ConnectionOnly);
 #endif
 #if TRACKEXCLUSIONLISTOPERATION
             e.exclusionProfile.getExclusionList().EndExclusionListOperationSW();
@@ -219,28 +218,37 @@ namespace MealTimeMS.RunTime
 
         static void PreExperimentSetUp()
         {
-            ConstructDecoyFasta();
 #if !COMETOFFLINESEARCH
+            ConstructDecoyFasta();
             ConstructIDX();
 #endif
 
             //CometSingleSearchTester.TestSearch();
-            if (GlobalVar.IsSimulation)
+            if (GlobalVar.IsSimulation&!GlobalVar.isSimulationForFeatureExtraction)
             //if(false)
             {
+
                 //ms2SpectraList = Loader.parseMS2File(InputFileOrganizer.MS2SimulationTestFile).getSpectraArray();
                 //GlobalVar.ExperimentTotalScans = ms2SpectraList.Count;
+
+#if BRUKERACQUISITIONSIMULATOR
                 GlobalVar.TIMSTOF_Precursor_ID_to_ms2_id = ParseTIMSTOFPrecursorID.getTIMSTOFFPrecursorID_to_ms2ID(InputFileOrganizer.MS2SimulationTestFile);
+#endif
                 GlobalVar.CheatingMonoPrecursorMassTable = ParseTIMSTOFPrecursorID.getCheatingMonoPrecursorMassTable(InputFileOrganizer.CheatingMonoPrecursorMass);
-                GlobalVar.ExperimentTotalScans = 303210;
                 ms2SpectraList = null;
                 GC.Collect();
+                FullPepXMLAndProteinProphetSetup();
+            }else if (GlobalVar.isSimulationForFeatureExtraction)
+            {
                 FullPepXMLAndProteinProphetSetup();
             }
             log.Debug("Setting up Database");
             database = databaseSetUp(InputFileOrganizer.ExclusionDBFasta);
-            log.Debug("Done setting up database.");
-            CometSingleSearch.InitializeComet(InputFileOrganizer.IDXDataBase, InputFileOrganizer.CometParamsFile);
+            if (!GlobalVar.isSimulationForFeatureExtraction)
+            { 
+                log.Debug("Done setting up database.");
+                CometSingleSearch.InitializeComet(InputFileOrganizer.IDXDataBase, InputFileOrganizer.CometParamsFile);
+            }
             //CometSingleSearch.InitializeComet_NonRealTime("C:\\Coding\\2019LavalleeLab\\GitProjectRealTimeMS\\TestData\\NoExclusion_RealTimeCometSearchResult.tsv");
             //CometSingleSearch.QualityCheck();
             Console.WriteLine("pre-experimental setup finished");
@@ -251,14 +259,14 @@ namespace MealTimeMS.RunTime
             if (GlobalVar.IsSimulation)
             {
 
-                if (!GlobalVar.usePepXMLComputedFile)
+                if (InputFileOrganizer.OriginalCometOutput.Equals(""))
                 {
                     //comet
                     log.Info("Performing Comet search on full ms2 data");
                     String fullCometFile = PostProcessingScripts.CometStandardSearch(InputFileOrganizer.MS2SimulationTestFile, InputFileOrganizer.preExperimentFilesFolder, true);
                     InputFileOrganizer.OriginalCometOutput = fullCometFile;
                 }
-                if (!GlobalVar.useComputedProteinProphet)
+                if (InputFileOrganizer.OriginalProtXMLFile.Equals(""))
                 {
                     //protein prophet
                     log.Info("Perform a protein prophet search on full pepxml");
@@ -271,7 +279,7 @@ namespace MealTimeMS.RunTime
 
         private static void ConstructDecoyFasta()
         {
-            if (!GlobalVar.useDecoyFastaComputedFile)
+            if (InputFileOrganizer.DecoyFasta.Equals(""))
             {
                 log.Debug("Generating decoy database for comet search validation");
                 InputFileOrganizer.DecoyFasta = DecoyConcacenatedDatabaseGenerator.GenerateConcacenatedDecoyFasta(InputFileOrganizer.FASTA_FILE, InputFileOrganizer.preExperimentFilesFolder);
@@ -282,14 +290,13 @@ namespace MealTimeMS.RunTime
         //Construct IDX file required for real time comet
         private static void ConstructIDX()
         {
-            if (!GlobalVar.useIDXComputedFile)
+            if (InputFileOrganizer.IDXDataBase.Equals(""))
             {
                 log.Debug("Converting concacenated decoy database to idx file.");
                 Console.WriteLine("Constructing IDX database for real-time comet search");
                 String idxDB = CommandLineProcessingUtil.FastaToIDXConverter(InputFileOrganizer.DecoyFasta, InputFileOrganizer.preExperimentFilesFolder);
                 InputFileOrganizer.IDXDataBase = idxDB;
                 log.Debug("idx Database generated");
-                GlobalVar.useIDXComputedFile = true;
             }
         }
 
@@ -474,6 +481,21 @@ namespace MealTimeMS.RunTime
             isListening = true;
             CometSingleSearch.reset();
         }
+
+        public static ExclusionProfile SimulationForFeatureExtraction()
+        {
+            PreExperimentSetUp();
+            int experimentNumber = 1;
+            double startTime = getCurrentTime();
+            ExclusionProfile exclusionProfile = new NoExclusion(database, GlobalVar.retentionTimeWindowSize);
+            WriterClass.writeln(exclusionProfile.GetPerformanceEvaluator().getHeader());
+            String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName;
+            Experiment experiment = new Experiment(exclusionProfile, experimentName, 1, ExclusionProfileEnum.NO_EXCLUSION_PROFILE, startTime);
+            //new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+            BrukerInstrumentConnection.Connect(exclusionProfile, InputFileOrganizer.BrukerdotDFolder, InputFileOrganizer.ProlucidSQTFile, BrukerInstrumentConnection.BrukerConnectionEnum.ProLucidConnectionOnly);
+            double analysisTime = getCurrentTime() - startTime;
+            return exclusionProfile;
+        }
         //Currently only used for running the simulation used to create the feature files for classifier training
         public static ExclusionProfile SingleSimulationRun(ExclusionProfileEnum expType)
         {
@@ -535,7 +557,8 @@ namespace MealTimeMS.RunTime
             String experimentName = "EXP_" + experimentNumber + GlobalVar.experimentName;
             Experiment experiment = new Experiment(exclusionProfile, experimentName, 1, expType, startTime);
 
-            new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+            //new DataReceiverSimulation().DoJob(exclusionProfile, ms2SpectraList);
+            BrukerInstrumentConnection.Connect(exclusionProfile, InputFileOrganizer.BrukerdotDFolder, InputFileOrganizer.ProlucidSQTFile, BrukerInstrumentConnection.BrukerConnectionEnum.MS2ConnectionOnly);
             double analysisTime = getCurrentTime() - startTime;
 
             //WriteScanArrivalProcessedTime(DataProcessor.scanArrivalAndProcessedTimeList);
@@ -625,7 +648,7 @@ namespace MealTimeMS.RunTime
 
 
             //new DataReceiver().DoJob(exclusionProfile);
-            BrukerInstrumentConnection.Connect(exclusionProfile, BrukerInstrumentConnection.BrukerConnectionEnum.MS2ConnectionOnly);
+            BrukerInstrumentConnection.Connect(exclusionProfile, InputFileOrganizer.BrukerdotDFolder, InputFileOrganizer.ProlucidSQTFile, BrukerInstrumentConnection.BrukerConnectionEnum.MS2ConnectionOnly);
 
             double analysisTime = getCurrentTime() - startTime;
             try

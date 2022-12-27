@@ -81,13 +81,7 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			performanceEvaluator.evaluateAnalysis(exclusionList, pep);
 #endif
 
-			//RetentionTime rt = pep.getRetentionTime();
-			//if (!rtCalcPredictedRT.Keys.Contains(pep.getSequence()))
-			//{
-			//	rtCalcPredictedRT.Add(pep.getSequence(), rt.getRetentionTimePeak());
-			//}
-			//double[] values = new double[] { id.getScanTime(), id.getXCorr(), rt.getRetentionTimePeak(), rt.getRetentionTimeStart() + GlobalVar.retentionTimeWindowSize, RetentionTime.getRetentionTimeOffset(), rtCalcPredictedRT[pep.getSequence()], rt.IsPredicted() ? 1 : 0 };
-
+			
 			// exclude this peptide for analysis if the xCorr score is above a threshold
 			const double XCORR_THRESHOLD = 2.5;
             // add the peptide to the exclusion list if it is over the xCorr threshold

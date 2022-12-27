@@ -18,6 +18,8 @@ namespace MealTimeMS.IO
 			new Parameter("CrucialFiles","CometParamsFile",true,"","File path to the comet parameters (2019 version). Make sure to set \"decoy_search\" to 0.",true),
 			new Parameter("DirectorySetUp","TPPBinFolder",true,"C:\\TPP\\bin\\","Directory of the bin folder of the Trans-Proteomic Pipeline installation",false),
 			new Parameter("SimulationParams","MS2SimulationSpectraFile",true,"","Spectral data in .ms2 format, can be converted from .mzML (or .raw) to .ms2 using ProteoWizard's msconvert",true),
+			new Parameter("SimulationParams","BrukerdotDFolder",true,"","Bruker raw data folder",false),
+			new Parameter("SimulationParams","ProlucidSQTFile",true,"","Prolucid search result .sqt file",true),
 			//new Parameter("SimulationParams","MZMLSimulationTestFile",true,"","",true),
 			//new Parameter("PreExperimentSetup","UsePrecomputedFiles",true,"false","true: use the files in the PrecomputedFiles section instead of generating them with the program. false: generate them with the program automatically. Set to false if running the program for the first time"),
 			new Parameter("PreExperimentSetup","DecoyPrefix",true,"DECOY_","Decoy prefix used in the Comet params"),
@@ -36,7 +38,7 @@ namespace MealTimeMS.IO
 			new Parameter("LogisticRegressionClassifier","LogisRegressionClassiferSavedCoefficient",false,"","File path to the saved coefficient file of a trained LR classifier model. " +
 				"To generate a traiend logistic regression classifier model saved coefficient file, use command: \"MealTimeMS.exe -train\" option",true),
             new Parameter("PrecomputedFiles","ChainSawDigestedDatabase",false,"","Fasta file digested with Chainsaw, this is used to construct the in-program database",true),
-            new Parameter("PrecomputedFiles","RTCalcPredictedPeptideRT",false,"","RTCalc predicted peptide retention time result file, in seconds",true),
+            new Parameter("PrecomputedFiles","RTCalcPredictedPeptideRT",false,"","RTCalc predicted peptide retention time result file, in minutes",true),
             new Parameter("PrecomputedFiles","PredictedPrecursorIonMobility",false,"","A tsv with three columns in this order: sequence, charge, ionMobility(ooko)",true),
 			//new Parameter("PrecomputedFiles","DecoyFasta",false,"","",true),
 			new Parameter("PrecomputedFiles","IDXDataBase",false,"","",true),
@@ -114,21 +116,26 @@ namespace MealTimeMS.IO
 							case "MS2SimulationSpectraFile":
 								InputFileOrganizer.MS2SimulationTestFile = value;
 								break;
+                            case "BrukerdotDFolder":
+                                InputFileOrganizer.BrukerdotDFolder = value;
+                                break;
+                            case "ProlucidSQTFile":
+                                InputFileOrganizer.ProlucidSQTFile = value;
+                                break;
 
-							
-							//case "MZMLSimulationTestFile":
-							//InputFileOrganizer.MZMLSimulationTestFile = value;
-							//	break;
-							//case "MS2_forClassifierTraining":
-							//	InputFileOrganizer.MS2_ClassifierTraining = value;
-							//	break;
-							//case "MZML_forClassifierTraining":
-							//	InputFileOrganizer.MZML_ClassifierTraining = value;
-							//	break;
-							//case "UsePrecomputedFiles":
-							//	UsePrecomputedFiles = Boolean.Parse(value);
-							//	break;
-							case "ExclusionMethod":
+                            //case "MZMLSimulationTestFile":
+                            //InputFileOrganizer.MZMLSimulationTestFile = value;
+                            //	break;
+                            //case "MS2_forClassifierTraining":
+                            //	InputFileOrganizer.MS2_ClassifierTraining = value;
+                            //	break;
+                            //case "MZML_forClassifierTraining":
+                            //	InputFileOrganizer.MZML_ClassifierTraining = value;
+                            //	break;
+                            //case "UsePrecomputedFiles":
+                            //	UsePrecomputedFiles = Boolean.Parse(value);
+                            //	break;
+                            case "ExclusionMethod":
 								GlobalVar.ExclusionMethod = ParseExclusionMethod(int.Parse(value));
 								break;
 							case "DecoyPrefix":
@@ -187,12 +194,10 @@ namespace MealTimeMS.IO
 
                                 case "ChainSawDigestedDatabase":
                                     InputFileOrganizer.ChainSawResult = value;
-                                    GlobalVar.useChainsawComputedFile = true;
                                     break;
 
                                 case "RTCalcPredictedPeptideRT":
 									InputFileOrganizer.RTCalcResult = value;
-									GlobalVar.useRTCalcComputedFile = true;
 									break;
                                 case "PredictedPrecursorIonMobility":
 									InputFileOrganizer.PredictedIonMobility = value;
@@ -205,12 +210,9 @@ namespace MealTimeMS.IO
 								//	break;
 								case "IDXDataBase":
 									InputFileOrganizer.IDXDataBase = value;
-									GlobalVar.useIDXComputedFile = true;
-
 									break;
 								case "OriginalCometOutput":
 									InputFileOrganizer.OriginalCometOutput = value;
-									GlobalVar.usePepXMLComputedFile = true;
 									break;
 
 								//case "ProtXML":
@@ -218,11 +220,9 @@ namespace MealTimeMS.IO
 								//	break;
 								case "LogisRegressionClassiferSavedCoefficient":
 									InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile = value;
-									GlobalVar.useLogisticRegressionTrainedFile = true;
 									break;
 								case "MeasuredPeptideRetentionTime":
 									InputFileOrganizer.MeasuredPeptideRetentionTime = value;
-									GlobalVar.useMeasuredRT = true;
 									break;
 								case "AmountPerturbation":
 									if (value.Equals(""))
@@ -274,7 +274,6 @@ namespace MealTimeMS.IO
 					if (name.Equals("ProteinProphet"))
 					{
 						InputFileOrganizer.OriginalProtXMLFile = value;
-						GlobalVar.useComputedProteinProphet = true;
 					}
                     if (name.Equals("CheatingMonoPrecursorMass"))
                     {

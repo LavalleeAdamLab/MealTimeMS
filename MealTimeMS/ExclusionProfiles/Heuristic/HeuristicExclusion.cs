@@ -75,7 +75,7 @@ namespace MealTimeMS.ExclusionProfiles.Heuristic
 		// database.addProteinFromIdentification(pep, id.getParentProteinAccessions());
 
 		Double xCorr = id.getXCorr();
-			Double dCN = id.getDeltaCN();
+		Double dCN = id.getDeltaCN();
 		pep.addScore(xCorr, xCorrThreshold, dCN); // updates the peptide score and numDB for each parent protein of the peptide
 		performanceEvaluator.evaluateAnalysis(exclusionList, pep);
 
@@ -95,24 +95,25 @@ namespace MealTimeMS.ExclusionProfiles.Heuristic
 
             // add all of the other peptides belonging to the parent protein(s) if numDB
             // threshold is passed
+            List<Protein> proteinsToExclude = new List<Protein>();
             foreach (Protein parentProtein in pep.getProteins())
-		{
-			if ((parentProtein.getNumDB() >= numDBThreshold) && (!parentProtein.IsExcluded()))
-			{
-				parentProtein.setExcluded(true);
-				log.Debug("Parent protein " + parentProtein.getAccession() + " is identified confidently "
-				 + parentProtein.getNumDB() + " times!");
-				performanceEvaluator.countProteinsExcluded();
+		    {
+			    if ((parentProtein.getNumDB() >= numDBThreshold) && (!parentProtein.IsExcluded()))
+			    {
+				    parentProtein.setExcluded(true);
+				    log.Debug("Parent protein " + parentProtein.getAccession() + " is identified confidently "
+				     + parentProtein.getNumDB() + " times!");
+				    performanceEvaluator.countProteinsExcluded();
 #if TRACKEXCLUSIONLISTOPERATION
-                    exclusionList.addProtein(parentProtein, id.getScanNum());
+                     exclusionList.addProtein(parentProtein, id.getScanNum());
 #else
-                    exclusionList.addProtein(parentProtein);
-
+                    proteinsToExclude.Add(parentProtein);
 #endif
-			}
-			log.Debug(parentProtein);
-		}
-		log.Debug(pep);
+                }
+			    log.Debug(parentProtein);
+		    }
+            exclusionList.addProteins(proteinsToExclude);
+		    log.Debug(pep);
 
 	}
 
