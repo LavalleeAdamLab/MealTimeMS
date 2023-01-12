@@ -48,11 +48,6 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 			Double dCN = id.getDeltaCN();
 			pep.addScore(xCorr, 0.0, dCN);
 			performanceEvaluator.evaluateAnalysis(exclusionList, pep);
-            
-
-
-			
-
 
 			if ((xCorr > 2.5))
 			{

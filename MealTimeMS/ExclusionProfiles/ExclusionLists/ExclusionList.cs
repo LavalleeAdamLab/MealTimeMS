@@ -12,8 +12,8 @@ namespace MealTimeMS.ExclusionProfiles
 {
 
 
-	// the list that keeps tracks of the excluded peptides
-public class ExclusionList
+    // the list that keeps tracks of the excluded peptides
+    public class ExclusionList
     {
 
         public const String PAST = "Past";
@@ -81,14 +81,14 @@ public class ExclusionList
         {
             return list.Contains(pep);
         }
-		// UTILITY for if a given list contains the peptide... used to clean up my code
-		public virtual bool containsPeptide( Peptide pep)
-		{
-			return exclusionList.Contains(pep);
-		}
+        // UTILITY for if a given list contains the peptide... used to clean up my code
+        public virtual bool containsPeptide(Peptide pep)
+        {
+            return exclusionList.Contains(pep);
+        }
 
-		// Returns all peptides which match the specified tense (PAST,PRESENT,FUTURE)
-		private List<Peptide> getPeptidesTense(String tense)
+        // Returns all peptides which match the specified tense (PAST,PRESENT,FUTURE)
+        private List<Peptide> getPeptidesTense(String tense)
         {
             List<Peptide> peptides = new List<Peptide>();
             foreach (Peptide pep in exclusionList)
@@ -102,7 +102,7 @@ public class ExclusionList
             return peptides;
         }
 
-      
+
 
         private void UpdateMassSpectrometerExclusionTable()
         {
@@ -117,11 +117,6 @@ public class ExclusionList
         public void setCurrentTime(double d)
         {
             currentTime = d;
-        }
-
-        public virtual void setRetentionTimeOffset(double rtOffset)
-        {
-
         }
 
         public double getPPMTolerance()
@@ -206,46 +201,54 @@ public class ExclusionList
             // Prevents adding peptides already on the list
             if (!containsPeptide(exclusionList, pep))
             {
-				int position = BinarySearchUtil.findPositionToAdd(exclusionList, pep, BinarySearchUtil.SortingScheme.MASS);
-				exclusionList.Insert(position, pep);
-				//exclusionList.Add(pep);
-				//SortListByMass();
-               
+                int position = BinarySearchUtil.findPositionToAdd(exclusionList, pep, BinarySearchUtil.SortingScheme.MASS);
+                exclusionList.Insert(position, pep);
+                //exclusionList.Add(pep);
+                //SortListByMass();
+
             }
         }
 
-		//Depricated, shouldn't be called, this is functional but just too computationally intensive when the list gets too large
-		public void SortListByMass()
-		{
-			exclusionList.Sort((Peptide x, Peptide y) => (y.getMass()).CompareTo(x.getMass()));
-		}
+        //Depricated, shouldn't be called, this is functional but just too computationally intensive when the list gets too large
+        public void SortListByMass()
+        {
+            exclusionList.Sort((Peptide x, Peptide y) => (y.getMass()).CompareTo(x.getMass()));
+        }
 
-        public void observedPeptide(Peptide pep, double time, double rt_window)
+        public void UpdateObservedPeptide(Peptide pep, double time, double rt_window)
         {
             // set a new RT
-            RetentionTime newRT = new RetentionTime(time + rt_window*0.5, rt_window, rt_window, false);
+            RetentionTime newRT = new RetentionTime(time + rt_window * 0.5, rt_window, rt_window, false);
             // excludes it for 2*rt_window time
             pep.setRetentionTime(newRT);
 
-            //addPeptide(pep); //personally i dont think this line is necessary, since the peptide would have already be added in 
-                                //MachineLearningGuidedExclusion EvaluateIdentification()
-                                //Note that in the last line when re-setting the retention time of the peptide, isPredicted will be set to false
+            //addObservedPeptide(pep); //personally i dont think this line is necessary, since the peptide would have already be added in 
+            //MachineLearningGuidedExclusion EvaluateIdentification()
+            //Note that in the last line when re-setting the retention time of the peptide, isPredicted will be set to false
+        }
+        public virtual void updateRetentionTimeOffset(double newOffset_min)
+        {
+            return;
+        }
+        public virtual void addObservedPeptide(Peptide pep)
+        {
+            addPeptide(pep);
         }
 
         // Add all the peptides of that protein to the exclusion list
-        public void addProtein(Protein p)
+        public virtual void addProtein(Protein p)
         {
-			foreach(Peptide pep in p.getPeptides())
-			{
-				addPeptide(pep);
-			}
+            foreach (Peptide pep in p.getPeptides())
+            {
+                addPeptide(pep);
+            }
         }
 
         public virtual void addProteins(List<Protein> proteins)
         {
-            foreach(Protein p in proteins)
+            foreach (Protein p in proteins)
             {
-				addProtein(p);
+                addProtein(p);
             }
         }
 

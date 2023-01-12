@@ -61,7 +61,7 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 				// calibrates our retention time alignment if the observed time is different
 				// from the predicted only if it passes this threshold
 				calibrateRetentionTime(pep);
-                exclusionList.addPeptide(pep);
+                exclusionList.addObservedPeptide(pep);
                 log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
                 performanceEvaluator.countPeptidesExcluded();
             }

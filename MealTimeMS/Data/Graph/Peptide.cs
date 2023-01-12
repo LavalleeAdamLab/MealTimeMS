@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MealTimeMS.Util;
 
 namespace MealTimeMS.Data.Graph
 {
@@ -17,13 +18,15 @@ namespace MealTimeMS.Data.Graph
 		private List<Double> dCNs;  // same thing as the score list, but stores the dCNs
         private bool fromFasta;
         private bool isUniquelyIdentifyingPeptide;
+        private int peptideID; // for the purpose of assigning an id to the exclusionMS interval object
+        private List<string> intervalJsons; // the interval json strings representing the exclusion window. Since IM is charge state-dependent, this is a list of strings instead of a single string. If IM is not used, this will be a list of size 1
         // make this accept multiple... and PTMs and theoretical masses
         // also make it accept retention time pairs (ExclusionPair.java)
 
         private Dictionary<String, Protein> parentProteins;
         private Dictionary<int, double> z_ook0;
 
-        public Peptide(String _sequence, double _mass, bool _fromFasta)
+        public Peptide(String _sequence, double _mass, bool _fromFasta, int _peptideID)
         {
             // peptideEvidence = _peptideEvidence;
             fromFasta = _fromFasta;
@@ -34,6 +37,12 @@ namespace MealTimeMS.Data.Graph
             scores = new List<Double>();
 			dCNs = new List<Double>();
             z_ook0 = new Dictionary<int, double>();
+            peptideID = _peptideID;
+        }
+
+        public void updateIntervalJson(double ppmTol, double rtWin, double IMTol, bool useIonMobility = false)
+        {
+            intervalJsons = ExclusionMSInterval.getJSONStringsFromPeptide(this, ppmTol, rtWin, IMTol, useIonMobility);
         }
         
         public void addScore(double score, double dCN)
@@ -68,7 +77,7 @@ namespace MealTimeMS.Data.Graph
         {
             if (parentProteins.Keys.Contains(acc))
             {
-                //logger.Debug("Protein already exists, protein skipped");
+                logger.Debug("Protein already exists, protein skipped");
             }
             else
             {
@@ -85,6 +94,14 @@ namespace MealTimeMS.Data.Graph
         public double getMass()
         {
             return mass;
+        }
+        public int getPeptideID()
+        {
+            return peptideID;
+        }
+        public List<String> getIntervalJsons()
+        {
+            return intervalJsons;
         }
 
         public Protein getProtein(String acc)
@@ -112,6 +129,7 @@ namespace MealTimeMS.Data.Graph
         public void setRetentionTime(RetentionTime _retentionTime)
         {
             retentionTime = _retentionTime;
+            updateIntervalJson(GlobalVar.ppmTolerance,GlobalVar.retentionTimeWindowSize, GlobalVar.IMWindowSize);
         }
 
         public RetentionTime getRetentionTime()

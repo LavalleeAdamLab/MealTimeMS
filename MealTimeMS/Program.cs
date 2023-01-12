@@ -25,6 +25,7 @@
 //for a real time test, use either 
 //IGNORE,DONTEVALUATE   or
 //IGNORE
+//For bruker, use BRUKERACQUISITIONSIMULATOR
 using System;
 using System.Globalization;
 using System.Threading;
@@ -38,10 +39,6 @@ using System.Collections.Generic;
 using CommandLine;
 using NLog;
 using System.IO;
-
-
-using DataType = Microsoft.Spark.Sql.Types.DataType;
-using DataTypes = Microsoft.Spark.Sql.Types;
 using MealTimeMS.ExclusionProfiles.MachineLearningGuided;
 namespace MealTimeMS
 {
@@ -53,6 +50,8 @@ namespace MealTimeMS
         static void Tester()
         {
             return;
+            AcquisitionSimulatorTester.DoJob();
+            //ExclusionMSTester.DoJob();
             //ProteinProphetResultTester.DoJob();
             //ProteinProphetResultTester.DoJob();
             //ConfidentProteinGroupData.DoJob();
@@ -62,10 +61,11 @@ namespace MealTimeMS
             String workDir = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace";
 			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(workDir) + "\\");
 			WriterClass.ExperimentOutputSetUp();
-            ProteinProphetResultTester.DoJob();
-            Program.ExitProgram(1);
-            String savedClassifierCoeff = IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel(@"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\Output\Training_test_id0.1xCorFilter\20200821K562300ng90min_1_Slot1-1_1_1638.d_extractedFeatures_positiveAndNonPositive.tsv", InputFileOrganizer.OutputFolderOfTheRun);
-            Program.ExitProgram(1);
+            //ProteinProphetResultTester.DoJob();
+            //Program.ExitProgram(1);
+            //String savedClassifierCoeff = IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel(@"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\Output\Training_test_id0.1xCorFilter\20200821K562300ng90min_1_Slot1-1_1_1638.d_extractedFeatures_positiveAndNonPositive.tsv", InputFileOrganizer.OutputFolderOfTheRun);
+            //Program.ExitProgram(1);
+            GlobalVar.exclusionMS_ip = "http://192.168.0.29";
             BrukerInstrumentConnection.PrintAllProlucidPSM(
                 "D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\20200821K562200ng90min_1_Slot1-1_1_1630.d",
                 "D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\20200821K562200ng90min_1_Slot1-1_1_1630.d\\20200821K562200ng90min_1_Slot1-1_1_1630_nopd.sqt");
@@ -243,11 +243,15 @@ namespace MealTimeMS
         {
             String kafka_url = String.Concat(brcOptions.kafka_ip , ":" , brcOptions.kafka_port);
             String schemaReg_url = String.Concat("http://" + brcOptions.schema_ip, ":", brcOptions.schema_port);
-            String exclusionMS_url = String.Concat(brcOptions.exclusionMS_ip, ":", brcOptions.exclusionMS_port);
+            String exclusionMS_url = String.Concat("http://"+brcOptions.exclusionMS_ip, ":", brcOptions.exclusionMS_port);
+            
             GlobalVar.kafka_url = kafka_url;
             GlobalVar.schemaRegistry_url = schemaReg_url;
             GlobalVar.exclusionMS_url = exclusionMS_url;
+            GlobalVar.exclusionMS_ip = "http://"+brcOptions.exclusionMS_ip;
+
             BrukerRuntimeCore.BrukerRuntimeCore_Main();
+            Program.ExitProgram(0);
         }
 
         static void HandleParseError(IEnumerable<Error> errs)

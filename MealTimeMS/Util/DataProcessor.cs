@@ -43,16 +43,8 @@ namespace MealTimeMS
         private static bool preExperimentSetupFinished = false;
         public static void StartProcessing(ExclusionProfile exclusionProfile)
         {
-			//log.Debug("Loading logistic regression model and creating exclusion profile");
-			//exclusionProfile = new MachineLearningGuidedExclusion(InputFileOrganizer.logisticRegressionClassifierSaveFile, ExclusionExplorer.database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
-			//exclusionProfile = new HeuristicExclusion(database,GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
-			//exclusionProfile = new RandomExclusion(InputFileOrganizer.logisticRegressionClassifierSaveFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
-
 			log.Debug("Initiating up DataProcessor Variables");
 			reset();
-			
-            //Console.ReadKey();
-
             preExperimentSetupFinished = true;
             while (running|| taskCounter > 0) //!parsedSpectra.IsEmpty
 			{
@@ -65,41 +57,14 @@ namespace MealTimeMS
 					double[] scanArrivalProcessedTime = { processedSpectra.getScanNum(), processedSpectra.getArrivalTime(), getCurrentMiliTime() };
 					scanArrivalAndProcessedTimeList.Add(scanArrivalProcessedTime);
                     Interlocked.Decrement(ref taskCounter);
-					//OnMS2Evaluated(processedSpectra.getScanNum(), analyzed); ;
-
                 }
             }
             log.Info("DataProcessor finished, processed {0} scans", scanIDCounter);
 			
         }
-
-		//private static Database databaseSetUp(String fasta_file_name)
-		//{
-		//    FastaFile f = Loader.parseFasta(fasta_file_name);
-		//    DigestedFastaFile df = PerformDigestion.performDigest(f, GlobalVar.NUM_MISSED_CLEAVAGES);
-
-		//    int numberOfProteinsInFasta = f.getAccessionToFullSequence().Count;
-		//    int numberOfPeptidesInDigestedFasta = df.getDigestedPeptideArray().Count;
-
-		//    log.Info("Fasta file: " + fasta_file_name);
-		//    log.Info("Num missed cleavages: " + GlobalVar.NUM_MISSED_CLEAVAGES);
-		//    log.Info("Number of proteins: " + numberOfProteinsInFasta);
-		//    log.Info("Number of peptides: " + numberOfPeptidesInDigestedFasta);
-
-		//    log.Debug("Constructing graph...");
-		//    Database g = new Database(f, df);
-		//    log.Debug(g);
-
-		//    return g;
-		//}
-
-		//static void OnMS2Evaluated(int scanNum, bool analyzed)
-		//{
-		//	MS2Evaluated args = new MS2Evaluated(scanNum,analyzed);
-		//	MS2EvaluatedEvent(null, args);
-		//}
-		static public List<double[]> spectraNotAdded;
+        static public List<double[]> spectraNotAdded;
 		static private bool ignore = false;
+
         //parses the IMsScan into a spectra object so IMSscan object can be released to free memory
         public static void ParseIMsScan(IMsScan arrivedScan)
         {
@@ -130,43 +95,6 @@ namespace MealTimeMS
 			Spectra spectra = IMsScanParser.Parse(arrivedScan, scanIDCounter, getCurrentMiliTime());
             parsedSpectra.Enqueue(spectra);
         }
-
-
-        private static void SetUp()
-        {
-   //         log.Debug("Setting up Database");
-   //         Database database = databaseSetUp(InputFileOrganizer.FASTA_FILE);
-   //         log.Debug("Done setting up database.");
-
-			//if (!GlobalVar.useIDXComputedFile)
-			//{
-			//	log.Debug("Generating decoy database for comet search validation");
-			//	String concacenatedDecoyDB = DecoyConcacenatedDatabaseGenerator.GenerateConcacenatedDecoyFasta(InputFileOrganizer.FASTA_FILE, InputFileOrganizer.OutputFolderOfTheRun);
-			//	log.Debug("Concacenated decoy database generated.");
-
-			//	log.Debug("Converting concacenated decoy database to idx file.");
-			//	String idxDB = CommandLineProcessingUtil.FastaToIDXConverter(concacenatedDecoyDB, InputFileOrganizer.OutputFolderOfTheRun);
-			//	InputFileOrganizer.IDXDataBase = idxDB;
-			//	log.Debug("idx Database generated");
-			//	GlobalVar.useIDXComputedFile = true;
-			//}
-
-			log.Debug("Loading logistic regression model and creating exclusion profile");
-            //exclusionProfile = new MachineLearningGuidedExclusion(InputFileOrganizer.logisticRegressionClassifierSaveFile, ExclusionExplorer.database , GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
-			//exclusionProfile = new HeuristicExclusion(database,GlobalVar.XCorr_Threshold, GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
-			//exclusionProfile = new RandomExclusion(InputFileOrganizer.logisticRegressionClassifierSaveFile, database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize);
-
-
-			log.Debug("Initiating up DataProcessor Variables");
-            taskCounter = 0;
-            parsedSpectra = new ConcurrentQueue<Spectra>();
-
-            scanIDCounter = 0;
-
-         
-
-        }
-
 
         public static void EndProcessing() {  running = false;  }
 

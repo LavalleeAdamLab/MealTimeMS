@@ -25,17 +25,19 @@ namespace MealTimeMS.RunTime
     class BrukerInstrumentConnection
     {
         static List<IDs> psmTracker;
-        const  double timeOutThresholdMiliseconds = 300000; //After receiving the acquisition-stopped signal from the paser_control kafka topic, will wait for this amount of miliseconds to elapse after the last message is consumed by psm or ms2 thread before stopping the psm/ms2 consuming thread
-        static ConcurrentDictionary<int , bool> includedScanNum;
-        static int psmReceived=1; //will be updated to 1 everytime the prolucid processing thread receives a psm. Used for the timer in the paserControl thread 
+        const double timeOutThresholdMiliseconds = 10000; //After receiving the acquisition-stopped signal from the paser_control kafka topic, will wait for this amount of miliseconds to elapse after the last message is consumed by psm or ms2 thread before stopping the psm/ms2 consuming thread
+        static int psmReceived = 1; //will be updated to 1 everytime the prolucid processing thread receives a psm. Used for the timer in the paserControl thread 
 
-        public static void Connect(ExclusionProfile exclusionProfile, String brukerDotDFolder, String sqtFile, BrukerConnectionEnum connectionMode, bool runWithoutExclusionProfile = false)
+        public static void ConnectRealTime(ExclusionProfile exclusionProfile)
         {
-            //string bootstrapServers = args[0];
-            //string schemaRegistryUrl = args[1];
-            //string topicName = args[2];
+            Connect(exclusionProfile, "", "", BrukerConnectionEnum.ProLucidConnectionOnly, false, false, _group_id: "MealTime-MS-Consumer");
+        }
+
+        public static void Connect(ExclusionProfile exclusionProfile, String brukerDotDFolder, String sqtFile,
+            BrukerConnectionEnum connectionMode, bool runWithoutExclusionProfile = false, bool startAcquisitionSimulator = true, string _group_id = "MealTime-MS-Consumer-Group")
+        {
             string bootstrapServers = GlobalVar.kafka_url;
-            string schemaRegistryUrl =GlobalVar.schemaRegistry_url;
+            string schemaRegistryUrl = GlobalVar.schemaRegistry_url;
             string topicName = "psm_prolucid";
 
             var producerConfig = new ProducerConfig
@@ -51,9 +53,9 @@ namespace MealTimeMS.RunTime
             var consumerConfig = new ConsumerConfig
             {
                 BootstrapServers = bootstrapServers,
-                GroupId = "MealTime-MS-Consumer-Group",
+                GroupId = _group_id,
                 AutoOffsetReset = AutoOffsetReset.Latest,
-              
+
             };
 
             var avroSerializerConfig = new AvroSerializerConfig
@@ -64,10 +66,12 @@ namespace MealTimeMS.RunTime
 
             int counter_psm = 0;
             int counter_ms2 = 0;
-            includedScanNum = new ConcurrentDictionary<int , bool>();
-
             CancellationTokenSource cts = new CancellationTokenSource();
-            CancellationTokenSource cts_paserControl = new CancellationTokenSource();
+            Task BrukerInputProcessorThread;
+            if (runWithoutExclusionProfile == false && connectionMode == BrukerConnectionEnum.ProLucidConnectionOnly)
+            {
+                BrukerInputProcessorThread = Task.Run(() => BrukerInputScheduler.StartProcessing(exclusionProfile, cts.Token));
+            }
             var consumeTask_paserControl = Task.Run(() =>
             {
                 using (var schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryConfig))
@@ -78,6 +82,7 @@ namespace MealTimeMS.RunTime
                         .Build())
                 {
                     consumer.Subscribe("paser_control");
+                    ResetConsumerOffset(consumer);
                     Console.WriteLine("Consumer connecting to kafka broker, topic: paser_control");
                     try
                     {
@@ -86,8 +91,9 @@ namespace MealTimeMS.RunTime
                             try
                             {
                                 var consumeResult = consumer.Consume(cts.Token);
+                               
                                 var paserControlMessage = consumeResult.Message.Value;
-                                if(paserControlMessage.control_type == 0)
+                                if (paserControlMessage.control_type == 0)
                                 {
                                     Console.WriteLine("End-of-acquisition message received from Paser-control. Stopping Mealtime-MS if no psm is received in 30 seconds");
                                     Interlocked.Exchange(ref psmReceived, 0);
@@ -127,7 +133,7 @@ namespace MealTimeMS.RunTime
                     }
                 }
             });
-            if(connectionMode == BrukerConnectionEnum.ProLucidConnectionOnly)
+            if (connectionMode == BrukerConnectionEnum.ProLucidConnectionOnly)
             {
                 var consumeTask_Prolucid = Task.Run(() =>
             {
@@ -139,21 +145,11 @@ namespace MealTimeMS.RunTime
                         .Build())
                 {
                     consumer.Subscribe(topicName);
-                    Thread.Sleep(3000);
-                    var tp = consumer.Assignment;
-                    tp= consumer.Assignment;
-                    var tpOffset = tp.Select(c => new TopicPartitionOffset(c, new Offset(
-                        consumer.GetWatermarkOffsets(c).High.Value + 1))).ToList();
-                        
-                    //var tpOffset = tp.Select(c => new TopicPartitionOffset(c, Offset.End+1));
-                    consumer.Assign(tpOffset );
-                    Thread.Sleep(3000);
-                    Console.WriteLine("Consumer connecting to kafka broker, topic {0}",topicName);
-                    Console.WriteLine("Invoking command line util to start acquisition simulator");
-                    CommandLineProcessingUtil.RunBrukerAcquisitionSimulator(brukerDotDFolder, sqtFile );
+                    ResetConsumerOffset(consumer);
+                    Console.WriteLine("Consumer connecting to kafka broker, topic {0}", topicName);
                     try
                     {
-                        
+
                         while (true)
                         {
                             try
@@ -167,31 +163,13 @@ namespace MealTimeMS.RunTime
                                     $"parent_id: {psm.parent_id}");
                                     Console.WriteLine("Offset {0}", consumeResult.Offset);
                                 }
-                                
-                               
-                                bool scanIncluded = false;
-                                //while (true)
-                                //{
-                                //    if ( includedScanNum.TryGetValue((psm.ms2_id), out scanIncluded))
-                                //    {
-                                //        //if this ms2 scan is  processed 
-                                //        break;
-                                //    }
-                                //}
-                                //if (!scanIncluded)
-                                //{
-                                //    continue;
-                                //}
-                                
-
                                 IDs id = IDs.getIDsFromPSMProlucid(psm);// maybe will need to change the rt unit to min
-                                
                                 counter_psm++;
                                 psmReceived = 1;
                                 if (!runWithoutExclusionProfile)
                                 {
-                                    
-                                    exclusionProfile.evaluateIdentificationAndUpdateCurrentTime(id);
+                                    BrukerInputScheduler.EnqueueProlucidPSM(id);
+                                    // exclusionProfile.evaluateIdentificationAndUpdateCurrentTime(id);
                                 }
                                 else
                                 {
@@ -199,8 +177,8 @@ namespace MealTimeMS.RunTime
                                     {
                                         //psmTracker.Add(id);
                                         sw.WriteLine(String.Join(separator: "\t",
-                                          id.getScanNum(), id.getPeptideSequence(), id.getPeptideSequence_withModification(),id.getScanTime(),
-                                          id.getPeptideMass(), id.getXCorr(), id.getDeltaCN(), 
+                                          id.getScanNum(), id.getPeptideSequence(), id.getPeptideSequence_withModification(), id.getScanTime(),
+                                          id.getPeptideMass(), id.getXCorr(), id.getDeltaCN(),
                                           id.getParentProteinAccessionsAsString()));
                                     }
                                 }
@@ -218,7 +196,7 @@ namespace MealTimeMS.RunTime
                     }
                 }
             });
-                consumeTask_Prolucid.Wait(600000000);
+
             }
             if (connectionMode == BrukerConnectionEnum.MS2ConnectionOnly)
             {
@@ -233,18 +211,8 @@ namespace MealTimeMS.RunTime
                         .Build())
                 {
                     consumer.Subscribe(ms2TopicName);
-                    Thread.Sleep(2000);
-                    var tp = consumer.Assignment;
-                    tp = consumer.Assignment;
-                    var tpOffset = tp.Select(c => new TopicPartitionOffset(c, new Offset(
-                        consumer.GetWatermarkOffsets(c).High.Value))).ToList();
-
-                    //var tpOffset = tp.Select(c => new TopicPartitionOffset(c, Offset.End+1));
-                    consumer.Assign(tpOffset);
-                    Thread.Sleep(2000);
+                    ResetConsumerOffset(consumer);
                     Console.WriteLine("Consumer connecting to kafka broker, topic {0}", ms2TopicName);
-                    Console.WriteLine("Invoking command line util to start acquisition simulator");
-                    CommandLineProcessingUtil.RunBrukerAcquisitionSimulator(brukerDotDFolder, sqtFile);
 
                     try
                     {
@@ -256,10 +224,10 @@ namespace MealTimeMS.RunTime
                                 var spectra = consumeResult.Message.Value;
                                 psmReceived = 1;
                                 counter_ms2++;
-                                if(counter_ms2% GlobalVar.ScansPerOutput == 0)
+                                if (counter_ms2 % GlobalVar.ScansPerOutput == 0)
                                 {
                                     Console.WriteLine($"key: {consumeResult.Message.Key}, ms2- ms2_id: {spectra.ms2_id}, rt_sec: {spectra.rt}, " +
-                                    $"charge: {spectra.charge}, " + 
+                                    $"charge: {spectra.charge}, " +
                                     $"parent_id: {spectra.parent_id}");
                                 }
                                 if (!runWithoutExclusionProfile)
@@ -271,7 +239,7 @@ namespace MealTimeMS.RunTime
                                 }
                                 else
                                 {
-                                    
+
                                 }
                             }
                             catch (ConsumeException e)
@@ -282,22 +250,25 @@ namespace MealTimeMS.RunTime
                     }
                     catch (OperationCanceledException)
                     {
-                        Console.WriteLine("Operation cancelled - kafka - {0} consumption",ms2TopicName);
+                        Console.WriteLine("Operation cancelled - kafka - {0} consumption", ms2TopicName);
                         consumer.Close();
                     }
                 }
             });
-                consumeTask_ms2.Wait(600000000);
+
             }
-
+            if (startAcquisitionSimulator)
+            {
+                CommandLineProcessingUtil.RunBrukerAcquisitionSimulator(brukerDotDFolder, sqtFile, GlobalVar.exclusionMS_ip);
+            }
+            
             consumeTask_paserControl.Wait(600000000);
-
+            //consumeTask_Prolucid.Wait(600000000);
+            //consumeTask_ms2.Wait(600000000);
             cts.Cancel();
+            Thread.Sleep(1500);
             Console.WriteLine("Operation finished");
             Console.WriteLine("Received total {0} psms and {1} ms2", counter_psm, counter_ms2);
-            int numScanIncluded = includedScanNum.Values.Where(x => x==true).Count();
-            int numScanExcluded = includedScanNum.Values.Where(x => x==false).Count();
-            Console.WriteLine("Scan included {0} and excluded {1}", numScanIncluded, numScanExcluded);
             //using (var schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryConfig))
             //using (var producer =
             //    new ProducerBuilder<string, User>(producerConfig)
@@ -335,6 +306,37 @@ namespace MealTimeMS.RunTime
 
         }
 
+        private static void ResetConsumerOffset(IConsumer<string, PsmProlucid> consumer)
+        {
+            Thread.Sleep(2000);
+            var tp = consumer.Assignment;
+            tp = consumer.Assignment;
+            var tpOffset = tp.Select(c => new TopicPartitionOffset(c, new Offset(
+                consumer.QueryWatermarkOffsets(c, TimeSpan.FromSeconds(10)).High.Value + 1))).ToList();
+            consumer.Assign(tpOffset);
+            Thread.Sleep(2000);
+        }
+        private static void ResetConsumerOffset(IConsumer<string, ProducerState> consumer)
+        {
+            Thread.Sleep(2000);
+            var tp = consumer.Assignment;
+            tp = consumer.Assignment;
+            var tpOffset = tp.Select(c => new TopicPartitionOffset(c, new Offset(
+                consumer.QueryWatermarkOffsets(c, TimeSpan.FromSeconds(10)).High.Value + 1))).ToList();
+            consumer.Assign(tpOffset);
+            Thread.Sleep(2000);
+        }
+        private static void ResetConsumerOffset(IConsumer<string, PasefMs2Spectrum> consumer)
+        {
+            Thread.Sleep(2000);
+            var tp = consumer.Assignment;
+            tp = consumer.Assignment;
+            var tpOffset = tp.Select(c => new TopicPartitionOffset(c, new Offset(
+                consumer.QueryWatermarkOffsets(c, TimeSpan.FromSeconds(10)).High.Value + 1))).ToList();
+            consumer.Assign(tpOffset);
+            Thread.Sleep(2000);
+        }
+
 
         //a unit test function that connects to Kafka broker and prints all psms to a file
         //NoExclusion.RecordSpecInfo() does something similar to this function 
@@ -343,9 +345,9 @@ namespace MealTimeMS.RunTime
         {
             psmTracker = new List<IDs>();
             sw = new StreamWriter(
-                Path.Combine(InputFileOrganizer.OutputFolderOfTheRun,"ProlucidPSMs.tsv"));
-            sw.WriteLine(String.Join(separator: "\t","ms2_id", "peptide_stripped","peptide_modified", "rt(sec)","calc_mass","xcorr","dCN","accessions"));
-            Connect(null, brukerDotDFolder, sqtFile, BrukerConnectionEnum.ProLucidConnectionOnly, true);
+                Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "ProlucidPSMs.tsv"));
+            sw.WriteLine(String.Join(separator: "\t", "ms2_id", "peptide_stripped", "peptide_modified", "rt(sec)", "calc_mass", "xcorr", "dCN", "accessions"));
+            Connect(null, brukerDotDFolder, sqtFile, BrukerConnectionEnum.ProLucidConnectionOnly, true, _group_id: "MealTime-MS-Consumer");
             sw.Close();
         }
 
@@ -360,5 +362,5 @@ namespace MealTimeMS.RunTime
 
     }
 
-    
+
 }

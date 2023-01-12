@@ -10,83 +10,82 @@ using MealTimeMS.IO;
 
 namespace MealTimeMS.ExclusionProfiles.Heuristic
 {
-	public class HeuristicExclusion : ExclusionProfile
-	{
-		static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
+    public class HeuristicExclusion : ExclusionProfile
+    {
+        static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
-	// Thresholds for exclusion
-	private double xCorrThreshold;
-	private int numDBThreshold;
+        // Thresholds for exclusion
+        private double xCorrThreshold;
+        private int numDBThreshold;
 
-	public HeuristicExclusion(Database _database, double _xCorrThreshold,
-			double _ppmTolerance, int _numDBThreshold, double _retentionTimeWindowSize): this(_database, _xCorrThreshold, _ppmTolerance, _numDBThreshold)
-		{
-		
-		setRetentionTimeWindow(_retentionTimeWindowSize);
-	}
+        public HeuristicExclusion(Database _database, double _xCorrThreshold,
+                double _ppmTolerance, int _numDBThreshold, double _retentionTimeWindowSize) : this(_database, _xCorrThreshold, _ppmTolerance, _numDBThreshold)
+        {
 
-	public HeuristicExclusion(Database _database, double _xCorrThreshold,
-			double _ppmTolerance, int _numDBThreshold):base(_database, _ppmTolerance)
-	{
-		
-		xCorrThreshold = _xCorrThreshold;
-		numDBThreshold = _numDBThreshold;
-	}
+            setRetentionTimeWindow(_retentionTimeWindowSize);
+        }
 
-	public double getXCorrThreshold()
-	{
-		return xCorrThreshold;
-	}
+        public HeuristicExclusion(Database _database, double _xCorrThreshold,
+                double _ppmTolerance, int _numDBThreshold) : base(_database, _ppmTolerance)
+        {
 
-	public double getNumDBThreshold()
-	{
-		return numDBThreshold;
-	}
+            xCorrThreshold = _xCorrThreshold;
+            numDBThreshold = _numDBThreshold;
+        }
 
-	public void setXCorrThreshold(double _xCorrThreshold)
-	{
-		xCorrThreshold = _xCorrThreshold;
-	}
+        public double getXCorrThreshold()
+        {
+            return xCorrThreshold;
+        }
 
-	public void setNumDBThreshold(int _numDBThreshold)
-	{
-		numDBThreshold = _numDBThreshold;
-	}
+        public double getNumDBThreshold()
+        {
+            return numDBThreshold;
+        }
 
-	override
-	protected void evaluateIdentification(IDs id)
-	{
+        public void setXCorrThreshold(double _xCorrThreshold)
+        {
+            xCorrThreshold = _xCorrThreshold;
+        }
 
-		// check if the peptide is identified or not
-		if (id == null)
-		{
-			performanceEvaluator.countMS2UnidentifiedAnalyzed();
-			return;
-		}
+        public void setNumDBThreshold(int _numDBThreshold)
+        {
+            numDBThreshold = _numDBThreshold;
+        }
 
-		Peptide pep = getPeptideFromIdentification(id); // if it was going to be null, it already returned
-                                                        // is fragmented
+        override
+        protected void evaluateIdentification(IDs id)
+        {
+
+            // check if the peptide is identified or not
+            if (id == null)
+            {
+                performanceEvaluator.countMS2UnidentifiedAnalyzed();
+                return;
+            }
+
+            Peptide pep = getPeptideFromIdentification(id); // if it was going to be null, it already returned
             if (pep == null)
             {
                 return;
             }
 
-		// add decoy or non-existent protein connections
-		// database.addProteinFromIdentification(pep, id.getParentProteinAccessions());
+            // add decoy or non-existent protein connections
+            // database.addProteinFromIdentification(pep, id.getParentProteinAccessions());
 
-		Double xCorr = id.getXCorr();
-		Double dCN = id.getDeltaCN();
-		pep.addScore(xCorr, xCorrThreshold, dCN); // updates the peptide score and numDB for each parent protein of the peptide
-		performanceEvaluator.evaluateAnalysis(exclusionList, pep);
+            Double xCorr = id.getXCorr();
+            Double dCN = id.getDeltaCN();
+            pep.addScore(xCorr, xCorrThreshold, dCN); // updates the peptide score and numDB for each parent protein of the peptide
+            performanceEvaluator.evaluateAnalysis(exclusionList, pep);
 
-		// add the peptide to the exclusion list if it is over the xCorr threshold
-		if ((xCorr > 2.5))
-		{
-			
-			// calibrates our retention time alignment if the observed time is different
-			// from the predicted only if it passes this threshold
-			calibrateRetentionTime(pep);
-            exclusionList.addPeptide(pep);
+            // add the peptide to the exclusion list if it is over the xCorr threshold
+            if ((xCorr > 2.5))
+            {
+
+                // calibrates our retention time alignment if the observed time is different
+                // from the predicted only if it passes this threshold
+                calibrateRetentionTime(pep);
+                exclusionList.addObservedPeptide(pep);
                 log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
                 performanceEvaluator.countPeptidesExcluded();
 
@@ -97,39 +96,39 @@ namespace MealTimeMS.ExclusionProfiles.Heuristic
             // threshold is passed
             List<Protein> proteinsToExclude = new List<Protein>();
             foreach (Protein parentProtein in pep.getProteins())
-		    {
-			    if ((parentProtein.getNumDB() >= numDBThreshold) && (!parentProtein.IsExcluded()))
-			    {
-				    parentProtein.setExcluded(true);
-				    log.Debug("Parent protein " + parentProtein.getAccession() + " is identified confidently "
-				     + parentProtein.getNumDB() + " times!");
-				    performanceEvaluator.countProteinsExcluded();
+            {
+                if ((parentProtein.getNumDB() >= numDBThreshold) && (!parentProtein.IsExcluded()))
+                {
+                    parentProtein.setExcluded(true);
+                    log.Debug("Parent protein " + parentProtein.getAccession() + " is identified confidently "
+                     + parentProtein.getNumDB() + " times!");
+                    performanceEvaluator.countProteinsExcluded();
 #if TRACKEXCLUSIONLISTOPERATION
                      exclusionList.addProtein(parentProtein, id.getScanNum());
 #else
                     proteinsToExclude.Add(parentProtein);
 #endif
                 }
-			    log.Debug(parentProtein);
-		    }
+                log.Debug(parentProtein);
+            }
             exclusionList.addProteins(proteinsToExclude);
-		    log.Debug(pep);
+            log.Debug(pep);
 
-	}
+        }
 
-	override
-	public String ToString()
-	{
-		double retentionTimeWindow = database.getRetentionTimeWindow();
-		double ppmTolerance = exclusionList.getPPMTolerance();
-		return "HeuristicExclusion[" + "RT_window: " + retentionTimeWindow + ";ppmTolerance: " + ppmTolerance
-				+ ";xCorrThreshold: " + xCorrThreshold + ";numDBThreshold: " + numDBThreshold + "]";
-	}
+        override
+        public String ToString()
+        {
+            double retentionTimeWindow = database.getRetentionTimeWindow();
+            double ppmTolerance = exclusionList.getPPMTolerance();
+            return "HeuristicExclusion[" + "RT_window: " + retentionTimeWindow + ";ppmTolerance: " + ppmTolerance
+                    + ";xCorrThreshold: " + xCorrThreshold + ";numDBThreshold: " + numDBThreshold + "]";
+        }
 
-	override
-	public ExclusionProfileEnum getAnalysisType()
-	{
-		return ExclusionProfileEnum.HEURISTIC_EXCLUSION_PROFILE;
-	}
-}
+        override
+        public ExclusionProfileEnum getAnalysisType()
+        {
+            return ExclusionProfileEnum.HEURISTIC_EXCLUSION_PROFILE;
+        }
+    }
 }

@@ -149,16 +149,16 @@ namespace MealTimeMS.ExclusionProfiles.MachineLearningGuided
 			{
 				performanceEvaluator.countPeptidesExcluded();
 				log.Debug("xCorrThreshold passed. Peptide added to the exclusion list.");
-				exclusionList.addPeptide(pep);
 				// calibrates our retention time alignment if the observed time is different
 				// from the predicted only if it passes this threshold
 				calibrateRetentionTime(pep);
-			}
+                exclusionList.addObservedPeptide(pep);
+            }
 
-			// Add all the peptides corresponding to the parent protein, if the parent
-			// protein is deemed confidently identified by the logisitc regression
-			// classifier
-			Dictionary<String, Boolean> identificationPredictions = IdentificationFeatureExtractionUtil
+            // Add all the peptides corresponding to the parent protein, if the parent
+            // protein is deemed confidently identified by the logisitc regression
+            // classifier
+            Dictionary<String, Boolean> identificationPredictions = IdentificationFeatureExtractionUtil
 					.assessProteinIdentificationConfidence(pep.getProteins(), lrAccord);
 
 			List<Protein> proteinsToExclude = new List<Protein>();

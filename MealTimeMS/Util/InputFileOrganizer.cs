@@ -48,14 +48,14 @@ namespace MealTimeMS.Util
 		public static String ProteinProphet = TPPBinFolder + "ProteinProphet.exe";
 
 		//pre computed files
-		public static String RTCalcResult;
-		public static String ChainSawResult;
-		public static String OriginalCometOutput;
-		public static String OriginalProtXMLFile;
-		public static String DecoyFasta;
-		public static String IDXDataBase;
-		public static String MeasuredPeptideRetentionTime;
-        public static String PredictedIonMobility;
+		public static String RTCalcResult = "";
+		public static String ChainSawResult = "";
+		public static String OriginalCometOutput = "";
+		public static String OriginalProtXMLFile = "";
+		public static String DecoyFasta = "";
+		public static String IDXDataBase = "";
+		public static String MeasuredPeptideRetentionTime="";
+        public static String PredictedIonMobility = "";
 
         //suffixes
         public static String PepXMLSuffix = ".pep.xml";

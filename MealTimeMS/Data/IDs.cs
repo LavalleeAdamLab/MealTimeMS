@@ -86,7 +86,7 @@ namespace MealTimeMS.Data
             var accessions = psm.candidates[0].locus.Select(c => c.locus_name);
             HashSet<String> parentProteins = new HashSet<String>(accessions);
            
-            IDs id = new IDs(psm.rt, psm.ms2_id, candidate.stripped_peptide, 
+            IDs id = new IDs(psm.rt/60.0, psm.ms2_id, candidate.stripped_peptide, 
                 candidate.calc_mass,candidate.Xcorr, dCN, parentProteins);
             List<String> peptideSeq = candidate.stripped_peptide.ToCharArray().Select(x=>x.ToString()).ToList(); 
             List<String> ptms = candidate.ptms.ToList();

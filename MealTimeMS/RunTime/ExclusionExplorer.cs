@@ -196,7 +196,7 @@ namespace MealTimeMS.RunTime
             new QuickDDAInstrumentSimulation(e, ms2SpectraList);
 #else
             //new DataReceiverSimulation().DoJob(e.exclusionProfile, ms2SpectraList);
-            BrukerInstrumentConnection.Connect(e.exclusionProfile, InputFileOrganizer.BrukerdotDFolder,InputFileOrganizer.ProlucidSQTFile, BrukerInstrumentConnection.BrukerConnectionEnum.MS2ConnectionOnly);
+            BrukerInstrumentConnection.Connect(e.exclusionProfile, InputFileOrganizer.BrukerdotDFolder, InputFileOrganizer.ProlucidSQTFile, BrukerInstrumentConnection.BrukerConnectionEnum.MS2ConnectionOnly);
 #endif
 #if TRACKEXCLUSIONLISTOPERATION
             e.exclusionProfile.getExclusionList().EndExclusionListOperationSW();
@@ -224,7 +224,7 @@ namespace MealTimeMS.RunTime
 #endif
 
             //CometSingleSearchTester.TestSearch();
-            if (GlobalVar.IsSimulation&!GlobalVar.isSimulationForFeatureExtraction)
+            if (GlobalVar.IsSimulation & !GlobalVar.isSimulationForFeatureExtraction)
             //if(false)
             {
 
@@ -238,14 +238,15 @@ namespace MealTimeMS.RunTime
                 ms2SpectraList = null;
                 GC.Collect();
                 FullPepXMLAndProteinProphetSetup();
-            }else if (GlobalVar.isSimulationForFeatureExtraction)
+            }
+            else if (GlobalVar.isSimulationForFeatureExtraction)
             {
                 FullPepXMLAndProteinProphetSetup();
             }
             log.Debug("Setting up Database");
             database = databaseSetUp(InputFileOrganizer.ExclusionDBFasta);
             if (!GlobalVar.isSimulationForFeatureExtraction)
-            { 
+            {
                 log.Debug("Done setting up database.");
                 CometSingleSearch.InitializeComet(InputFileOrganizer.IDXDataBase, InputFileOrganizer.CometParamsFile);
             }
@@ -300,7 +301,7 @@ namespace MealTimeMS.RunTime
             }
         }
 
-        private static Database databaseSetUp(String fasta_file_name)
+        public static Database databaseSetUp(String fasta_file_name)
         {
             FastaFile f = Loader.parseFasta(fasta_file_name);
             DigestedFastaFile df = PerformDigestion.performDigest(f, GlobalVar.NUM_MISSED_CLEAVAGES);
@@ -318,7 +319,7 @@ namespace MealTimeMS.RunTime
 #if EXTRACT_SPECTRAL_COUNT
             GlobalVar.useRT = false;
 #endif
-            if (GlobalVar.isSimulationForFeatureExtraction == true || !GlobalVar.useRT)//TODO Change
+            if (GlobalVar.isSimulationForFeatureExtraction == true )//TODO Change
             {
                 g = new Database(f, df, true, false);
             }
@@ -398,7 +399,7 @@ namespace MealTimeMS.RunTime
             ExtractNumberOfPeptidePerIdentifiedProtein.DoJob(e.ppr, e.exclusionProfile, e.experimentNumber);
         }
 
-        private static void WriteUsedSpectra(Experiment e)
+        public static void WriteUsedSpectra(Experiment e)
         {
             String usedSpectraOutputFolder = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "AnalyzedSpectra");
             if (!Directory.Exists(usedSpectraOutputFolder))

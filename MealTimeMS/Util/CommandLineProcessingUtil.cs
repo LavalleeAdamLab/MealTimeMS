@@ -95,18 +95,20 @@ namespace MealTimeMS.Util
 			return targetOutputDirectory;
 		}
 
-        public static void RunBrukerAcquisitionSimulator(String BrukerDotDFolder, String sqtFile)
+        public static void RunBrukerAcquisitionSimulator(String BrukerDotDFolder, String sqtFile, String exclusionMS_ip)
         {
-
+            Console.WriteLine("Invoking command line util to start acquisition simulator");
             //String command = "python -m bdal.paser.acquisitionsimulator -q --ip 127.0.0.1 --pid -1 --wid -1 --no_ms1 -d 30 -l 3 -r 0 --kafka-port 9092 --schema-port 8083 --sqt_file D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\200ngHeLaPASEF_2min.d\\200ngHeLaPASEF_2min_PaSER2023.sqt --input D:\\CodingLavaleeAdamCDriveBackup\\APIO\\APIO_testData\\200ngHeLaPASEF_2min.d";
             String command = String.Format("python -m bdal.paser.acquisitionsimulator -q --ip 127.0.0.1 " +
                 "--pid -1 --wid -1 --no_ms1 -d 15 -l 3 -r 0 --kafka-port 9092 --schema-port 8083 " +
-                "--sqt_file {0} --input {1}", sqtFile, BrukerDotDFolder);
+                "--sqt_file {0} --input {1} --exclusion-api-ip {2} --exclusion-api-port 8000",
+                sqtFile, BrukerDotDFolder, exclusionMS_ip);
             var runBrukerAcquisitionSimulatorSThread = Task.Run(() =>
             {
                 Console.WriteLine("Run acquisition simulator");
                 ExecuteShellCommand.executeCommand(command);
             });
+
         }
 
 	}

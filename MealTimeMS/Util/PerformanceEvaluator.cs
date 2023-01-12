@@ -85,6 +85,7 @@ namespace MealTimeMS.Util
          */
         public void evaluateExclusion(ExclusionList exclusionList, Peptide p)
         {
+            return;
             if (exclusionList is SimplifiedExclusionList_Key)
             {
                 return;
@@ -147,6 +148,7 @@ namespace MealTimeMS.Util
     
         public void evaluateAnalysis(ExclusionList exclusionList, Peptide p)
         {
+            return;
             log.Debug("Evaluating peptide analysis...");
 #if WRITE_RT_TIME
             WriteRetention(String.Format("AN\t{0}\t{1}",exclusionList.getCurrentTime(),p.getRetentionTime().getRetentionTimeStart()));

@@ -8,7 +8,7 @@ using MealTimeMS.Data;
 using MealTimeMS.Data.Graph;
 using MealTimeMS.Util;
 
-namespace MealTimeMS.ExclusionProfiles.TestProfile
+namespace MealTimeMS.ExclusionProfiles
 {
     public class SequenceExclusionList:ExclusionList
     {

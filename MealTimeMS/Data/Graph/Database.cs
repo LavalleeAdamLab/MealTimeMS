@@ -62,7 +62,7 @@ public class Database
         private void addPeptides(List<DigestedPeptide> digestedPeptideArray)
         {
             log.Debug("Adding peptides...");
-            int counter = 0;
+            int peptideID = 0;
             foreach (DigestedPeptide dp in digestedPeptideArray)
             {
                 //if(counter % 100000 == 0)
@@ -93,7 +93,8 @@ public class Database
                         peptideMass = carbamidoModificationMass(peptideSequence, peptideMass);
                     }
 
-                    pep = new Peptide(peptideSequence, peptideMass, true);
+                    pep = new Peptide(peptideSequence, peptideMass, true, peptideID);
+                    peptideID++;
                     SequenceToPeptide.Add(peptideSequence, pep);
                     peptides.Add(pep);
                 }
@@ -222,16 +223,14 @@ public class Database
             else
             {
                 // Adds the peptide from the identification into the database
-                pep = new Peptide(peptideSequence, peptideMass, false);
+                pep = new Peptide(peptideSequence, peptideMass, false, -1);
                 // these peptides will be removed if reset() is called
                 SequenceToPeptide.Add(peptideSequence, pep);
                 peptides.Add(pep);
 
                 if (includeRetentionTime)
                 {
-                    // TODO right now this takes the current time as the peak retention time...
-                    // should we run it through RTCalc so we can better estimate our RT alignment?
-                    // 2019-04-29 No, do not. Observed times are better than predicted
+                    //  Observed times are better than predicted
                     // pep.setRetentionTime(RetentionTimeUtil.convertDoubleToRetentionTime(rt,
                     // retentionTimeWindow,
                     // retentionTimeWindow));

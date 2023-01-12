@@ -17,6 +17,7 @@ namespace MealTimeMS.Util
         public static bool IsSimulation = true;         //is this a simulation or if we're actually connecting this to a mass spec
 
 		public static bool isSimulationForFeatureExtraction = false;
+		public static bool isForBrukerRunTime = false;
 
 		public static double amountPerturbationAroundMeasuredRetentionTimeInSeconds = 0.0;
 
@@ -63,11 +64,11 @@ namespace MealTimeMS.Util
         //Connection var
         public static String kafka_url = "localhost:9092";
         public static String schemaRegistry_url = "http://localhost:8083";
-        public static String exclusionMS_url; // url of the exclusionMS webserver
+        public static String exclusionMS_url = "http://192.168.0.29:8000"; // url of the exclusionMS webserver (url+ port number)
+        public static String exclusionMS_ip = "http://192.168.0.29"; // ip of the exclusionMS webserver
 
         //temp variables
         public static int randomRepeatsPerExperiment = 3;
-        public static bool useRT = true;
         public static Dictionary<int, int> TIMSTOF_Precursor_ID_to_ms2_id = null;
         public static Dictionary<int, double> CheatingMonoPrecursorMassTable = null;
         //ExclusionExplorerParamsList

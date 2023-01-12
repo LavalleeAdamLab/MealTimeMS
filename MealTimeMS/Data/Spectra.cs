@@ -97,7 +97,9 @@ namespace MealTimeMS.Data
         public static Spectra GetSpectraFromPasefMs2Spectrum(com.bruker.paser.avro.PasefMs2Spectrum pSpec)
         {
 #if BRUKERACQUISITIONSIMULATOR
-            pSpec.ms2_id = GlobalVar.TIMSTOF_Precursor_ID_to_ms2_id[pSpec.ms2_id];
+            if(GlobalVar.TIMSTOF_Precursor_ID_to_ms2_id!=null){
+                pSpec.ms2_id = GlobalVar.TIMSTOF_Precursor_ID_to_ms2_id[pSpec.ms2_id];
+            }
 #endif
             double rt_min = pSpec.rt / 60.0;
             var spec = new Spectra(-1, pSpec.ms2_id, 2, pSpec.intensity_data.Length, null, null,
