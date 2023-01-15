@@ -32,9 +32,12 @@ namespace MealTimeMS.RunTime
             }
             PopulateHardCodedContentFilePaths();
             SetUpExperimentParameters();
+            //RunResultTracker();
+            //return;
             ExclusionProfile exclusionProfile = PreexperimentSetup();
             RunExperimentOrSimulation(isSimulation, exclusionProfile);
         }
+
         private static void RunExperimentOrSimulation(bool isSimulation, ExclusionProfile exclusionProfile)
         {
             if (isSimulation)

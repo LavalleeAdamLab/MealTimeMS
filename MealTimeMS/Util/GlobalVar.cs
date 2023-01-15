@@ -33,7 +33,7 @@ namespace MealTimeMS.Util
 		//public static double AminoAcid_M_modifiedMass = 15.9949;
 
 		//Experiment Params
-		public static int ScansPerOutput = 1000;
+		public static int ScansPerOutput = 500;
         public static bool SeeExclusionFormat = false;
         public static bool SetExclusionTable = false;
         public static int NUM_MISSED_CLEAVAGES = 1;

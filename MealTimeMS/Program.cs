@@ -50,7 +50,7 @@ namespace MealTimeMS
         static void Tester()
         {
            
-            BrukerInstrumentConnection.TestConnection();
+            //BrukerInstrumentConnection.TestConnection();
             return;
             //AcquisitionSimulatorTester.DoJob();
             //ExclusionMSTester.DoJob();
@@ -251,7 +251,7 @@ namespace MealTimeMS
             GlobalVar.schemaRegistry_url = schemaReg_url;
             GlobalVar.exclusionMS_url = exclusionMS_url;
             GlobalVar.exclusionMS_ip = "http://"+brcOptions.exclusionMS_ip;
-
+            //BrukerInstrumentConnection.TestConnection();
             BrukerRuntimeCore.BrukerRuntimeCore_Main();
             Program.ExitProgram(0);
         }

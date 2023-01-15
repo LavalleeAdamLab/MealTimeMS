@@ -173,7 +173,7 @@ namespace MealTimeMS.RunTime
                                 }
                                 else
                                 {
-                                    if (id != null)
+                                        if (false) // id != null)
                                     {
                                         //psmTracker.Add(id);
                                         sw.WriteLine(String.Join(separator: "\t",
@@ -355,14 +355,15 @@ namespace MealTimeMS.RunTime
             //String libraryPath = Path.Combine(InputFileOrganizer.AssemblyDirectory, "librdkafka\\x64\\librdkafka.dll");
             //String libraryPath = Path.Combine(InputFileOrganizer.AssemblyDirectory, "EmbeddedDataFiles/librdkafka.dll");
             //Console.WriteLine(libraryPath);
-            while (false)
-            {
-                Thread.Sleep(3000);
-            }
+            //Console.WriteLine("Type yes");
+            //while (!Console.ReadLine().Equals("yes"))
+            //{
+            //    Thread.Sleep(1000);
+            //}
             //Library.Load(libraryPath);
             Console.WriteLine("Testing connection to kafka broker");
-            GlobalVar.kafka_url = "127.0.0.1:9092";
-            GlobalVar.schemaRegistry_url = "127.0.0.1:8083";
+            //GlobalVar.kafka_url = "127.0.0.1:9092";
+            //GlobalVar.schemaRegistry_url = "127.0.0.1:8083";
             Connect(null, "", "", BrukerConnectionEnum.ProLucidConnectionOnly, runWithoutExclusionProfile: true, false);
         }
 
