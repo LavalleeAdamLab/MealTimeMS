@@ -49,8 +49,10 @@ namespace MealTimeMS
     {        
         static void Tester()
         {
+           
+            BrukerInstrumentConnection.TestConnection();
             return;
-            AcquisitionSimulatorTester.DoJob();
+            //AcquisitionSimulatorTester.DoJob();
             //ExclusionMSTester.DoJob();
             //ProteinProphetResultTester.DoJob();
             //ProteinProphetResultTester.DoJob();

@@ -350,6 +350,21 @@ namespace MealTimeMS.RunTime
             Connect(null, brukerDotDFolder, sqtFile, BrukerConnectionEnum.ProLucidConnectionOnly, true, _group_id: "MealTime-MS-Consumer");
             sw.Close();
         }
+        public static void TestConnection()
+        {
+            //String libraryPath = Path.Combine(InputFileOrganizer.AssemblyDirectory, "librdkafka\\x64\\librdkafka.dll");
+            //String libraryPath = Path.Combine(InputFileOrganizer.AssemblyDirectory, "EmbeddedDataFiles/librdkafka.dll");
+            //Console.WriteLine(libraryPath);
+            while (false)
+            {
+                Thread.Sleep(3000);
+            }
+            //Library.Load(libraryPath);
+            Console.WriteLine("Testing connection to kafka broker");
+            GlobalVar.kafka_url = "127.0.0.1:9092";
+            GlobalVar.schemaRegistry_url = "127.0.0.1:8083";
+            Connect(null, "", "", BrukerConnectionEnum.ProLucidConnectionOnly, runWithoutExclusionProfile: true, false);
+        }
 
         public enum BrukerConnectionEnum
         {
