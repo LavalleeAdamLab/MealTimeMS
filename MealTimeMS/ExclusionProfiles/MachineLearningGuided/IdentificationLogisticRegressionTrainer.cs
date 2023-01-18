@@ -6,9 +6,7 @@ using System.Threading;
 using System.Data;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using static Microsoft.ML.DataOperationsCatalog;
 using Microsoft.ML.Trainers;
-using Microsoft.ML.Transforms.Text;
 using MealTimeMS.Util;
 
 using Accord.Statistics.Models.Regression.Fitting;

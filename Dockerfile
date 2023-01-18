@@ -10,6 +10,6 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN mkdir /opt/app
 COPY . /opt/app
 WORKDIR /opt/app
-RUN msbuild MealTimeMS.sln /property:Configuration=Release /property:Platform=x64
+RUN msbuild MealTimeMS.sln /property:Configuration=Release /property:Platform=x64 /restore
 #RUN export MONO_PATH=MealTimeMS/bin/x64/Release/librdkafka/x64/
 ENTRYPOINT ["mono","MealTimeMS/bin/x64/Release/MealTimeMS.exe"]

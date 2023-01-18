@@ -36,7 +36,7 @@ namespace MealTimeMS.Util
 		public static int ScansPerOutput = 500;
         public static bool SeeExclusionFormat = false;
         public static bool SetExclusionTable = false;
-        public static int NUM_MISSED_CLEAVAGES = 1;
+        public static int NUM_MISSED_CLEAVAGES = 2;
         public static int MinimumPeptideLength = 6;
 		public static String DecoyPrefix = "DECOY_";
 		public static String DBTargetProteinStartString = "sp|";

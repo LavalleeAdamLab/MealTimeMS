@@ -422,7 +422,7 @@ namespace MealTimeMS.ExclusionProfiles
          */
         public virtual void reset()
         {
-            
+            log.Info("Resetting exclusion profile, exclusion list, and exclusion database");
             database.reset();
             exclusionList.reset();
             performanceEvaluator = new PerformanceEvaluator();

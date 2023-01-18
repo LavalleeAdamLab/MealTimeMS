@@ -34,15 +34,16 @@ namespace MealTimeMS.RunTime
             SetUpExperimentParameters();
             //RunResultTracker();
             //return;
-            ExclusionProfile exclusionProfile = PreexperimentSetup();
-            RunExperimentOrSimulation(isSimulation, exclusionProfile);
+            PreexperimentSetup();
+            RunExperimentOrSimulation(isSimulation);
         }
 
-        private static void RunExperimentOrSimulation(bool isSimulation, ExclusionProfile exclusionProfile)
+        private static void RunExperimentOrSimulation(bool isSimulation)
         {
+            ExclusionProfile exclusionProfile = CreateExclusionProfile();
             if (isSimulation)
             {
-                Task MTMS = Task.Run(()=>RunExperiment(exclusionProfile) );
+                Task MTMS = Task.Run(()=>RunExperiment(exclusionProfile, repeatListening: false) );
                 int numSpectraAnalyzed = RunResultTracker();
                 MTMS.Wait();
                 //String proteinProphetResultFileName = "ProteinProphetResult";
@@ -55,7 +56,7 @@ namespace MealTimeMS.RunTime
             }
             else
             {
-                RunExperiment(exclusionProfile);
+                RunExperiment(exclusionProfile, repeatListening: true);
             }
         }
 
@@ -63,32 +64,43 @@ namespace MealTimeMS.RunTime
         {
             GlobalVar.isForBrukerRunTime = true;
             GlobalVar.includeIonMobility = false;
-            GlobalVar.ppmTolerance = 15.0 / 1000000.0;
-            GlobalVar.retentionTimeWindowSize = 1.0;
+            GlobalVar.ppmTolerance = 10.0 / 1000000.0;
+            GlobalVar.retentionTimeWindowSize = 0.6;
             //GlobalVar.IMWindowSize = imWin;
             GlobalVar.AccordThreshold = 0.95;
-            GlobalVar.XCorr_Threshold = 2.5;
+            GlobalVar.XCorr_Threshold = 3.5;
             GlobalVar.NumDBThreshold = 2;
             int experimentNumber = 1;
 
 
 
         }
-        private static ExclusionProfile PreexperimentSetup()
+        private static void PreexperimentSetup()
         {
             database = ExclusionExplorer.databaseSetUp(InputFileOrganizer.ExclusionDBFasta);
-            //ExclusionProfile exclusionProfile = new CombinedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile,
-            //    database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize,
-            //    GlobalVar.XCorr_Threshold, GlobalVar.NumDBThreshold);
-            ExclusionProfile exclusionProfile = new HeuristicExclusion(database, GlobalVar.XCorr_Threshold,
-                 GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
-            return exclusionProfile;
-
         }
-        private static void RunExperiment(ExclusionProfile exclusionProfile)
+        private static ExclusionProfile CreateExclusionProfile()
         {
+            ExclusionProfile exclusionProfile = new CombinedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile,
+                database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize,
+                GlobalVar.XCorr_Threshold, GlobalVar.NumDBThreshold);
+            //ExclusionProfile exclusionProfile = new HeuristicExclusion(database, GlobalVar.XCorr_Threshold,
+            //     GlobalVar.ppmTolerance, GlobalVar.NumDBThreshold, GlobalVar.retentionTimeWindowSize);
+            Console.WriteLine("Exclusion Profile:\n\t" + exclusionProfile.ToString());
+            return exclusionProfile;
+        }
+        private static void RunExperiment(ExclusionProfile exclusionProfile, bool repeatListening)
+        {
+            while (true)
+            {
+                BrukerInstrumentConnection.ConnectRealTime(exclusionProfile);
+                Thread.Sleep(3000);
+                Console.Write("Resetting MealTimeMS exclusion environment");
+                if (!repeatListening)
+                    break;
+                exclusionProfile = CreateExclusionProfile();
+            }
             
-            BrukerInstrumentConnection.ConnectRealTime(exclusionProfile);            
         }
 
         private static void SetUpResultTrackerParams()

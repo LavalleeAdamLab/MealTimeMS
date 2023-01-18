@@ -42,10 +42,10 @@ namespace MealTimeMS.Util
         private static bool preExperimentSetupFinished = false;
         public static void StartProcessing(ExclusionProfile exclusionProfile, CancellationToken ct)
         {
-            log.Debug("Initiating up DataProcessor Variables");
+            log.Debug("Initiating input message scheduler variables");
             reset();
             preExperimentSetupFinished = true;
-            Console.WriteLine("Data processor running");
+            Console.WriteLine("Input message scheduler running");
             while (true) //!parsedSpectra.IsEmpty
             {
                 if (ct.IsCancellationRequested)
@@ -80,7 +80,7 @@ namespace MealTimeMS.Util
                 return;
             }
 #if IGNORE
-            if (Interlocked.Read(ref taskCounter)>=100)
+            if (Interlocked.Read(ref taskCounter)>=200)
 			{
 				ignore = true;
 			}

@@ -147,6 +147,7 @@ namespace MealTimeMS.RunTime
                     consumer.Subscribe(topicName);
                     ResetConsumerOffset(consumer);
                     Console.WriteLine("Consumer connecting to kafka broker, topic {0}", topicName);
+                    Console.WriteLine("Ready to process incoming messages");
                     try
                     {
 
@@ -213,7 +214,7 @@ namespace MealTimeMS.RunTime
                     consumer.Subscribe(ms2TopicName);
                     ResetConsumerOffset(consumer);
                     Console.WriteLine("Consumer connecting to kafka broker, topic {0}", ms2TopicName);
-
+                    Console.WriteLine("Ready to process incoming messages");
                     try
                     {
                         while (true)

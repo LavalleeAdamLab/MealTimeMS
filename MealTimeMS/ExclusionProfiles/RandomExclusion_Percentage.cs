@@ -20,10 +20,14 @@ namespace MealTimeMS.ExclusionProfiles
         double chanceToExclude;
         static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
-        public RandomExclusion_Percentage(Database _database, List<Spectra> spectraArray,
+        public RandomExclusion_Percentage(Database _database,
             int numExcluded, int numAnalyzed) : base(_database)
         {
             chanceToExclude = (double)numExcluded / ((double)(numExcluded + numAnalyzed));
+        }
+        public RandomExclusion_Percentage(Database _database, double _chanceToExclude): base(_database)
+        {
+            chanceToExclude = _chanceToExclude;
         }
         override
         protected void evaluateIdentification(IDs id)
@@ -67,7 +71,8 @@ namespace MealTimeMS.ExclusionProfiles
         {
             double retentionTimeWindow = database.getRetentionTimeWindow();
             double ppmTolerance = exclusionList.getPPMTolerance();
-            return "RandomExclusion[" + "RT_window: " + retentionTimeWindow + ";ppmTolerance: " + ppmTolerance + "]";
+            return String.Format("RandomExclusion_Percentage[RT_window: {0};ppmTolerance: {1}; randomly excluding {2} scans per scan]"
+                ,retentionTimeWindow, ppmTolerance, chanceToExclude);
         }
 
         override

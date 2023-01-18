@@ -173,7 +173,7 @@ namespace MealTimeMS.RunTime
                         int numAnalyzed = expResult.numSpectraAnalyzed;
 
                         //ExclusionProfile exclusionProfile = new RandomExclusion_Fast(database, ms2SpectraList, numExcluded, numAnalyzed, GlobalVar.ddaNum);
-                        ExclusionProfile exclusionProfile = new RandomExclusion_Percentage(database, ms2SpectraList, numExcluded, numAnalyzed);
+                        ExclusionProfile exclusionProfile = new RandomExclusion_Percentage(database,  numExcluded, numAnalyzed);
 
                         String experimentName = "EXP_" + experimentNumber + String.Format("Random:originalExperiment_{0}", originalExperimentName);
 
