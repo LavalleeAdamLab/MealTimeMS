@@ -105,7 +105,9 @@ namespace MealTimeMS
 
             Tester();
             //Program.ExitProgram(0);
-
+            Console.WriteLine("The arguments that needs to be supplied include the ip and port number of the kafka broker, schema registry, and exclusionMS containers\nI launched the container with the following arguments:");
+            Console.WriteLine("docker run --rm --name mealtimems --network=\"host\" yunenchung7271/mealtimems-testing -c --kafka_ip 127.0.0.1 --kafka_port 9092 --schema_ip 127.0.0.1 --schema_port 8083 --exclusionMS_ip 192.168.0.29 --exclusionMS_port 8000");
+            Console.WriteLine("\n\n");
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
             //Parse Command Line options, and reads the MealTimeMS.param file to populate GlobalVar and InputFileOrganizer variables

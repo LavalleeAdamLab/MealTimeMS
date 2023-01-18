@@ -1,0 +1,19 @@
+If building this repo doesn't work, the latest image I built on my personal pc is available on docker hub at:
+  yunenchung7271/mealtimems-testing
+To launch the container, provide the ip and port number for the kafka broker, schema reg, and exclusionMS containers.
+(I included the --network="host" parameter since all the containers above are running on the same the same network on my pc, but I'm not sure whether this will be needed when running on a PaserBox.)
+Command to launch the container (ip and port number need to be changed):
+  docker run --rm --name mealtimems --network="host" yunenchung7271/mealtimems-testing -c --kafka_ip 127.0.0.1 --kafka_port 9092 --schema_ip 127.0.0.1 --schema_port 8083 --exclusionMS_ip 192.168.0.29 --exclusionMS_port 8000
+
+The program takes about 1 minute to initialize. 
+When ready, a message "Ready to process incoming messages" should be displayed on the console.
+A few lines of kafka connection errors might be displayed, they can be ignored if the error stops spontaneously.
+The program listens to 2 kafka streams (paser_control and psm_prolucid), and outputs to the exclusionMS webserver.
+The internal database is updated as the program receives psm_prolucid messages, and updates the exclusionMS accordingly.
+When the acquisition-ended-signal is received from the paser_control stream, 
+  the program resets the database (takes about 30 sec), 
+  sends a request to clear the active exclusionlist and offsets on the exclusionMS webserver,
+  and waits for the next incomming psm_prolucid message.
+This is a loop that doesn't end, to terminate the program, the container has to be stopped by the following comand on a separate terminal:
+	docker stop mealtimems
+
