@@ -253,6 +253,7 @@ namespace MealTimeMS
             GlobalVar.schemaRegistry_url = schemaReg_url;
             GlobalVar.exclusionMS_url = exclusionMS_url;
             GlobalVar.exclusionMS_ip = "http://"+brcOptions.exclusionMS_ip;
+            GlobalVar.ScansPerOutput = brcOptions.scansPerOutput;
             //BrukerInstrumentConnection.TestConnection();
             BrukerRuntimeCore.BrukerRuntimeCore_Main();
             Program.ExitProgram(0);
@@ -317,6 +318,8 @@ namespace MealTimeMS
             public String exclusionMS_ip { get; set; }
             [Option("exclusionMS_port", Required = true, HelpText = "port number of the exclusionMS webserver")]
             public String exclusionMS_port { get; set; }
+            [Option('r', "report", Required = false, Default = 500, HelpText = "Number of scans processed for every info update (default 500)")]
+            public int scansPerOutput { get; set; }
 
 
         }

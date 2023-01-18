@@ -62,6 +62,7 @@ namespace MealTimeMS.RunTime
 
         private static void SetUpExperimentParameters()
         {
+            Console.WriteLine("Setting up experiment parameters");
             GlobalVar.isForBrukerRunTime = true;
             GlobalVar.includeIonMobility = false;
             GlobalVar.ppmTolerance = 10.0 / 1000000.0;
@@ -77,10 +78,12 @@ namespace MealTimeMS.RunTime
         }
         private static void PreexperimentSetup()
         {
+            Console.WriteLine("Setting up the exclusion database");
             database = ExclusionExplorer.databaseSetUp(InputFileOrganizer.ExclusionDBFasta);
         }
         private static ExclusionProfile CreateExclusionProfile()
         {
+            Console.WriteLine("Creating exclusion profile");
             ExclusionProfile exclusionProfile = new CombinedExclusion(InputFileOrganizer.AccordNet_LogisticRegressionClassifier_WeightAndInterceptSavedFile,
                 database, GlobalVar.ppmTolerance, GlobalVar.retentionTimeWindowSize,
                 GlobalVar.XCorr_Threshold, GlobalVar.NumDBThreshold);
@@ -131,6 +134,7 @@ namespace MealTimeMS.RunTime
         }
         private static void PopulateHardCodedContentFilePaths()
         {
+            Console.WriteLine("Populating hard-coded content file paths");
             String TestDataDirectory = Path.Combine(InputFileOrganizer.AssemblyDirectory, "TestData");
             String datasetFolderName = "K562Lysate";
             InputFileOrganizer.ChainSawResult = Path.Combine(TestDataDirectory, datasetFolderName, "uniprot-R_20210810_UP000005640_human.fasta_digestedPeptides_2missedCleavage.tsv");
