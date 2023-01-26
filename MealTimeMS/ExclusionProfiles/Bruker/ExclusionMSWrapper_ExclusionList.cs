@@ -43,6 +43,10 @@ namespace MealTimeMS.ExclusionProfiles
     */
         public override void addProteins(List<Protein> proteins)
         {
+            if (proteins.Count == 0)
+            {
+                return;
+            }
             //extracts all peptides of all proteins and flattens them into a hashset to remove duplicates
             HashSet<Peptide> peptidesToAdd = new HashSet<Peptide>(proteins.SelectMany(prot => prot.getPeptides()));
             //HashSet<Peptide> peptidesToAdd = new HashSet<Peptide>();
@@ -106,6 +110,7 @@ namespace MealTimeMS.ExclusionProfiles
                 pepSeqToIntervalID.Remove(pepSeq);
             }
         }
+        static int DeleteRequestCounter = 0;
         private async void RemoveInterval(int id)
         {
             String intervalJson = ExclusionMSInterval.getEmptyJSONStringFromID(id);
@@ -115,8 +120,15 @@ namespace MealTimeMS.ExclusionProfiles
                 RequestUri = new Uri(url_DELETE_interval),
                 Content = new StringContent(intervalJson, Encoding.UTF8, "application/json")
             };
+            DeleteRequestCounter++;
+            if (DeleteRequestCounter % GlobalVar.ScansPerOutput == 0)
+            {
+                Console.WriteLine("DELETE Request message: {0}", request.ToString());
+                Console.WriteLine("msg content: {0}", intervalJson);
+            }
             var response = await client.SendAsync(request);
         }
+        static int PostRequestCounter = 0;
         public async void PostIntervals(List<String> intervalJsons)
         {
             String jsoncontent = String.Concat("[", String.Join(separator:",",intervalJsons),"]");
@@ -126,6 +138,15 @@ namespace MealTimeMS.ExclusionProfiles
                 RequestUri = new Uri(url_POST_intervals),
                 Content = new StringContent(jsoncontent, Encoding.UTF8, "application/json")
             };
+            if (intervalJsons.Count == 0 || intervalJsons[0] == "")
+            {
+                Console.WriteLine("!!POST request empty!!");
+            }
+            PostRequestCounter++;
+            if (PostRequestCounter % GlobalVar.ScansPerOutput==0) {
+                Console.WriteLine("POST Request message: {0}", request.ToString());
+                Console.WriteLine("msg content: {0}",jsoncontent);
+            }
             //var response = client.SendAsync(request);
             var response = Task.Run(async () => await client.SendAsync(request)).Result;
             //String responseString = await response.Content.ReadAsStringAsync();

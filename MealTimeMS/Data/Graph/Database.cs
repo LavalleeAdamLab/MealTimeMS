@@ -112,8 +112,9 @@ public class Database
             // add retention time information
             setRetentionTimes();
             setIonMobility();
-
+#if !SIMPLIFIEDEXCLUSIONLIST
             peptides.Sort((Peptide x, Peptide y) => (y.getMass()).CompareTo(x.getMass()));
+#endif
             log.Debug("Done adding peptides.");
         }
 

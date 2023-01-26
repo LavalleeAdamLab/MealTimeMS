@@ -157,14 +157,22 @@ namespace MealTimeMS.RunTime
                             {
                                 var consumeResult = consumer.Consume(cts.Token);
                                 var psm = consumeResult.Message.Value;
+                                IDs id = IDs.getIDsFromPSMProlucid(psm);// maybe will need to change the rt unit to min
 
                                 if (psm.ms2_id % GlobalVar.ScansPerOutput == 0)
                                 {
                                     Console.WriteLine($"key: {consumeResult.Message.Key}, psm- ms2_id: {psm.ms2_id}, rt: {psm.rt}, mono mz: {psm.mono_mz},charge: {psm.charge}, " +
                                     $"parent_id: {psm.parent_id}");
+                                    if (id == null)
+                                    {
+                                        Console.WriteLine("id = null");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("id- ms2_id: {0}, xcor: {1}, dCN: {2}, sequence: {3}", id.getScanNum(), id.getXCorr(), id.getDeltaCN(), id.getPeptideSequence());
+                                    }
                                     Console.WriteLine("Offset {0}", consumeResult.Offset);
                                 }
-                                IDs id = IDs.getIDsFromPSMProlucid(psm);// maybe will need to change the rt unit to min
                                 counter_psm++;
                                 psmReceived = 1;
                                 if (!runWithoutExclusionProfile)

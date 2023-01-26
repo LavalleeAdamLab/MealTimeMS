@@ -105,9 +105,9 @@ namespace MealTimeMS
 
             Tester();
             //Program.ExitProgram(0);
-            Console.WriteLine("The arguments that needs to be supplied include the ip and port number of the kafka broker, schema registry, and exclusionMS containers\nI launched the container with the following arguments:");
-            Console.WriteLine("docker run --rm --name mealtimems --network=\"host\" yunenchung7271/mealtimems-testing -c --kafka_ip 127.0.0.1 --kafka_port 9092 --schema_ip 127.0.0.1 --schema_port 8083 --exclusionMS_ip 192.168.0.29 --exclusionMS_port 8000");
-            Console.WriteLine("\n\n");
+            Console.WriteLine("The arguments that needs to be supplied include the ip and port number of the kafka broker, schema registry, and exclusionMS containers\nExample command to launch the container with the arguments:");
+            Console.WriteLine("  docker run --rm --name mealtimems --network=\"host\" yunenchung7271/mealtimems-testing -c --kafka_ip 127.0.0.1 --kafka_port 9092 --schema_ip 127.0.0.1 --schema_port 8083 --exclusionMS_ip 192.168.0.29 --exclusionMS_port 8000");
+            Console.WriteLine("\n");
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
             //Parse Command Line options, and reads the MealTimeMS.param file to populate GlobalVar and InputFileOrganizer variables
@@ -254,6 +254,8 @@ namespace MealTimeMS
             GlobalVar.exclusionMS_url = exclusionMS_url;
             GlobalVar.exclusionMS_ip = "http://"+brcOptions.exclusionMS_ip;
             GlobalVar.ScansPerOutput = brcOptions.scansPerOutput;
+            Console.WriteLine("Connection parameters:\nkafka address: {0}\nschema_reg address: {1}\nexclusionMS address: {2}\n",
+                kafka_url, schemaReg_url, exclusionMS_url);
             //BrukerInstrumentConnection.TestConnection();
             BrukerRuntimeCore.BrukerRuntimeCore_Main();
             Program.ExitProgram(0);

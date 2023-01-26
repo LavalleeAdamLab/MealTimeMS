@@ -77,7 +77,7 @@ namespace MealTimeMS.Data.Graph
         {
             if (parentProteins.Keys.Contains(acc))
             {
-                logger.Debug("Protein already exists, protein skipped");
+                logger.Trace("Protein already exists, protein skipped");
             }
             else
             {

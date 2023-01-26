@@ -50,9 +50,6 @@ namespace MealTimeMS.ExclusionProfiles
             currentTime = 0.0;
             includedSpectra = new List<int>();
             excludedSpectra = new List<int>();
-            log.Debug("Setting up Comet");
-
-            //CometDecoy = new CometSingleSearch(InputFileOrganizer.DecoyIDXDatabase, InputFileOrganizer.CometParamsFile);
             reset();
         }
 
