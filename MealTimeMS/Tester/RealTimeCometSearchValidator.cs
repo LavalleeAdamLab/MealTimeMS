@@ -49,7 +49,7 @@ namespace MealTimeMS.Tester
 				}
 			}
 			sw.WriteLine("RealTimeOutput has {0} PSMs", realTimeIDList.Count);
-			sw.WriteLine(CometSingleSearch.ReportFailedStatistics());
+			//sw.WriteLine(CometSingleSearch.ReportFailedStatistics());
 			sw.WriteLine("ScanNum\tSeq_sd\tSeq_rt\txcorr_sd\txcorr_rt");
 			sw.Flush();
 

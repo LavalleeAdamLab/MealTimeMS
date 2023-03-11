@@ -412,9 +412,6 @@ namespace MealTimeMS.Util
             if(exclusionList is SimplifiedExclusionList_Key)
             {
                 totalExclusionListSize = ((SimplifiedExclusionList_Key)exclusionList).getExclusionListTotalSize();
-            }if(exclusionList is SimplifiedExclusionList_IM)
-            {
-                totalExclusionListSize = ((SimplifiedExclusionList_IM)exclusionList).getExclusionListTotalSize();
             }if(exclusionList is SimplifiedExclusionList_IM2)
             {
                 totalExclusionListSize = ((SimplifiedExclusionList_IM2)exclusionList).getExclusionListTotalSize();

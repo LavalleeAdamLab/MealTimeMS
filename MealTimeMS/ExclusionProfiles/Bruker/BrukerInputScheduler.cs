@@ -121,7 +121,26 @@ namespace MealTimeMS.Util
             return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         }
 
-       
+        public static void WriteScanArrivalProcessedTime()
+        {
+
+            String header = "ScanNum\tArrival\tProcessed";
+            WriterClass.writeln(header, writerClassOutputFile.scanArrivalAndProcessedTime);
+            List<double[]> listOfAllItems = scanArrivalAndProcessedTimeList;
+            listOfAllItems.AddRange(itemsNotAdded);
+            foreach (double[] scan in listOfAllItems)
+            {
+                String data = "";
+                foreach (double d in scan)
+                {
+                    data = data + d + "\t";
+                }
+                WriterClass.writeln(data, writerClassOutputFile.scanArrivalAndProcessedTime);
+            }
+
+        }
+
+
     }
    
 }

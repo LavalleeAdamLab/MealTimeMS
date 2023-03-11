@@ -64,7 +64,7 @@ namespace MealTimeMS.Tester.Junk
             //Outputing the search result to a log file, not necessary
             sw.WriteLine("Comet search of " + counter + " spectra took " + watch.ElapsedMilliseconds + " milliseconds");
             sw.WriteLine("RealTimeOutput has {0} PSMs", realTimeIDList.Count);
-            sw.WriteLine(CometSingleSearch.ReportFailedStatistics());
+            //sw.WriteLine(CometSingleSearch.ReportFailedStatistics());
             sw.WriteLine("ScanNum\tSeq\txcorr");
             sw.Flush();
             foreach (IDs realTimeID in realTimeIDList)

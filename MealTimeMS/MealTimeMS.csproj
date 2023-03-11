@@ -390,15 +390,12 @@
     <Compile Include="Data\InputFiles\FastaFile.cs" />
     <Compile Include="Data\InputFiles\ProteinProphetFile.cs" />
     <Compile Include="Data\ProteinProphetResult.cs" />
-    <Compile Include="Data\ResultDatabase.cs" />
     <Compile Include="Data\RetentionTime.cs" />
-    <Compile Include="EasyDataReceiver.cs" />
     <Compile Include="ExclusionProfiles\Bruker\BrukerInputScheduler.cs" />
     <Compile Include="ExclusionProfiles\Bruker\BrukerNoExclusion.cs" />
     <Compile Include="ExclusionProfiles\ExclusionLists\ExclusionList.cs" />
     <Compile Include="ExclusionProfiles\ExclusionProfile.cs" />
     <Compile Include="ExclusionProfiles\ExclusionProfileEnum.cs" />
-    <Compile Include="ExclusionProfiles\ExperimentScheduler.cs" />
     <Compile Include="ExclusionProfiles\MachineLearningGuided\FeatureExtractor.cs" />
     <Compile Include="ExclusionProfiles\MachineLearningGuided\LRModel.cs" />
     <Compile Include="ExclusionProfiles\MachineLearningGuided\MachineLearningGuidedExclusion.cs" />
@@ -407,7 +404,6 @@
     <Compile Include="ExclusionProfiles\Heuristic\HeuristicExclusion.cs" />
     <Compile Include="ExclusionProfiles\Heuristic\HeuristicSequenceExclusion.cs" />
     <Compile Include="ExclusionProfiles\RandomExclusion_Percentage.cs" />
-    <Compile Include="ExclusionProfiles\SimplifiedExclusionList.cs" />
     <Compile Include="ExclusionProfiles\TaxonGuided\TaxonClass.cs" />
     <Compile Include="ExclusionProfiles\TaxonGuided\TaxonGuidedExclusion.cs" />
     <Compile Include="ExclusionProfiles\TestProfile\CombinedExclusion.cs" />
@@ -418,7 +414,6 @@
     <Compile Include="ExclusionProfiles\TestProfile\RandomExclusion_Fast.cs" />
     <Compile Include="ExclusionProfiles\TestProfile\SequenceExclusion.cs" />
     <Compile Include="ExclusionProfiles\ExclusionLists\SequenceExclusionList.cs" />
-    <Compile Include="ExclusionProfiles\ExclusionLists\SimplifiedExclusionList_IM.cs" />
     <Compile Include="ExclusionProfiles\ExclusionLists\SimplifiedExclusionList_IM2.cs" />
     <Compile Include="ExclusionProfiles\ExclusionLists\SimplifiedExclusionList_Key.cs" />
     <Compile Include="IO\IOUtils.cs" />
@@ -427,10 +422,7 @@
     <Compile Include="IO\Writer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\Scan.cs" />
-    <Compile Include="Data\ScanInfo.cs" />
     <Compile Include="IO\WriterClass.cs" />
-    <Compile Include="IO\InputHandler.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -445,10 +437,6 @@
     <Compile Include="RunTime\BrukerRuntimeCore.cs" />
     <Compile Include="RunTime\ExclusionExplorer.cs" />
     <Compile Include="Simulation\BrukerResultEvaluator.cs" />
-    <Compile Include="Simulation\DDAInstrumentSimulation.cs" />
-    <Compile Include="Simulation\InstrumentSimulation.cs" />
-    <Compile Include="Simulation\DataReceiverSimulation.cs" />
-    <Compile Include="RunTime\Connection.cs" />
     <Compile Include="Simulation\QuickDDAInstrumentSimulation.cs" />
     <Compile Include="Tester\DecoyConcacenatedGeneratorTester.cs" />
     <Compile Include="Tester\ExcludedProteinOverlapAnalyzer.cs" />
@@ -479,7 +467,6 @@
     <Compile Include="Util\ExecuteShellCommand.cs" />
     <Compile Include="Util\GlobalVar.cs" />
     <Compile Include="Util\HelperFunction.cs" />
-    <Compile Include="Util\HttpClientWrapper.cs" />
     <Compile Include="Util\IdentificationFeatureExtractionUtil.cs" />
     <Compile Include="Util\IMsScanParser.cs" />
     <Compile Include="Util\InputFileOrganizer.cs" />
@@ -489,8 +476,6 @@
     <Compile Include="Util\PostProcessing\ProteinProphetEvaluator.cs" />
     <Compile Include="Util\RetentionTimeUtil.cs" />
     <Compile Include="Util\SerializeClone.cs" />
-    <Compile Include="RunTime\DataReceiver.cs" />
-    <Compile Include="Util\DataProcessor.cs" />
     <Compile Include="IO\Loader.cs" />
     <Compile Include="Data\MZMLFile.cs" />
     <Compile Include="Data\Spectra.cs" />
@@ -526,12 +511,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Tools\comet.2019015.win32.exe" />
-    <Content Include="Tools\RTCalc.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Tools\RTCalc_2019.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="App.config" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -540,13 +519,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <Content Include="Tools\RTCalc.coeff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Tools\chainsaw">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Tools\RTCalc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Properties\Settings.settings">
@@ -562,12 +535,6 @@
     <Content Include="TestData\K562Lysate\uniprot-R_20210810_UP000005640_human.fasta_digestedPeptides_2missedCleavage.tsv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Tools\rtcalc_120minTraining.coeff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Tools\rtcalc_240minTraining.coeff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Util\PreProcessing\" />

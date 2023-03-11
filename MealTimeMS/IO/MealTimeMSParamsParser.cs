@@ -15,7 +15,7 @@ namespace MealTimeMS.IO
 		public static List<Parameter> paramList = new List<Parameter>()
 		{
 			new Parameter("CrucialFiles","FastaFileName",true,"","File path to the Protein sequence database Fasta file",true),
-			new Parameter("CrucialFiles","CometParamsFile",true,"","File path to the comet parameters (2019 version). Make sure to set \"decoy_search\" to 0.",true),
+			new Parameter("CrucialFiles","CometParamsFile",false,"","File path to the comet parameters (2019 version). Make sure to set \"decoy_search\" to 0.",true),
 			new Parameter("DirectorySetUp","TPPBinFolder",true,"C:\\TPP\\bin\\","Directory of the bin folder of the Trans-Proteomic Pipeline installation",false),
 			new Parameter("SimulationParams","MS2SimulationSpectraFile",true,"","Spectral data in .ms2 format, can be converted from .mzML (or .raw) to .ms2 using ProteoWizard's msconvert",true),
 			new Parameter("SimulationParams","BrukerdotDFolder",true,"","Bruker raw data folder",false),
@@ -23,7 +23,7 @@ namespace MealTimeMS.IO
 			//new Parameter("SimulationParams","MZMLSimulationTestFile",true,"","",true),
 			//new Parameter("PreExperimentSetup","UsePrecomputedFiles",true,"false","true: use the files in the PrecomputedFiles section instead of generating them with the program. false: generate them with the program automatically. Set to false if running the program for the first time"),
 			new Parameter("PreExperimentSetup","DecoyPrefix",true,"DECOY_","Decoy prefix used in the Comet params"),
-			new Parameter("PreExperimentSetup","RTCalcCoefficient",true,"","Trained RTCalc model .coeff file, used by RTCalc to predict peptide retention time. The training should be done in seconds.",true),
+			new Parameter("PreExperimentSetup","RTCalcCoefficient",false,"","Trained RTCalc model .coeff file, used by RTCalc to predict peptide retention time. The training should be done in seconds.",true),
 			new Parameter("PreExperimentSetup","NUM_MISSED_CLEAVAGES",true,"1","This version of the MealTime MS is limited to a Trypsin digestion experiment. This number specifies the number of missed cleavage of the digestion"),
 			new Parameter("PreExperimentSetup","MinimumPeptideLength",true,"6","Minimum peptide length of the trypsin digestion"),
 			//new Parameter("ClassifierTrainingFiles","MS2_forClassifierTraining",true,"MS_QC_240min.ms2","",true),

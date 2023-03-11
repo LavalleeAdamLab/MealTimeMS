@@ -10,29 +10,34 @@ namespace MealTimeMS.Data
 {
     class ExclusionMSInterval
     {
-        public int interval_id;
-        public string charge ="";
-        public string min_mass = "";
-        public string max_mass = "";
-        public string min_rt = ""; //ExclusionMS takes time in seconds
-        public string max_rt = "";
-        public string min_ook0 = "";
-        public string max_ook0 = "";
-        public string min_intensity = "";
-        public string max_intensity = "";
+        public static JsonSerializerSettings serializerSettings = new JsonSerializerSettings
+        {
+            FloatFormatHandling = FloatFormatHandling.DefaultValue,
+            NullValueHandling = NullValueHandling.Ignore
+        };
+    public int interval_id;
+        public Nullable<int> charge = null;
+        public Nullable<double> min_mass;
+        public Nullable<double> max_mass;
+        public Nullable<double> min_rt; //ExclusionMS takes time in seconds
+        public Nullable<double> max_rt ;
+        public Nullable<double> min_ook0 = null;
+        public Nullable<double> max_ook0 = null;
+        public Nullable<double> min_intensity = null;
+        public Nullable<double> max_intensity = null;
         public ExclusionMSInterval(int _interval_id, double mass, double ppmTol, double rt, double rtWin)
         {
             interval_id = _interval_id;
-            min_mass = (mass * (1.0 - ppmTol)).ToString();
-            max_mass = (mass * (1.0 + ppmTol)).ToString();
-            min_rt = ((rt - rtWin) * 60.0).ToString(); //ExclusionMS takes time in seconds
-            max_rt = ((rt + rtWin) * 60.0).ToString();
+            min_mass = (mass * (1.0 - ppmTol));
+            max_mass = (mass * (1.0 + ppmTol));
+            min_rt = (rt - rtWin) * 60.0; //ExclusionMS takes time in seconds
+            max_rt = (rt + rtWin) * 60.0;
         }
         public ExclusionMSInterval(int _interval_id, double mass, double ppmTol, double rt, double rtWin, 
             double IM, double IMWin): this(_interval_id, mass, ppmTol, rt, rtWin)
         {
-            min_ook0 = (IM - IMWin).ToString();
-            max_ook0 = (IM + IMWin).ToString();
+            min_ook0 = (IM - IMWin);
+            max_ook0 = (IM + IMWin);
 
         }
         public ExclusionMSInterval(int _interval_id)
@@ -42,7 +47,7 @@ namespace MealTimeMS.Data
         
         public String toJSONString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, serializerSettings);
         }
         public static List<String> getJSONStringsFromPeptide(Peptide pep, double ppmTol, double rtWin, double IMTol, bool useIonMobility = false)
         {

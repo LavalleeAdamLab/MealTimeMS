@@ -140,7 +140,7 @@ public class Database
         public void changeRetentionTimeWindow(double _retentionTimeWindow)
         {
             retentionTimeWindow = _retentionTimeWindow;
-            setRetentionTimes();
+            //setRetentionTimes();
         }
 
         private void setRetentionTimes()

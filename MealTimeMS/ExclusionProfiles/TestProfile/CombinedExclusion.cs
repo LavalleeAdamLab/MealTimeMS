@@ -95,10 +95,23 @@ namespace MealTimeMS.ExclusionProfiles.TestProfile
 			exclusionList.addProteins(proteinsToExclude);
 
 		}
+        override
+       public String ToString()
+        {
+            double retentionTimeWindow = database.getRetentionTimeWindow();
+            double ppmTolerance = exclusionList.getPPMTolerance();
+            double probabilityThreshold = GlobalVar.AccordThreshold;
+            double XCorr_Threshold = GlobalVar.XCorr_Threshold;
+            double NumDBThreshold = GlobalVar.NumDBThreshold;
+            return "MachineLearningGuidedExclusion[" + "RT_window: " + retentionTimeWindow + ";ppmTolerance: "
+                    + ppmTolerance + ";probabilityThreshold: " + probabilityThreshold +
+                    String.Format(";XCorr_threshold: {0};NumDBThreshold{1}",XCorr_Threshold, NumDBThreshold)+
+                    "]";
+        }
 
 
-		override
-		public ExclusionProfileEnum getAnalysisType()
+        override
+        public ExclusionProfileEnum getAnalysisType()
 		{
 			return ExclusionProfileEnum.COMBINED_EXCLUSION;
 		}

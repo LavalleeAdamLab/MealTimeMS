@@ -69,7 +69,7 @@ namespace MealTimeMS.RunTime
             GlobalVar.retentionTimeWindowSize = 0.6;
             //GlobalVar.IMWindowSize = imWin;
             GlobalVar.AccordThreshold = 0.95;
-            GlobalVar.XCorr_Threshold = 3.5;
+            GlobalVar.XCorr_Threshold = 2;
             GlobalVar.NumDBThreshold = 2;
             int experimentNumber = 1;
 

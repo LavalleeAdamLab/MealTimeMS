@@ -480,7 +480,6 @@ namespace MealTimeMS.RunTime
         public static void reset()
         {
             isListening = true;
-            CometSingleSearch.reset();
         }
 
         public static ExclusionProfile SimulationForFeatureExtraction()
@@ -566,13 +565,13 @@ namespace MealTimeMS.RunTime
             //WriteExcludedProteinList(exclusionProfile.getDatabase().getExcludedProteins());
 
 #if IGNORE
-			WriteScanArrivalProcessedTime(DataProcessor.spectraNotAdded);
+			//WriteScanArrivalProcessedTime(DataProcessor.spectraNotAdded);
 			
-			foreach(double[] ignoredSpectra in DataProcessor.spectraNotAdded)
-			{
-				int scanNum = ms2SpectraList[(int)ignoredSpectra[0]-1].getScanNum();
-				exclusionProfile.getSpectraUsed().Add(scanNum);
-			}
+			//foreach(double[] ignoredSpectra in DataProcessor.spectraNotAdded)
+			//{
+			//	int scanNum = ms2SpectraList[(int)ignoredSpectra[0]-1].getScanNum();
+			//	exclusionProfile.getSpectraUsed().Add(scanNum);
+			//}
 #endif
 
             //if (expType == ExclusionProfileEnum.NO_EXCLUSION_PROFILE)
@@ -655,8 +654,8 @@ namespace MealTimeMS.RunTime
             try
             {
                 WriteUnusedSpectra(experiment);
-                WriteScanArrivalProcessedTime(DataProcessor.scanArrivalAndProcessedTimeList);
-                WriteScanArrivalProcessedTime(DataProcessor.spectraNotAdded);
+                //WriteScanArrivalProcessedTime(DataProcessor.scanArrivalAndProcessedTimeList);
+                //WriteScanArrivalProcessedTime(DataProcessor.spectraNotAdded);
                 WriteUsedSpectra(experiment);
                 WriterClass.writeln("ExclusionList size: " + exclusionProfile.getExclusionList().getExclusionList().Count);
                 WriterClass.writeln("Number of exclusion: " + exclusionProfile.getUnusedSpectra().Count);

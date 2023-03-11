@@ -57,10 +57,7 @@ namespace MealTimeMS.ExclusionProfiles
         {
 
         }
-        public String ReportFailedCometSearchStatistics()
-        {
-            return CometSingleSearch.ReportFailedStatistics();
-        }
+
         public double getPPMTolerance()
         {
             return exclusionList.getPPMTolerance();

@@ -76,11 +76,6 @@ namespace MealTimeMS.Data
             
         }
 
-        // public RetentionTime(double average, double standardDeviation) {
-        // retentionTimeStart = average - (2 * standardDeviation);
-        // retentionTimeEnd = average + (2 * standardDeviation);
-        // }
-
 
         public static void setRetentionTimeOffset(double d)
         {

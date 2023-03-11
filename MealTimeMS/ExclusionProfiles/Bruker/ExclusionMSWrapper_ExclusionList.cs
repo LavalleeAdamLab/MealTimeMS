@@ -17,7 +17,7 @@ namespace MealTimeMS.ExclusionProfiles
         private string url_exclusionMS;
         private string url_POST_intervals;
         private string url_DELETE_interval;
-        private string url_DELETE_exclusionMS; //url to call to clear the active exclusion list
+        private string url_POST_exclusionMS_clear; //url to call to clear the active exclusion list
         private string url_Offset;
 
 
@@ -33,8 +33,8 @@ namespace MealTimeMS.ExclusionProfiles
         public void SetUpURL()
         {
             url_POST_intervals = String.Concat(url_exclusionMS, "/exclusionms/intervals");
-            url_DELETE_interval = String.Concat(url_exclusionMS, "/exclusionms/interval");
-            url_DELETE_exclusionMS = String.Concat(url_exclusionMS, "/exclusionms");
+            url_DELETE_interval = String.Concat(url_exclusionMS, "/exclusionms/intervals");
+            url_POST_exclusionMS_clear = String.Concat(url_exclusionMS, "/exclusionms/clear");
             url_Offset = String.Concat(url_exclusionMS, "/exclusionms");
         }
 
@@ -113,7 +113,8 @@ namespace MealTimeMS.ExclusionProfiles
         static int DeleteRequestCounter = 0;
         private async void RemoveInterval(int id)
         {
-            String intervalJson = ExclusionMSInterval.getEmptyJSONStringFromID(id);
+            //String intervalJson = ExclusionMSInterval.getEmptyJSONStringFromID(id);
+            String intervalJson = $"{{\"interval_id\": \"{id}\"}}";
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Delete,
@@ -164,7 +165,13 @@ namespace MealTimeMS.ExclusionProfiles
 
         public void ClearExclusionMS()
         {
-            client.DeleteAsync(url_DELETE_exclusionMS);
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(url_POST_exclusionMS_clear),
+                Content = new StringContent("", Encoding.UTF8, "application/json")
+            };
+            client.SendAsync(request);
         }
      
 
@@ -188,6 +195,7 @@ namespace MealTimeMS.ExclusionProfiles
         {
             double newOffset_sec = newOffset_min * 60.0;
             //http://192.168.0.29:8000/exclusionms/offset?mass=0&rt=1.0&ook0=0&intensity=0
+            //http://localhost:8000/exclusionms/offset?mass=0&rt=10&ook0=0&intensity=0
             string requestURI = String.Format("{0}/offset?mass=0&rt={1}&ook0=0&intensity=0",
                 url_Offset, newOffset_sec);
             String jsoncontent ="";
