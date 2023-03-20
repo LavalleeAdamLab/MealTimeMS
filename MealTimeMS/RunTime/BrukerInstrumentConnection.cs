@@ -171,7 +171,7 @@ namespace MealTimeMS.RunTime
                                     {
                                         Console.WriteLine("id- ms2_id: {0}, xcor: {1}, dCN: {2}, sequence: {3}", id.getScanNum(), id.getXCorr(), id.getDeltaCN(), id.getPeptideSequence());
                                     }
-                                    Console.WriteLine("Offset {0}", consumeResult.Offset);
+                                    //Console.WriteLine("Offset {0}", consumeResult.Offset);
                                 }
                                 counter_psm++;
                                 psmReceived = 1;

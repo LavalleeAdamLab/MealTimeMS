@@ -33,6 +33,14 @@ namespace MealTimeMS.Data
             min_rt = (rt - rtWin) * 60.0; //ExclusionMS takes time in seconds
             max_rt = (rt + rtWin) * 60.0;
         }
+        public ExclusionMSInterval (int _interval_id, double _min_mass, double _max_mass, double _min_rt, double _max_rt, bool thisparamDoesntMatterItsJustHereForOverload)
+        {
+            interval_id = _interval_id;
+            min_mass = _min_mass;
+            max_mass = _max_mass;
+            min_rt = _min_rt;
+            max_rt = _max_rt;
+        }
         public ExclusionMSInterval(int _interval_id, double mass, double ppmTol, double rt, double rtWin, 
             double IM, double IMWin): this(_interval_id, mass, ppmTol, rt, rtWin)
         {

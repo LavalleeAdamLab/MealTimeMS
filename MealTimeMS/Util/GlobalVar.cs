@@ -33,9 +33,7 @@ namespace MealTimeMS.Util
 		//public static double AminoAcid_M_modifiedMass = 15.9949;
 
 		//Experiment Params
-		public static int ScansPerOutput = 500;
-        public static bool SeeExclusionFormat = false;
-        public static bool SetExclusionTable = false;
+
         public static int NUM_MISSED_CLEAVAGES = 2;
         public static int MinimumPeptideLength = 6;
 		public static String DecoyPrefix = "DECOY_";
@@ -81,6 +79,12 @@ namespace MealTimeMS.Util
 		public static List<double> XCORR_THRESHOLD_LIST;
 		public static List<int> NUM_DB_THRESHOLD_LIST;
 
+        //Debugging
+        public static int ScansPerOutput = 500;
+        public static int verbosity = 0;
+        public static bool ClearExclusionListBeforeEachRun = false;
+        public static int DebugIntervals = 0; //0 = nothing; 1= 2 min intervals; 2 = 10 min intervals
+        
 
     }
 }

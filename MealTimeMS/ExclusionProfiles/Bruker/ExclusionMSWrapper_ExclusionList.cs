@@ -12,7 +12,7 @@ namespace MealTimeMS.ExclusionProfiles
 {
     class ExclusionMSWrapper_ExclusionList : ExclusionList
     {
-        Dictionary<string, int> pepSeqToIntervalID;
+        public Dictionary<string, int> pepSeqToIntervalID;
         private readonly HttpClient client;
         private string url_exclusionMS;
         private string url_POST_intervals;
@@ -27,7 +27,7 @@ namespace MealTimeMS.ExclusionProfiles
             client = new HttpClient();
             url_exclusionMS = _url_exclusionMS;
             SetUpURL();
-            ClearExclusionMS();
+            if (GlobalVar.ClearExclusionListBeforeEachRun) { ClearExclusionMS(); }
             updateRetentionTimeOffset(0);
         }
         public void SetUpURL()
@@ -49,18 +49,6 @@ namespace MealTimeMS.ExclusionProfiles
             }
             //extracts all peptides of all proteins and flattens them into a hashset to remove duplicates
             HashSet<Peptide> peptidesToAdd = new HashSet<Peptide>(proteins.SelectMany(prot => prot.getPeptides()));
-            //HashSet<Peptide> peptidesToAdd = new HashSet<Peptide>();
-            //foreach (Protein prot in proteins)
-            //{
-            //    foreach (Peptide pep in prot.getPeptides())
-            //    {
-            //        if (!pepSeqToIntervalID.ContainsKey(pep.getSequence()))
-            //        {
-            //            peptidesToAdd.Add(pep);
-            //            pepSeqToIntervalID.Add(pep.getSequence(), pep.getPeptideID());
-            //        }
-            //    }
-            //}
             addPeptides(peptidesToAdd.ToList());
         }
         public override void addProtein(Protein protein)
@@ -114,7 +102,8 @@ namespace MealTimeMS.ExclusionProfiles
         private async void RemoveInterval(int id)
         {
             //String intervalJson = ExclusionMSInterval.getEmptyJSONStringFromID(id);
-            String intervalJson = $"{{\"interval_id\": \"{id}\"}}";
+            String intervalJson = "[{\"interval_id\": \""+id+"\"}]";
+            Console.WriteLine(intervalJson);
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Delete,
@@ -144,7 +133,7 @@ namespace MealTimeMS.ExclusionProfiles
                 Console.WriteLine("!!POST request empty!!");
             }
             PostRequestCounter++;
-            if (PostRequestCounter % GlobalVar.ScansPerOutput==0) {
+            if (GlobalVar.verbosity >= 1) {
                 Console.WriteLine("POST Request message: {0}", request.ToString());
                 Console.WriteLine("msg content: {0}",jsoncontent);
             }

@@ -256,6 +256,10 @@ namespace MealTimeMS
             GlobalVar.ScansPerOutput = brcOptions.scansPerOutput;
             Console.WriteLine("Connection parameters:\nkafka address: {0}\nschema_reg address: {1}\nexclusionMS address: {2}\n",
                 kafka_url, schemaReg_url, exclusionMS_url);
+            GlobalVar.ClearExclusionListBeforeEachRun = brcOptions.ClearExclusionListBeforeEachRun;
+            GlobalVar.DebugIntervals = brcOptions.DebugIntervals;
+            GlobalVar.verbosity = brcOptions.verbosity;
+            
             //BrukerInstrumentConnection.TestConnection();
             BrukerRuntimeCore.BrukerRuntimeCore_Main();
             Program.ExitProgram(0);
@@ -322,6 +326,14 @@ namespace MealTimeMS
             public String exclusionMS_port { get; set; }
             [Option('r', "report", Required = false, Default = 500, HelpText = "Number of scans processed for every info update (default 500)")]
             public int scansPerOutput { get; set; }
+            [Option('d',"debugIntervals", Required = false, Default = 0, HelpText = "0 (default) = nothing, MTMS runs as usual; " +
+                "1 = sends 3-min exclusion intervals every 2 mins to exclude a list of 20 abundant proteins; " +
+                "2 = sends exclusion intervals that excludes mass 100-1500Da at 0-5min, and 1500-6000Da at 5-10min")]
+            public int DebugIntervals { get; set; }
+            [Option('w', "clearExclusionMS", Required = false, Default = false, HelpText = "false (default): does not clear active exclusionMS list before each run; true: clears active exclusionMS list before each run")]
+            public bool ClearExclusionListBeforeEachRun { get; set; }
+            [Option('v', "verbosity", Required = false, Default = 0, HelpText = "0 (default), 1(shows content of every POST call to exclusionMS),2,3")]
+            public int verbosity { get; set; }
 
 
         }

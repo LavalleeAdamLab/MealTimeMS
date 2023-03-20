@@ -112,10 +112,8 @@ namespace MealTimeMS.ExclusionProfiles
             return excludedSpectra;
         }
 
-        //Called by DataProcessor, entry point to Alex's program
         public virtual bool evaluate(Spectra spec)
         {
-
 
             updateCurrentTimeAndExclusionListTime(spec.getStartTime());
             if (spec.getMSLevel() == 1)
