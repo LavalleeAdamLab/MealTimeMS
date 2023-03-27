@@ -414,7 +414,7 @@ namespace MealTimeMS.Util
                 totalExclusionListSize = ((SimplifiedExclusionList_Key)exclusionList).getExclusionListTotalSize();
             }if(exclusionList is SimplifiedExclusionList_IM2)
             {
-                totalExclusionListSize = ((SimplifiedExclusionList_IM2)exclusionList).getExclusionListTotalSize();
+                totalExclusionListSize = exclusionList.getExcludedPeptideCount();
             }
             ChangeValue(Header.ExclusionListPastSize, pastSize);
 			ChangeValue(Header.ExclusionListCurrentSize, currentSize);

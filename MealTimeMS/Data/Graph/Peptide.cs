@@ -42,7 +42,9 @@ namespace MealTimeMS.Data.Graph
 
         public void updateIntervalJson(double ppmTol, double rtWin, double IMTol, bool useIonMobility = false)
         {
+#if !DDA
             intervalJsons = ExclusionMSInterval.getJSONStringsFromPeptide(this, ppmTol, rtWin, IMTol, useIonMobility);
+#endif
         }
         
         public void addScore(double score, double dCN)

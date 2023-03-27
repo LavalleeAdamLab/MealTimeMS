@@ -130,7 +130,7 @@ namespace MealTimeMS.ExclusionProfiles
                     double progressPercent = spec.getIndex() / GlobalVar.ExperimentTotalScans * 100;
                     log.Info("Progress: {0:F2}% Processing ID: {1}\t ScanNum: {2} \t Excluded spectra: {3} \t Excluded peptides: {4}",
                         progressPercent, spec.getIndex(), spec.getScanNum(),
-                        excludedSpectra.Count, exclusionList.getAllExcludedPeptides().Count);
+                        excludedSpectra.Count, exclusionList.getExcludedPeptideCount());
 #else
 					log.Info("Progress: {0}\t{1} excluded------------------------",spec.getIndex(),excludedSpectra.Count);
 					log.Info("ExclusionListSize: {0}\tRTOffset: {1}",exclusionList.getExclusionList().Count, RetentionTime.getRetentionTimeOffset());

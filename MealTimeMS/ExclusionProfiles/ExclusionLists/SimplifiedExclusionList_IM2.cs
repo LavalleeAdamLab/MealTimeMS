@@ -331,5 +331,10 @@ namespace MealTimeMS.ExclusionProfiles
         {
             return PepSeqToExclusionKey.Count;
         }
+
+        override public int getExcludedPeptideCount()
+        {
+            return PepSeqToExclusionKey.Count;
+        }
     }
 }

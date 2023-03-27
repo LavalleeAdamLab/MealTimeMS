@@ -58,7 +58,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SIMULATION,COMETOFFLINESEARCH,DONTEVALUATE,SIMPLIFIEDEXCLUSIONLIST,IGNORE,BRUKERACQUISITIONSIMULATOR</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SIMULATION,COMETOFFLINESEARCH,DONTEVALUATE,SIMPLIFIEDEXCLUSIONLIST,IGNORE,DDA</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -495,6 +495,15 @@
     <Content Include="TestData\K562Lysate\20200821K562300ng90min_1_Slot1-1_1_1638.d_extractedFeatures_positiveAndNonPositive.ClassifierCoefficient.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\K562Lysate\AutoRT_fastaPrediction_misCleaved2.tsv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\K562Lysate\uniprot-R_20210810_UP000005640_human.fasta">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\K562Lysate\uniprot-R_20210810_UP000005640_human.fasta_digestedPeptides_2missedCleavage.tsv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Tools\chainsaw.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -526,15 +535,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="TestData\K562Lysate\AutoRT_fastaPrediction_misCleaved2.tsv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\K562Lysate\uniprot-R_20210810_UP000005640_human.fasta">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\K562Lysate\uniprot-R_20210810_UP000005640_human.fasta_digestedPeptides_2missedCleavage.tsv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Util\PreProcessing\" />

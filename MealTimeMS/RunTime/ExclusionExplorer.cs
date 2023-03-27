@@ -228,14 +228,16 @@ namespace MealTimeMS.RunTime
             //if(false)
             {
 
-                //ms2SpectraList = Loader.parseMS2File(InputFileOrganizer.MS2SimulationTestFile).getSpectraArray();
-                //GlobalVar.ExperimentTotalScans = ms2SpectraList.Count;
 
 #if BRUKERACQUISITIONSIMULATOR
                 GlobalVar.TIMSTOF_Precursor_ID_to_ms2_id = ParseTIMSTOFPrecursorID.getTIMSTOFFPrecursorID_to_ms2ID(InputFileOrganizer.MS2SimulationTestFile);
+#else
+                ms2SpectraList = Loader.parseMS2File(InputFileOrganizer.MS2SimulationTestFile).getSpectraArray();
+                GlobalVar.ExperimentTotalScans = ms2SpectraList.Count;
+
 #endif
                 GlobalVar.CheatingMonoPrecursorMassTable = ParseTIMSTOFPrecursorID.getCheatingMonoPrecursorMassTable(InputFileOrganizer.CheatingMonoPrecursorMass);
-                ms2SpectraList = null;
+                //ms2SpectraList = null;
                 GC.Collect();
                 FullPepXMLAndProteinProphetSetup();
             }

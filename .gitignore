@@ -340,3 +340,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/MealTimeMS/uniprot-R_20210810_UP000005640_human.fasta_digestedPeptides_2missedCleavage.tsv
+**/TestData/K562Lysate

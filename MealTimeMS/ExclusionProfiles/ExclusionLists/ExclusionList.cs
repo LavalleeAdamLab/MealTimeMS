@@ -162,6 +162,12 @@ namespace MealTimeMS.ExclusionProfiles
         {
             return exclusionList;
         }
+
+        //get number of peptides on the exclusion list
+        public virtual int getExcludedPeptideCount()
+        {
+            return exclusionList.Count;
+        }
 #if TRACKEXCLUSIONLISTOPERATION
         private StreamWriter exclusionListOperationSW;
         private System.Diagnostics.Stopwatch stopWatch;

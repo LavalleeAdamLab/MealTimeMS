@@ -286,7 +286,7 @@ namespace MealTimeMS
 			[Value(1, MetaName = "paramsFile", Required = false,Default =null, HelpText = "Full path of the parameters file for MealTime MS, use option -p to generate")]
 			public String paramsFile { get; set; }
 
-			[Option('r', "report", Required = false, Default =1, HelpText = "Number of scans processed for every info output (default 1)")]
+			[Option('r', "report", Required = false, Default =100, HelpText = "Number of scans processed for every info output (default 1)")]
 			public int scansPerOutput { get; set; }
 
 			[Option('s', "simulation", Required = false, Default = true, HelpText = "Is this a simulation? Set to [false] if it's actually hooked up to a mass spec. Default: [true]")]
