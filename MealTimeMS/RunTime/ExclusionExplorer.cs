@@ -211,6 +211,7 @@ namespace MealTimeMS.RunTime
             PostExperimentProcessing(e);
             WriteUnusedSpectra(e);
             WriteUsedSpectra(e);
+            WriteExcludedProteinList(e);
             SimplifiedExclusionList_IM2.WriteRecordedExclusion(e.experimentNumber.ToString());
             e.exclusionProfile.reset();
             reset();
@@ -450,10 +451,17 @@ namespace MealTimeMS.RunTime
         }
 
         //writes a list of proteins added to the exclusion list
-        private static void WriteExcludedProteinList(ExclusionProfile exclusionProfile)
+        private static void WriteExcludedProteinList(Experiment experiment)
         {
+            var exclusionProfile = experiment.exclusionProfile;
             List<string> excludedProteins = exclusionProfile.getDatabase().getExcludedProteins();
-            String outputFile = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "ExcludedProteinList.txt");
+            string dir = Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "ExcludedProteinList"); // If directory does not exist, create it.
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            String outputFile = Path.Combine(dir, experiment.experimentNumber.ToString()+"_ExcludedProteinList.txt");
             StreamWriter sw = new StreamWriter(outputFile);
             foreach (String prot in excludedProteins)
             {

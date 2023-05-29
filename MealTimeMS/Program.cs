@@ -21,7 +21,7 @@
 #endregion legal notice
 
 //possible pre-processor directives
-//SIMULATION,DONTEVALUATE,STDEVINCLUDED,WRITE_RT_TIME,IGNORE,CHEATINGRTTIME,TRACKEXCLUDEDPROTEINFEATURE, DDA, EXTRACT_SPECTRAL_COUNT, LINUX, COMETOFFLINESEARCH
+//SIMULATION,DONTEVALUATE,STDEVINCLUDED,WRITE_RT_TIME,IGNORE,CHEATINGRTTIME,TRACKEXCLUDEDPROTEINFEATURE, DDA, EXTRACT_SPECTRAL_COUNT, LINUX, COMETOFFLINESEARCH, 
 //for a real time test, use either 
 //IGNORE,DONTEVALUATE   or
 //IGNORE
@@ -49,9 +49,12 @@ namespace MealTimeMS
     {        
         static void Tester()
         {
-           
-            //BrukerInstrumentConnection.TestConnection();
+   //         String workDir = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace";
+			//InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(workDir) + "\\");
+			//WriterClass.ExperimentOutputSetUp();
+   //         ProteinProphetResultTester.DoJob();           
             return;
+            //BrukerInstrumentConnection.TestConnection();
             //AcquisitionSimulatorTester.DoJob();
             //ExclusionMSTester.DoJob();
             //ProteinProphetResultTester.DoJob();
@@ -60,9 +63,6 @@ namespace MealTimeMS
            // ReplacingStuffInPepXML.DoJob();
             //PostProcessingTester.DoJob();
             //Program.ExitProgram(0);
-            String workDir = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace";
-			InputFileOrganizer.SetWorkDir(IOUtils.getAbsolutePath(workDir) + "\\");
-			WriterClass.ExperimentOutputSetUp();
             //ProteinProphetResultTester.DoJob();
             //Program.ExitProgram(1);
             //String savedClassifierCoeff = IdentificationLogisticRegressionTrainer.TraingAndWriteAccordModel(@"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\Output\Training_test_id0.1xCorFilter\20200821K562300ng90min_1_Slot1-1_1_1638.d_extractedFeatures_positiveAndNonPositive.tsv", InputFileOrganizer.OutputFolderOfTheRun);

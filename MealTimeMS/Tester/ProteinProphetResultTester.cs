@@ -24,6 +24,7 @@ namespace MealTimeMS.Tester
             //ProteinProphetResult ppr = PostProcessingScripts.RunProteinProphet(outputCometFile, InputFileOrganizer.OutputFolderOfTheRun, true);
             String proteinProphetFile = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\Output\NoExclusion_WithIonMObility\protein_prophet_output\0NoExclusion_WithIonMObility_partial_interact.prot.xml";
              proteinProphetFile = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\Output\Dat1630_NoExclusion\protein_prophet_output\0Dat1630_NoExclusion_partial_interact.prot.xml";
+            proteinProphetFile = @"D:\CodingLavaleeAdamCDriveBackup\APIO\MTMSWorkspace\Output\testRunnn\protein_prophet_output\1testRunnn_partial_interact.prot.xml";
             ProteinProphetResult ppr = ProteinProphetEvaluator.getProteinProphetResult(proteinProphetFile);
             using (StreamWriter sw = new StreamWriter(Path.Combine(InputFileOrganizer.OutputFolderOfTheRun, "IdentifiedProteins.tsv")))
             {
